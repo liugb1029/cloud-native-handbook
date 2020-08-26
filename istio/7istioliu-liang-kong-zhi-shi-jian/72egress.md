@@ -169,5 +169,3 @@ Use 'kubectl describe pod/sleep-8f795f47d-djmjn -n default' to see all of the co
 
 
 
-
-
