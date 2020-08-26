@@ -2,24 +2,11 @@
 
 刚听说[Service Mesh](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#service-mesh)并试用过[Istio](https://istio.io/)的人可能都会有下面几个疑问：
 
-1. 为什么
-   [Istio](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#istio)
-   要绑定 Kubernetes 呢？
-2. Kubernetes 和
-   [Service Mesh](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#service-mesh)
-   分别在云原生中扮演什么角色？
-3. [Istio](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#istio)
-   扩展了 Kubernetes 的哪些方面？解决了哪些问题？
-4. Kubernetes、xDS 协议（
-   [Envoy](https://github.com/envoyproxy/envoy)
-   、
-   [MOSN](https://github.com/mosn/mosn)
-   等）与
-   [Istio](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#istio)
-   之间又是什么关系？
-5. 到底该不该上
-   [Service Mesh](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#service-mesh)
-   ？
+1. 为什么[Istio](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#istio)要绑定 Kubernetes 呢？
+2. Kubernetes 和[Service Mesh](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#service-mesh)分别在云原生中扮演什么角色？
+3. [Istio](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#istio)扩展了 Kubernetes 的哪些方面？解决了哪些问题？
+4. Kubernetes、xDS 协议（[Envoy](https://github.com/envoyproxy/envoy)、[MOSN](https://github.com/mosn/mosn)等）与[Istio](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#istio)之间又是什么关系？
+5. 到底该不该上[Service Mesh](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#service-mesh)？
 
 这一节我们将试图带您梳理清楚 Kubernetes、xDS 协议以及[Istio](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#istio)[Service Mesh](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#service-mesh)之间的内在联系。此外，本节还将介绍 Kubernetes 中的负载均衡方式，xDS 协议对于[Service Mesh](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#service-mesh)的意义以及为什么说即使有了 Kubernetes 还需要[Istio](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#istio)。
 
@@ -103,7 +90,7 @@ Kubernetes 集群的每个节点都部署了一个`kube-proxy`组件，该组件
 
 ## kube-proxy 组件 {#kube-proxy-组件}
 
-在 Kubernetes 集群中，每个 Node 运行一个`kube-proxy`进程。`kube-proxy`负责为`Service`实现了一种 VIP（虚拟 IP）的形式。 在 Kubernetes v1.0 版本，代理完全在 userspace 实现。Kubernetes v1.1 版本新增了[iptables 代理模式](https://jimmysong.io/kubernetes-handbook/concepts/service.html#iptables-%E4%BB%A3%E7%90%86%E6%A8%A1%E5%BC%8F)，但并不是默认的运行模式。从 Kubernetes v1.2 起，默认使用 iptables 代理。在 Kubernetes v1.8.0-beta.0 中，添加了[ipvs 代理模式](https://jimmysong.io/kubernetes-handbook/concepts/service.html#ipvs-%E4%BB%A3%E7%90%86%E6%A8%A1%E5%BC%8F)。关于 kube-proxy 组件的更多介绍请参考[kubernetes 简介：service 和 kube-proxy 原理](https://cizixs.com/2017/03/30/kubernetes-introduction-service-and-kube-proxy/)和[使用 IPVS 实现 Kubernetes 入口流量负载均衡](https://jishu.io/kubernetes/ipvs-loadbalancer-for-kubernetes/)。
+在 Kubernetes 集群中，每个 Node 运行一个`kube-proxy`进程。`kube-proxy`负责为`Service`实现了一种 VIP（虚拟 IP）的形式。 在 Kubernetes v1.0 版本，代理完全在 userspace 实现。Kubernetes v1.1 版本新增了[iptables 代理模式](https://jimmysong.io/kubernetes-handbook/concepts/service.html#iptables-代理模式)，但并不是默认的运行模式。从 Kubernetes v1.2 起，默认使用 iptables 代理。在 Kubernetes v1.8.0-beta.0 中，添加了[ipvs 代理模式](https://jimmysong.io/kubernetes-handbook/concepts/service.html#ipvs-代理模式)。关于 kube-proxy 组件的更多介绍请参考[kubernetes 简介：service 和 kube-proxy 原理](https://cizixs.com/2017/03/30/kubernetes-introduction-service-and-kube-proxy/)和[使用 IPVS 实现 Kubernetes 入口流量负载均衡](https://jishu.io/kubernetes/ipvs-loadbalancer-for-kubernetes/)。
 
 ### kube-proxy 的缺陷 {#kube-proxy-的缺陷}
 
