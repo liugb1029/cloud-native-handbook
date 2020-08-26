@@ -30,6 +30,8 @@
 
 #### 第五阶段  Service Mesh![](/image/Istio/ServiceMesh-5-sidecar.png)
 
+从架构演进路径来看，从最早期的巨石单体（Monolithic）到分布式（Distributed），再到微服务（Microservices）、容器化（Containerization）、容器编排（Container Orchestration），最后到服务网格（[Service Mesh](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#service-mesh)）、无服务器（Serverless）。而服务网格正是这一演进路径中，至关重要的一环。
+
 #### 主要功能
 
 1、流量控制
