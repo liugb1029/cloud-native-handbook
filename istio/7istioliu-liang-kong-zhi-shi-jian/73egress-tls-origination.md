@@ -1,8 +1,4 @@
-
-
 # Egress TLS Origination {#title}
-
-
 
 [控制 Egress 流量](https://istio.io/latest/zh/docs/tasks/traffic-management/egress/)的任务向我们展示了位于服务网格内部的应用应如何访问外部（即服务网格之外）的 HTTP 和 HTTPS 服务。 正如该任务所述，[`ServiceEntry`](https://istio.io/latest/zh/docs/reference/config/networking/service-entry/)用于配置 Istio 以受控的方式访问外部服务。 本示例将演示如何通过配置 Istio 去实现对发往外部服务的流量的TLS origination。 若此时原始的流量为 HTTP，则 Istio 会将其转换为 HTTPS 连接。
 
@@ -64,6 +60,41 @@ spec:
       weight: 100
 EOF
 ```
+
+ 2. 向外部的 HTTP 服务发送请求：
+
+```
+[root@master istio-1.4.10]# kubectl exec -it $SOURCE_POD -- curl -sL -o /dev/null -D - http://www.servicemesher.com/istio-handbook/
+Defaulting container name to sleep.
+Use 'kubectl describe pod/sleep-8f795f47d-xgmlc -n default' to see all of the containers in this pod.
+HTTP/1.1 301 Moved Permanently
+server: envoy
+date: Mon, 24 Aug 2020 21:25:14 GMT
+content-type: text/html
+content-length: 169
+location: https://www.servicemesher.com/istio-handbook/
+x-envoy-upstream-service-time: 17
+
+HTTP/1.1 200 OK
+Server: nginx/1.16.1
+Date: Wed, 26 Aug 2020 08:16:23 GMT
+Content-Type: text/html
+Content-Length: 124949
+Last-Modified: Thu, 13 Aug 2020 03:27:22 GMT
+Connection: keep-alive
+ETag: "5f34b31a-1e815"
+Accept-Ranges: bytes
+
+[root@master istio-1.4.10]#
+```
+
+请注意_curl_的`-L`标志，该标志指示_curl_将遵循重定向。 在这种情况下，服务器将对到`http://www.servicemesher.com/istio-handbook`的 HTTP 请求返回重定向响应 \([301 Moved Permanently](https://tools.ietf.org/html/rfc2616#section-10.3.2)\)。 而重定向响应将指示客户端使用 HTTPS 向`https://www.servicemesher.com/istio-handbook`重新发送请求。 对于第二个请求，服务器则返回了请求的内容和_200 OK_状态码。
+
+尽管_curl_命令简明地处理了重定向，但是这里有两个问题。 第一个问题是请求冗余，它使获取`http://www.servicemesher.com/istio-handbook`内容的延迟加倍。 第二个问题是 URL 中的路径（在本例中为_politics_）被以明文的形式发送。 如果有人嗅探您的应用与`www.servicemesher.com/`之间的通信，他将会知晓该应用获取了此网站中哪些特定的内容。 而出于隐私的原因，您可能希望阻止这些内容被披露。
+
+通过配置`Istio`执行`TLS`发起，则可以解决这两个问题。
+
+
 
 
 
