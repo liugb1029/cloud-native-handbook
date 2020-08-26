@@ -65,7 +65,7 @@ Ingress-Nginx 是一个K8S ingress工具，支持配置 Ingress Annotations 来�
 
 * 基于权重的 Canary 规则![](/image/kubernetes/canary-1.png)
 
-* 基于用户请求的 Canary 规则
+* 基于用户请求的 Canary 规则![](/image/kubernetes/canary-2.png)
 
 注意： Ingress-Nginx 实在0.21.0 版本 中，引入的Canary 功能，因此要确保ingress版本OK
 
