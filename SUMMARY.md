@@ -18,4 +18,5 @@
   * 4.监控
 * [Istio](istio.md)
   * [1.Service Mesh历程](istio/1service-meshli-cheng.md)
+  * [2.Istio简介](istio/2istiojian-jie.md)
 
