@@ -57,6 +57,25 @@ sleep-8f795f47d-djmjn             2/2     Running   0          2m9s
 
 #### 3、关闭访问外部策略
 
+Istio 有一个[安装选项](https://istio.io/latest/zh/docs/reference/config/installation-options/)，`global.outboundTrafficPolicy.mode`，它配置 sidecar 对外部服务（那些没有在 Istio 的内部服务注册中定义的服务）的处理方式。如果这个选项设置为`ALLOW_ANY`，Istio 代理允许调用未知的服务。如果这个选项设置为`REGISTRY_ONLY`，那么 Istio 代理会阻止任何没有在网格中定义的 HTTP 服务或 service entry 的主机。`ALLOW_ANY`是默认值，不控制对外部服务的访问，方便你快速地评估 Istio。你可以稍后再[配置对外部服务的访问](https://istio.io/latest/zh/docs/tasks/traffic-management/egress/egress-control/#controlled-access-to-external-services)。
+
+要查看这种方法的实际效果，你需要确保 Istio 的安装配置了`global.outboundTrafficPolicy.mode`选项为`ALLOW_ANY`。它在默认情况下是开启的，除非你在安装 Istio 时显式地将它设置为`REGISTRY_ONLY`。
+
+运行以下命令以确认配置是正确的：
+
+```
+$ kubectl get configmap istio -n istio-system -o yaml | grep -o "mode: ALLOW_ANY"
+mode: ALLOW_ANY
+```
+
+如果它开启了，那么输出应该会出现`mode: ALLOW_ANY`。
+
+如果你显式地设置了`REGISTRY_ONLY`模式，可以用以下的命令来改变它：
+
+```
+kubectl get configmap istio -n istio-system -o yaml | sed 's/mode: REGISTRY_ONLY/mode: ALLOW_ANY/g' | kubectl replace -n istio-system -f -
+```
+
 参考链接 [https://archive.istio.io/v1.4/docs/tasks/traffic-management/egress/egress-control/](https://archive.istio.io/v1.4/docs/tasks/traffic-management/egress/egress-control/)
 
 ```
@@ -77,7 +96,7 @@ transfer-encoding: chunked
 / #
 ```
 
-#### 4、配置ServiceEntry
+#### 4、配置ServiceEntry---访问一个外部的HTTP服务
 
 ```
 [root@master istio-1.4.10]# kubectl apply -f - <<EOF
