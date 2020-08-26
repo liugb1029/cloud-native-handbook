@@ -10,9 +10,7 @@
 * 访问安全（HTTPS、mTLS 等）
 * 统一应用入口，API 聚合
 
-![](/chapter2/istio-ingress.png)
-
-![](/chapter2/gateway-config.png)
+![](/image/Istio/istio-ingress.png)![](/image/Istio/gateway-config.png)
 
 #### 1、事先部署好bookinfo demo
 
