@@ -12,4 +12,5 @@
     * [1.7通过Token访问k8s-apiserver](Kubernetes/1chang-jian-wen-ti-zong-jie/17tong-guo-token-fang-wen-k8s-apiserver.md)
     * [1.8Curl探索K8S-APISERVER](Kubernetes/1chang-jian-wen-ti-zong-jie/18curltan-suo-k8s-apiserver.md)
     * [1.9curl访问Kubernetes  API接口实践](Kubernetes/1chang-jian-wen-ti-zong-jie/19curlfang-wenkubernetes-api-jie-kou-shi-jian.md)
+    * [1.10Kubectl命令详细使用方法](Kubernetes/1chang-jian-wen-ti-zong-jie/110kubectlming-ling-xiang-xi-shi-yong-fang-fa.md)
 
