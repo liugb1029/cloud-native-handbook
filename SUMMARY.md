@@ -14,8 +14,8 @@
     * [1.9curl访问Kubernetes  API接口实践](Kubernetes/1chang-jian-wen-ti-zong-jie/19curlfang-wenkubernetes-api-jie-kou-shi-jian.md)
     * [1.10Kubectl命令详细使用方法](Kubernetes/1chang-jian-wen-ti-zong-jie/110kubectlming-ling-xiang-xi-shi-yong-fang-fa.md)
   * [2.网络](Kubernetes/2wang-luo.md)
-  * 3.日志
-  * 4.监控
+  * [3.日志](Kubernetes/3ri-zhi.md)
+  * [4.监控](Kubernetes/4jian-kong.md)
 * [Istio](istio.md)
   * [1.Service Mesh历程](istio/1service-meshli-cheng.md)
     * [1.1Service Mesh基本概念](istio/1service-meshli-cheng/11service-meshji-ben-gai-nian.md)
