@@ -167,5 +167,49 @@ Use 'kubectl describe pod/sleep-8f795f47d-djmjn -n default' to see all of the co
 
 与集群内的请求相似，也可以为使用`ServiceEntry`配置访问的外部服务设置[Istio 路由规则](https://istio.io/latest/zh/docs/concepts/traffic-management/#routing-rules)。在本示例中，你将设置对`httpbin.org`服务访问的超时规则。
 
+1. 从用作测试源的 pod 内部，向外部服务`httpbin.org`的`/delay`endpoint 发出_curl_请求：
+
+1. ```
+   kubectl exec -it $SOURCE_POD -c sleep sh
+   time curl -o /dev/null -s -w "%{http_code}\n" http://httpbin.org/delay/5
+   ```
+
+   这个请求大约在 5 秒内返回 200 \(OK\)。
+
+2. 退出测试源 pod，使用`kubectl`设置调用外部服务`httpbin.org`的超时时间为 3 秒。
+
+   ```
+   $ kubectl apply -f - <<EOF
+   apiVersion: networking.istio.io/v1alpha3
+   kind: VirtualService
+   metadata:
+     name: httpbin-ext
+   spec:
+     hosts:
+       - httpbin.org
+     http:
+     - timeout: 3s
+       route:
+         - destination:
+             host: httpbin.org
+           weight: 100
+   EOF
+   ```
+
+3. 几秒后，重新发出_curl_请求：
+
+   ```
+   $ kubectl exec -it $SOURCE_POD -c sleep sh
+   $ time curl -o /dev/null -s -w "%{http_code}\n" http://httpbin.org/delay/5
+   504
+
+   real    0m3.149s
+   user    0m0.004s
+   sys     0m0.004s
+
+   ```
+
+   这一次，在 3 秒后出现了 504 \(Gateway Timeout\)。Istio 在 3 秒后切断了响应时间为 5 秒的`httpbin.org`服务。
+
 
 
