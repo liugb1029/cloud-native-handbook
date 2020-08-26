@@ -4,15 +4,15 @@
 
 在讲云原生之前，我们先了解一下CNCF，即云原生计算基金会，2015年由谷歌牵头成立，基金会成员目前已有一百多企业与机构，包括亚马逊、微软。思科等巨头。
 
-                                                          ![](/image/cncf.png)
+![](/image/cncf.png)
 
-                                                                            cncf
+
 
 目前CNCF所托管的应用已达14个，下图为其公布的Cloud Native Landscape，给出了云原生生态的参考体系。
 
 
 
-                                                             Cloud Native Landscape
+                                                         Cloud Native Landscape
 
 ### 1.2 云原生
 
