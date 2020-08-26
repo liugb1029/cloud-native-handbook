@@ -4,9 +4,11 @@
 
 在讲云原生之前，我们先了解一下CNCF，即云原生计算基金会，2015年由谷歌牵头成立，基金会成员目前已有一百多企业与机构，包括亚马逊、微软。思科等巨头。
 
-![](/image/cncf.png)
 
-目前CNCF所托管的应用已达14个，下图为其公布的Cloud Native Landscape，给出了云原生生态的参考体系。![](/image/cncf.png)Cloud Native Landscape
+
+目前CNCF所托管的应用已达14个，下图为其公布的Cloud Native Landscape，给出了云原生生态的参考体系。![](/image/cloud-native-1.png)
+
+Cloud Native Landscape
 
 ### 1.2 云原生
 
@@ -20,7 +22,7 @@ CNCF给出了云原生应用的三大特征：
 
 这边引用网上关于云原生所需要的能力和特征总结，如下图。
 
-![](//upload-images.jianshu.io/upload_images/7891228-b9f958627d0aa2fc.jpg?imageMogr2/auto-orient/strip|imageView2/2/w/1200/format/webp)
+
 
 cca
 
