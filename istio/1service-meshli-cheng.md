@@ -74,21 +74,17 @@
 * UDPA \(Universal Data Plane API\)  数据面
 * SMI \(Service Mesh Interface\)    控制面
 
-![](/chapter2/SMI-and-UDPA.png)
+![](/image/Istio/SMI-and-UDPA.png)
 
-#### Service Mesh 产品发展历史
+#### Service Mesh 产品发展历史![](/image/Istio/service-mesh-devlop-history.png)
 
-![](/chapter2/service-mesh-devlop-history.png)
+* Linkerd![](/image/Istio/linkerd.png)
 
-* Linkerd![](/chapter2/linkerd.png)
-
-* Envoy
-
-![](/chapter2/envoy.png)
+* Envoy![](/image/Istio/envoy.png)
 
 * Istio
 
-![](/chapter2/Istio.png)
+![](/image/Istio/Istio.png)
 
 * App Mesh
 * Sofa Mesh
