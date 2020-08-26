@@ -30,5 +30,6 @@
     * [6.3Citadel和Galley](istio/6istiozu-jian-gong-neng/63citadelhe-galley.md)
   * [7.Istio流量控制实践](istio/7istioliu-liang-kong-zhi-shi-jian.md)
     * [7.1Ingress](istio/7istioliu-liang-kong-zhi-shi-jian/71ingress.md)
-    * [7.2Egress](istio/7istioliu-liang-kong-zhi-shi-jian/72egress.md)
+    * [7.2Egress-ServiceEntry](istio/7istioliu-liang-kong-zhi-shi-jian/72egress.md)
+    * [7.3Egress-TLS Origination](istio/7istioliu-liang-kong-zhi-shi-jian/73egress-tls-origination.md)
 
