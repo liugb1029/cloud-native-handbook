@@ -22,7 +22,7 @@ kubectl apply -f samples/sleep/sleep.yaml
 
 1. 创建一个`ServiceEntry`和`VirtualService`以启用对`edition.cnn.com`的访问：
 
-```
+```bash
 [root@master istio-1.4.10]# kubectl apply -f - <<EOF
 apiVersion: networking.istio.io/v1alpha3
 kind: ServiceEntry
@@ -154,7 +154,7 @@ EOF
 
 如您所见`VirtualService`将 80 端口的请求重定向到 443 端口，并在相应的`DestinationRule`执行 TSL 发起。
 
-2. 如上一节一样，向`http://www.servicemesher.com/istio-handbook`发送 HTTP 请求：
+1. 如上一节一样，向`http://www.servicemesher.com/istio-handbook`发送 HTTP 请求：
 
 ```
 [root@master istio-1.4.10]# kubectl exec -it $SOURCE_POD -- curl -sL -o /dev/null -D - http://www.servicemesher.com/istio-handbook/
