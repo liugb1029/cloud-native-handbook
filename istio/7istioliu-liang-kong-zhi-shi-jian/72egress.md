@@ -163,3 +163,11 @@ Use 'kubectl describe pod/sleep-8f795f47d-djmjn -n default' to see all of the co
 
 注意由 Istio sidecar 代理添加的 headers:`X-Envoy-Decorator-Operation`。
 
+### 管理到外部服务的流量 {#manage-traffic-to-external-services}
+
+与集群内的请求相似，也可以为使用`ServiceEntry`配置访问的外部服务设置[Istio 路由规则](https://istio.io/latest/zh/docs/concepts/traffic-management/#routing-rules)。在本示例中，你将设置对`httpbin.org`服务访问的超时规则。
+
+
+
+
+
