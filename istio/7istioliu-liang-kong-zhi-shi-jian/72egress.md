@@ -118,8 +118,6 @@ EOF
 
 #### 5、配置ServiceEntry---访问一个外部的HTTPS服务
 
-
-
 #### 6. 测试连通性
 
 ```
@@ -145,5 +143,5 @@ Use 'kubectl describe pod/sleep-8f795f47d-djmjn -n default' to see all of the co
 }
 ```
 
-
+注意由 Istio sidecar 代理添加的 headers:`X-Envoy-Decorator-Operation`。
 
