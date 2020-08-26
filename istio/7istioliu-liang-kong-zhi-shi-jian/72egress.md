@@ -116,7 +116,11 @@ spec:
 EOF
 ```
 
-#### 5. 测试连通性
+#### 5、配置ServiceEntry---访问一个外部的HTTPS服务
+
+
+
+#### 6. 测试连通性
 
 ```
 [root@master istio-1.4.10]# kubectl exec -it sleep-8f795f47d-djmjn -- sh
