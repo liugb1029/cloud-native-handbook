@@ -118,6 +118,24 @@ EOF
 
 #### 5、配置ServiceEntry---访问一个外部的HTTPS服务
 
+```
+[root@master istio-1.4.10]# kubectl apply -f - <<EOF
+apiVersion: networking.istio.io/v1alpha3
+kind: ServiceEntry
+metadata:
+  name: google
+spec:
+  hosts:
+  - www.google.com
+  ports:
+  - number: 443
+    name: https
+    protocol: HTTPS
+  resolution: DNS
+  location: MESH_EXTERNAL
+EOF
+```
+
 #### 6. 测试连通性
 
 ```
