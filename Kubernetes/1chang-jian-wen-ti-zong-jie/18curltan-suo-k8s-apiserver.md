@@ -2,7 +2,7 @@
 
 在Kubernetes集群中，API Server是集群管理API的入口，由运行在Master节点上的一个名为kube-apiserver的进程提供的服务。 用户进入API可以通过kubectl、客户端库或者http rest，User 或者 Service Account可以被授权进入API。当一个请求到达API时， 往往要经过几个阶段的安全控制，在一个典型的应用集群中，API Server通常会使用自签名的证书提供HTTPS服务，同时开启认证与授权等安全机制。
 
-
+![](/image/kubernetes/k8s-api-server-access.png)
 
 通常，在Kubernetes集群搭建之后，除了使用官方的kubectl工具与API Server进行交互，我们还可以使用Postman或者curl了，有些时候直接使用curl功能更强大， 与API Server交互通常需要首先创建一个有正确权限的ServiceAccount，这个ServiceAccount通过ClusterRole/Role、ClusterRoleBinding/RoleBinding等给其赋予相关资源的操作权限， 而Service Account对应的Token则用于API Server进行基本的认证。与API Server的交互是基于TLS，所以请求的时候还需要自签名的证书，当然也可以非安全方式连接API Server， 但是不推荐。
 
