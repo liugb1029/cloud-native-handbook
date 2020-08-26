@@ -5,4 +5,5 @@
   * [1.常见运维问题](Kubernetes/1chang-jian-wen-ti-zong-jie.md)
     * [1.1Kubeadm证书过期](Kubernetes/1chang-jian-wen-ti-zong-jie/11kubeadmzheng-shu-guo-qi.md)
     * [1.2K8S Pod 内抓包快速定位网络问题](Kubernetes/1chang-jian-wen-ti-zong-jie/12k8s-pod-nei-zhua-bao-kuai-su-ding-wei-wang-luo-wen-ti.md)
+    * 1.3处理内存碎片化
 
