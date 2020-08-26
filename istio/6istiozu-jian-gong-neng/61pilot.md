@@ -14,11 +14,11 @@
 
 如下图所示：pilot直接从运行平台\(kubernetes,consul\)提取数据并将其构造和转换成istio的服务发现模型， 因此pilot只有服务发现功能，无须进行服务注册。这种抽象模型解耦Pilot 和底层平台的不同实现，可支持kubernetes，consul等平台
 
-![](/chapter2/pilot-discovery.png)
 
-除了服务发现， Pilot 更重要的一个功能是向数据面下发规则，包括VirtualService 、DestinationRule 、Gateway 、ServiceEntry 等流量治理规则，也包括认证授权等安全规则。Pilot 负责将各种规则转换成Envoy 可识别的格式，通过标准的XDS 协议发送给Envoy,指导Envoy 完成功作。在通信上， Envoy 通过gRPC 流式订阅Pilot 的配置资源。如下图所示， Pilot 将VirtualService 表达的路由规则分发到Evnoy 上， Envoy 根据该路由规则进行流量转发。![](/chapter2/pilot-xiafa.png)
 
-![](/chapter2/pilot-arch.png)
+除了服务发现， Pilot 更重要的一个功能是向数据面下发规则，包括VirtualService 、DestinationRule 、Gateway 、ServiceEntry 等流量治理规则，也包括认证授权等安全规则。Pilot 负责将各种规则转换成Envoy 可识别的格式，通过标准的XDS 协议发送给Envoy,指导Envoy 完成功作。在通信上， Envoy 通过gRPC 流式订阅Pilot 的配置资源。如下图所示， Pilot 将VirtualService 表达的路由规则分发到Evnoy 上， Envoy 根据该路由规则进行流量转发。
+
+
 
 根据上图，[Pilot](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#pilot)几个关键的模块如下。
 
