@@ -1,4 +1,4 @@
-### 什么是服务入口（ServiceEntry）
+## 什么是服务入口（ServiceEntry）
 
 * 添加外部服务到网格内
 * 管理到外部服务的请求
@@ -14,7 +14,7 @@
 
 [https://istio.io/latest/zh/docs/tasks/traffic-management/egress/egress-control/](https://istio.io/latest/zh/docs/tasks/traffic-management/egress/egress-control/)
 
-#### 1、部署sleep服务\(带curl\)
+### 1、部署sleep服务\(带curl\)
 
 ```
 [root@master istio-1.4.10]# kubectl apply -f samples/sleep/sleep.yaml
@@ -30,7 +30,7 @@ sleep-8f795f47d-djmjn             2/2     Running   0          2m9s
 [root@master istio-1.4.10]# export SOURCE_POD=$(kubectl get pod -l app=sleep -o jsonpath={.items..metadata.name})
 ```
 
-#### 2、测试访问外部
+### 2、测试访问外部
 
 使用外部[http://httpbin.org来测试http请求](http://httpbin.org来测试http请求)
 
@@ -55,7 +55,7 @@ sleep-8f795f47d-djmjn             2/2     Running   0          2m9s
 / #
 ```
 
-#### 3、关闭访问外部策略
+### 3、关闭访问外部策略
 
 Istio 有一个[安装选项](https://istio.io/latest/zh/docs/reference/config/installation-options/)，`global.outboundTrafficPolicy.mode`，它配置 sidecar 对外部服务（那些没有在 Istio 的内部服务注册中定义的服务）的处理方式。如果这个选项设置为`ALLOW_ANY`，Istio 代理允许调用未知的服务。如果这个选项设置为`REGISTRY_ONLY`，那么 Istio 代理会阻止任何没有在网格中定义的 HTTP 服务或 service entry 的主机。`ALLOW_ANY`是默认值，不控制对外部服务的访问，方便你快速地评估 Istio。你可以稍后再[配置对外部服务的访问](https://istio.io/latest/zh/docs/tasks/traffic-management/egress/egress-control/#controlled-access-to-external-services)。
 
@@ -96,7 +96,7 @@ transfer-encoding: chunked
 / #
 ```
 
-#### 4、配置ServiceEntry---访问一个外部的HTTP服务
+### 4、配置ServiceEntry---访问一个外部的HTTP服务
 
 ```
 [root@master istio-1.4.10]# kubectl apply -f - <<EOF
@@ -116,7 +116,7 @@ spec:
 EOF
 ```
 
-#### 5、配置ServiceEntry---访问一个外部的HTTPS服务
+### 5、配置ServiceEntry---访问一个外部的HTTPS服务
 
 ```
 [root@master istio-1.4.10]# kubectl apply -f - <<EOF
@@ -136,7 +136,7 @@ spec:
 EOF
 ```
 
-#### 6. 测试连通性
+### 6. 测试连通性
 
 ```
 [root@master istio-1.4.10]# kubectl exec -it sleep-8f795f47d-djmjn -- sh
@@ -163,7 +163,7 @@ Use 'kubectl describe pod/sleep-8f795f47d-djmjn -n default' to see all of the co
 
 注意由 Istio sidecar 代理添加的 headers:`X-Envoy-Decorator-Operation`。
 
-### 管理到外部服务的流量 {#manage-traffic-to-external-services}
+## 管理到外部服务的流量
 
 与集群内的请求相似，也可以为使用`ServiceEntry`配置访问的外部服务设置[Istio 路由规则](https://istio.io/latest/zh/docs/concepts/traffic-management/#routing-rules)。在本示例中，你将设置对`httpbin.org`服务访问的超时规则。
 
@@ -256,6 +256,51 @@ istioctl manifest apply --set profile=demo --set values.global.proxy.includeIPRa
     "X-Amzn-Trace-Id": "Root=1-5f460aec-6cfe0a88b970720b344997c7"
   }
 }
+```
+
+## 理解原理 {#understanding-what-happened}
+
+在此任务中，您研究了从 Istio 网格调用外部服务的三种方法：
+
+1. 配置 Envoy 以允许访问任何外部服务。
+
+2. 使用 service entry 将一个可访问的外部服务注册到网格中。这是推荐的方法。
+
+3. 配置 Istio sidecar 以从其重新映射的 IP 表中排除外部 IP。
+
+第一种方法通过 Istio sidecar 代理来引导流量，包括对网格内部未知服务的调用。使用这种方法时，你将无法监控对外部服务的访问或无法利用 Istio 的流量控制功能。 要轻松为特定的服务切换到第二种方法，只需为那些外部服务创建 service entry 即可。 此过程使你可以先访问任何外部服务，然后再根据需要决定是否启用控制访问、流量监控、流量控制等功能。
+
+第二种方法可以让你使用 Istio 服务网格所有的功能区调用集群内或集群外的服务。 在此任务中，你学习了如何监控对外部服务的访问并设置对外部服务的调用的超时规则。
+
+第三种方法绕过了 Istio Sidecar 代理，使你的服务可以直接访问任意的外部服务。 但是，以这种方式配置代理需要了解集群提供商相关知识和配置。 与第一种方法类似，你也将失去对外部服务访问的监控，并且无法将 Istio 功能应用于外部服务的流量。
+
+## 安全说明 {#security-note}
+
+> 请注意，此任务中的配置示例 **没有启用安全的出口流量控制**恶意程序可以绕过 Istio Sidecar 代理并在没有 Istio 控制的情况下访问任何外部服务。
+
+为了以更安全的方式实施出口流量控制，你必须[通过 egress gateway 引导出口流量](https://istio.io/latest/zh/docs/tasks/traffic-management/egress/egress-gateway/)， 并查看[其他安全注意事项](https://istio.io/latest/zh/docs/tasks/traffic-management/egress/egress-gateway/#additional-security-considerations)部分中描述的安全问题。
+
+### 将出站流量策略模式设置为所需的值 {#set-the-outbound-traffic-policy-mode-to-your-desired-value}
+
+1. 检查现在的值:
+
+   ```
+   $ kubectl get configmap istio -n istio-system -o yaml | grep -o "mode: ALLOW_ANY" | uniq
+   $ kubectl get configmap istio -n istio-system -o yaml | grep -o "mode: REGISTRY_ONLY" | uniq
+   mode: ALLOW_ANY
+   ```
+
+   输出将会是`mode: ALLOW_ANY`或`mode: REGISTRY_ONLY`。
+
+2. 如果你想改变这个模式，执行以下命令：
+
+```
+kubectl get configmap istio -n istio-system -o yaml | sed 's/mode: ALLOW_ANY/mode: REGISTRY_ONLY/g' | kubectl replace -n istio-system -f -
+```
+
+```
+kubectl get configmap istio -n istio-system -o yaml | sed 's/mode: REGISTRY_ONLY/mode: ALLOW_ANY/g' | kubectl replace -n istio-system -f -
+
 ```
 
 
