@@ -21,4 +21,5 @@
   * [2.Istio简介](istio/2istiojian-jie.md)
   * [3.Istio流量控制](istio/3istioliu-liang-kong-zhi.md)
   * [4.Istio可观测性](istio/4istioke-guan-ce-xing.md)
+  * [5.Istio安全](istio/5istioan-quan.md)
 
