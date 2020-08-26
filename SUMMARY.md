@@ -26,4 +26,7 @@
     * [6.1Pilot](istio/6istiozu-jian-gong-neng/61pilot.md)
     * [6.2Mixer](istio/6istiozu-jian-gong-neng/62mixer.md)
     * [6.3Citadel和Galley](istio/6istiozu-jian-gong-neng/63citadelhe-galley.md)
+  * [7.Istio流量控制实践](istio/7istioliu-liang-kong-zhi-shi-jian.md)
+    * [7.1Ingress](istio/7istioliu-liang-kong-zhi-shi-jian/71ingress.md)
+    * 7.2Egress
 
