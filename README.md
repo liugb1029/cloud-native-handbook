@@ -6,13 +6,15 @@
 
 ![](/image/cncf.png)
 
-
-
 目前CNCF所托管的应用已达14个，下图为其公布的Cloud Native Landscape，给出了云原生生态的参考体系。
 
 
 
-                                                         Cloud Native Landscape
+
+
+Cloud Native Landscape
+
+                                                    
 
 ### 1.2 云原生
 
