@@ -4,11 +4,9 @@
 
 在讲云原生之前，我们先了解一下CNCF，即云原生计算基金会，2015年由谷歌牵头成立，基金会成员目前已有一百多企业与机构，包括亚马逊、微软。思科等巨头。
 
+![](/image/cncf.png)
 
-
-目前CNCF所托管的应用已达14个，下图为其公布的Cloud Native Landscape，给出了云原生生态的参考体系。![](/image/cloud-native-1.png)
-
-Cloud Native Landscape
+目前CNCF所托管的应用已达14个，下图为其公布的Cloud Native Landscape，给出了云原生生态的参考体系。![](/image/cloud-native-1.png)Cloud Native Landscape
 
 ### 1.2 云原生
 
@@ -22,9 +20,7 @@ CNCF给出了云原生应用的三大特征：
 
 这边引用网上关于云原生所需要的能力和特征总结，如下图。
 
-
-
-cca
+![](/image/cloud-native-2.jpg)
 
 ### 1.3 The Twelve Factors
 
@@ -83,23 +79,15 @@ Docker可以解决虚拟机能够解决的问题，同时也能够解决虚拟�
 
 传统的web开发方式，一般被称为单体架构（Monolithic）所有的功能打包在一个WAR包里，基本没有外部依赖（除了容器），部署在一个JEE容器（Tomcat，JBoss，WebLogic）里，包含了DO/DAO，Service，UI等所有逻辑。其架构如下图所示。
 
-![](//upload-images.jianshu.io/upload_images/7891228-5541ee8965435c39.jpg?imageMogr2/auto-orient/strip|imageView2/2/w/400/format/webp)
-
-monolithic
+![](/image/cloud-native-3.jpg)
 
 单体架构进行演化升级之后，过渡到SOA架构，即面向服务架构。近几年微服务架构（Micro-Service Archeticture）是最流行的架构风格，旨在通过将功能模块分解到各个独立的子系统中以实现解耦，它并没有一成不变的规定，而是需要根据业务来做设计。微服务架构是对SOA的传承，是SOA的具体实践方法。微服务架构中，每个微服务模块只是对简单、独立、明确的任务进行处理，通过REST API返回处理结果给外部。在微服务推广实践角度来看，微服务将整个系统进行拆分，拆分成更小的粒度，保持这些服务独立运行，应用容器化技术将微服务独立运行在容器中。过去设计架构时，是在内存中以参数或对象的方式实现粒度细化。微服务使用各个子服务控制模块的思想代替总线。不同的业务要求，服务控制模块至少包含服务的发布、注册、路由、代理功能。
 
-容器化的出现，一定程度上带动了微服务架构。架构演化从单体式应用到分布式，再从分布式架构到云原生架构，微服务在其中有着不可或缺的角色。微服务带给我们很多开发和部署上的灵活性和技术多样性，但是也增加了服务调用的开销、分布式系事务、调试与服务治理方面的难题。
-
-![](//upload-images.jianshu.io/upload_images/7891228-771acdc181e27558.png?imageMogr2/auto-orient/strip|imageView2/2/w/867/format/webp)
-
-cloud structure
+容器化的出现，一定程度上带动了微服务架构。架构演化从单体式应用到分布式，再从分布式架构到云原生架构，微服务在其中有着不可或缺的角色。微服务带给我们很多开发和部署上的灵活性和技术多样性，但是也增加了服务调用的开销、分布式系事务、调试与服务治理方面的难题。![](/image/cloud-native-4.png)
 
 从上图Spring Cloud组件的架构可以看出在微服务架构中所必须的组件，包括：服务发现与注册、熔断机制、路由、全局锁、中心配置管理、控制总线、决策竞选、分布式会话和集群状态管理等基础组件。
 
-![](//upload-images.jianshu.io/upload_images/7891228-a52db4b2de995e0b.png?imageMogr2/auto-orient/strip|imageView2/2/w/998/format/webp)
-
-scvsk8s
+![](/image/cloud-native-5.png)
 
 Spring Cloud和Kubernetes有很大的不同，Spring Cloud和Kubernetes处理了不同范围的微服务架构技术点，而且是用了不同的方法。Spring Cloud方法是试图解决在JVM中的微服务架构要点，而Kubernetes方法是试图让问题消失，为开发者在平台层解决。Spring Cloud在JVM中非常强大，Kubernetes管理那些JVM很强大。看起来各取所长，充分利用这两者的优势是自然而然的趋势了。
 
