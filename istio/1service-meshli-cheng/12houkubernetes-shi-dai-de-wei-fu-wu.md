@@ -123,26 +123,11 @@ xDS 协议是由[Envoy](https://envoyproxy.io/)提出的，在[Envoy](https://ww
 最后总结下关于 xDS 协议的要点：
 
 * CDS、EDS、LDS、RDS 是最基础的 xDS 协议，它们可以分别独立更新。
-* 所有的发现服务（Discovery
-  [Service](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#service)
-  ）可以连接不同的 Management Server，也就是说管理 xDS 的服务器可以是多个。
-* [Envoy](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#envoy)
-  在原始 xDS 协议的基础上进行了一些列扩充，增加了 SDS（秘钥发现服务）、ADS（聚合发现服务）、HDS（健康发现服务）、MS（Metric 服务）、RLS（速率限制服务）等 API。
-* 为了保证数据一致性，若直接使用 xDS 原始 API 的话，需要保证这样的顺序更新：CDS --
-  &gt;
-   EDS --
-  &gt;
-   LDS --
-  &gt;
-   RDS，这是遵循电子工程中的
-  **先合后断**
-  （Make-Before-Break）原则，即在断开原来的连接之前先建立好新的连接，应用在路由里就是为了防止设置了新的路由规则的时候却无法发现上游集群而导致流量被丢弃的情况，类似于电路里的断路。
-* CDS 设置
-  [Service Mesh](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#service-mesh)
-  中有哪些服务。
-* EDS 设置哪些实例（Endpoint）属于这些服务（
-  [Cluster](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#cluster)
-  ）。
+* 所有的发现服务（Discovery [Service](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#service)）可以连接不同的 Management Server，也就是说管理 xDS 的服务器可以是多个。
+* [Envoy](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#envoy)在原始 xDS 协议的基础上进行了一些列扩充，增加了 SDS（秘钥发现服务）、ADS（聚合发现服务）、HDS（健康发现服务）、MS（Metric 服务）、RLS（速率限制服务）等 API。
+* 为了保证数据一致性，若直接使用 xDS 原始 API 的话，需要保证这样的顺序更新：CDS --&gt;EDS --&gt;LDS --&gt;RDS，这是遵循电子工程中的**先合后断**（Make-Before-Break）原则，即在断开原来的连接之前先建立好新的连接，应用在路由里就是为了防止设置了新的路由规则的时候却无法发现上游集群而导致流量被丢弃的情况，类似于电路里的断路。
+* CDS 设置[Service Mesh](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#service-mesh)中有哪些服务。
+* EDS 设置哪些实例（Endpoint）属于这些服务（[Cluster](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#cluster)）。
 * LDS 设置实例上监听的端口以配置路由。
 * RDS 最终服务间的路由关系，应该保证最后更新 RDS。
 
@@ -150,7 +135,7 @@ xDS 协议是由[Envoy](https://envoyproxy.io/)提出的，在[Envoy](https://ww
 
 [Envoy](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#envoy)是[Istio](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#istio)[Service Mesh](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#service-mesh)中默认的[Sidecar](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#sidecar)，[Istio](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#istio)在 Enovy 的基础上按照[Envoy](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#envoy)的 xDS 协议扩展了其控制平面，在讲到[Envoy](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#envoy)xDS 协议之前我们还需要先熟悉下[Envoy](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#envoy)的基本术语。下面列举了[Envoy](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#envoy)里的基本术语及其数据结构解析，关于[Envoy](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#envoy)的详细介绍请参考[Envoy 官方文档](http://www.servicemesher.com/envoy/)，至于[Envoy](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#envoy)在[Service Mesh](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#service-mesh)（不仅限于[Istio](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#istio)） 中是如何作为转发代理工作的请参考网易云刘超的这篇[深入解读 Service Mesh 背后的技术细节](https://www.cnblogs.com/163yun/p/8962278.html)以及[理解 Istio Service Mesh 中 Envoy 代理 Sidecar 注入及流量劫持](https://jimmysong.io/blog/envoy-sidecar-injection-in-istio-service-mesh-deep-dive/)，本文引用其中的一些观点，详细内容不再赘述。
 
-[![](https://www.servicemesher.com/istio-handbook/images/envoy-arch.png "Envoy proxy 架构图")](https://www.servicemesher.com/istio-handbook/images/envoy-arch.png)
+![](/image/Istio/envoy-arch.png)
 
 图 2.1.2.5：
 
@@ -162,33 +147,12 @@ proxy 架构图
 
 下面是您应该了解的 Enovy 里的基本术语：
 
-* **Downstream（下游）**
-  ：下游主机连接到
-  [Envoy](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#envoy)
-  ，发送请求并接收响应，即发送请求的主机。
-* **Upstream（上游）**
-  ：上游主机接收来自
-  [Envoy](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#envoy)
-  的连接和请求，并返回响应，即接受请求的主机。
-* **Listener（监听器）**
-  ：监听器是命名网地址（例如，端口、unix domain socket 等\)，下游客户端可以连接这些监听器。
-  [Envoy](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#envoy)
-  暴露一个或者多个监听器给下游主机连接。
-* [**Cluster**](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#cluster)
-  **（集群）**
-  ：集群是指
-  [Envoy](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#envoy)
-  连接的一组逻辑相同的上游主机。
-  [Envoy](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#envoy)
-  通过
-  [服务发现](http://www.servicemesher.com/envoy/intro/arch_overview/service_discovery.html#arch-overview-service-discovery)
-  来发现集群的成员。可以选择通过
-  [主动健康检查](http://www.servicemesher.com/envoy/intro/arch_overview/health_checking.html#arch-overview-health-checking)
-  来确定集群成员的健康状态。
-  [Envoy](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#envoy)
-  通过
-  [负载均衡策略](http://www.servicemesher.com/envoy/intro/arch_overview/load_balancing.html#arch-overview-load-balancing)
-  决定将请求路由到集群的哪个成员。
+* **Downstream（下游）**：下游主机连接到[Envoy](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#envoy)，发送请求并接收响应，即发送请求的主机。
+* **Upstream（上游）**：上游主机接收来自[Envoy](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#envoy)的连接和请求，并返回响应，即接受请求的主机。
+* **Listener（监听器）**：监听器是命名网地址（例如，端口、unix domain socket 等\)，下游客户端可以连接这些监听器。
+  [Envoy](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#envoy)暴露一个或者多个监听器给下游主机连接。
+* [**Cluster**](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#cluster)**（集群）**：集群是指[Envoy](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#envoy)连接的一组逻辑相同的上游主机。[Envoy](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#envoy)通过[服务发现](http://www.servicemesher.com/envoy/intro/arch_overview/service_discovery.html#arch-overview-service-discovery)来发现集群的成员。可以选择通过
+  [主动健康检查](http://www.servicemesher.com/envoy/intro/arch_overview/health_checking.html#arch-overview-health-checking)来确定集群成员的健康状态。[Envoy](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#envoy)通过[负载均衡策略](http://www.servicemesher.com/envoy/intro/arch_overview/load_balancing.html#arch-overview-load-balancing)决定将请求路由到集群的哪个成员。
 
 [Envoy](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#envoy)中可以设置多个 Listener，每个 Listener 中又可以设置 filter chain（过滤器链表），而且过滤器是可扩展的，这样就可以更方便我们操作流量的行为，例如设置加密、私有 RPC 等。
 
@@ -196,7 +160,7 @@ xDS 协议是由[Envoy](https://www.servicemesher.com/istio-handbook/GLOSSARY.ht
 
 ## Istio Service Mesh {#istio-service-mesh}
 
-[![](https://www.servicemesher.com/istio-handbook/images/istio-mesh-arch.png "Istio service mesh 架构图")](https://www.servicemesher.com/istio-handbook/images/istio-mesh-arch.png)
+![](/image/Istio/istio-mesh-arch.png)
 
 图 2.1.2.6：
 
@@ -208,64 +172,34 @@ xDS 协议是由[Envoy](https://www.servicemesher.com/istio-handbook/GLOSSARY.ht
 
 [Istio](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#istio)是一个功能十分丰富的[Service Mesh](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#service-mesh)，它包括如下功能：
 
-* 流量管理：这是
-  [Istio](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#istio)
-  的最基本的功能。
-* 策略控制：通过
-  [Mixer](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#mixer)
-  组件和各种适配器来实现，实现访问控制系统、遥测捕获、配额管理和计费等。
-* 可观测性：通过
-  [Mixer](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#mixer)
-  来实现。
+* 流量管理：这是[Istio](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#istio)的最基本的功能。
+* 策略控制：通过[Mixer](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#mixer)组件和各种适配器来实现，实现访问控制系统、遥测捕获、配额管理和计费等。
+* 可观测性：通过[Mixer](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#mixer)来实现。
 * 安全认证：Citadel 组件做密钥和证书管理。
 
 ### Istio 中的流量管理 {#istio-中的流量管理}
 
 [Istio](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#istio)中定义了如下的[CRD](https://jimmysong.io/kubernetes-handbook/concepts/custom-resource.html)来帮助用户进行流量管理：
 
-* **Gateway**
-  ：
-  [Gateway](https://istio.io/docs/reference/config/networking/gateway/)
+* **Gateway**：[Gateway](https://istio.io/docs/reference/config/networking/gateway/)
   描述了在网络边缘运行的负载均衡器，用于接收传入或传出的HTTP / TCP连接。
-* **VirtualService**
-  ：
-  [VirtualService](https://istio.io/docs/reference/config/networking/virtual-service/)
-  实际上将 Kubernetes 服务连接到
-  [Istio](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#istio)
-  Gateway。它还可以执行更多操作，例如定义一组流量路由规则，以便在主机被寻址时应用。
-* **DestinationRule**
-  ：
-  [`DestinationRule`](https://istio.io/zh/docs/reference/config/networking/destination-rule/)
-  所定义的策略，决定了经过路由处理之后的流量的访问策略。简单的说就是定义流量如何路由。这些策略中可以定义负载均衡配置、连接池尺寸以及外部检测（用于在负载均衡池中对不健康主机进行识别和驱逐）配置。
-* **EnvoyFilter**
-  ：
-  [`EnvoyFilter`](https://istio.io/docs/reference/config/networking/envoy-filter/)
-  对象描述了针对代理服务的过滤器，这些过滤器可以定制由
-  [Istio](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#istio)
-  [Pilot](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#pilot)
-  生成的代理配置。这个配置初级用户一般很少用到。
-* **ServiceEntry**
-  ：默认情况下
-  [Istio](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#istio)
-  [Service Mesh](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#service-mesh)
-  中的服务是无法发现 Mesh 外的服务的，
-  [`ServiceEntry`](https://istio.io/docs/reference/config/networking/service-entry/)
-  能够在
-  [Istio](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#istio)
-  内部的服务注册表中加入额外的条目，从而让网格中自动发现的服务能够访问和路由到这些手工加入的服务。
+* **VirtualService**：[VirtualService](https://istio.io/docs/reference/config/networking/virtual-service/)实际上将 Kubernetes 服务连接到[Istio](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#istio)Gateway。它还可以执行更多操作，例如定义一组流量路由规则，以便在主机被寻址时应用。
+* **DestinationRule**：[`DestinationRule`](https://istio.io/zh/docs/reference/config/networking/destination-rule/)所定义的策略，决定了经过路由处理之后的流量的访问策略。简单的说就是定义流量如何路由。这些策略中可以定义负载均衡配置、连接池尺寸以及外部检测（用于在负载均衡池中对不健康主机进行识别和驱逐）配置。
+* **EnvoyFilter**：[`EnvoyFilter`](https://istio.io/docs/reference/config/networking/envoy-filter/)对象描述了针对代理服务的过滤器，这些过滤器可以定制由[Istio](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#istio) [Pilot](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#pilot)生成的代理配置。这个配置初级用户一般很少用到。
+* **ServiceEntry**：默认情况下[Istio](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#istio) [Service Mesh](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#service-mesh)中的服务是无法发现 Mesh 外的服务的，[`ServiceEntry`](https://istio.io/docs/reference/config/networking/service-entry/)能够在[Istio](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#istio)内部的服务注册表中加入额外的条目，从而让网格中自动发现的服务能够访问和路由到这些手工加入的服务。
 
 ## Kubernetes vs xDS vs Istio {#kubernetes-vs-xds-vs-istio}
 
 在阅读完上文对 Kubernetes 的`kube-proxy`组件、xDS 和[Istio](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#istio)中流量管理的抽象概念之后，下面将带您仅就流量管理方面比较下三者对应的组件/协议（注意，三者不可以完全等同）。
 
-| Kubernetes | xDS | [Istio](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#istio) | [Service Mesh](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#service-mesh) |
-| :--- | :--- | :--- | :--- |
-|  | Endpoint | Endpoint | - |
-|  | [Service](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#service) | Route | VirtualService |
-|  | kube-proxy | Route | DestinationRule |
-|  | kube-proxy | Listener | EnvoyFilter |
-|  | Ingress | Listener | Gateway |
-|  | [Service](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#service) | [Cluster](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#cluster) | ServiceEntry |
+|  Kubernetes | xDS |  |
+| :--- | :--- | :--- |
+| Endpoint | Endpoint | - |
+| [Service](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#service) | Route | VirtualService |
+| kube-proxy | Route | DestinationRule |
+| kube-proxy | Listener | EnvoyFilter |
+| Ingress | Listener | Gateway |
+| [Service](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#service) | [Cluster](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#cluster) | ServiceEntry |
 
 ## 小结 {#小结}
 
