@@ -61,9 +61,7 @@ options:
 查看Pod所在 `宿主机` 和 `Pod名称`。
 
 ```bash
-$ kubectl get pods -n 
-test
- -o wide
+$ kubectl get pods -n test -o wide
 ```
 
 登陆Pod所在 `宿主机`，创建一个 `e_net.sh` Shell 脚本。
