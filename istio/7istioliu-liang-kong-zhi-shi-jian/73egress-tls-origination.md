@@ -61,7 +61,7 @@ spec:
 EOF
 ```
 
- 2. 向外部的 HTTP 服务发送请求：
+1. 向外部的 HTTP 服务发送请求：
 
 ```
 [root@master istio-1.4.10]# kubectl exec -it $SOURCE_POD -- curl -sL -o /dev/null -D - http://www.servicemesher.com/istio-handbook/
@@ -94,7 +94,84 @@ Accept-Ranges: bytes
 
 通过配置`Istio`执行`TLS`发起，则可以解决这两个问题。
 
+## 用于 egress 流量的 TLS 发起 {#TLS-origination-for-egress-traffic}
 
+1. 重新定义上一节的`ServiceEntry`和`VirtualService`以重写 HTTP 请求端口，并添加一个`DestinationRule`以执行 TLS 发起。
 
+```
+kubectl apply -f - <<EOF
+apiVersion: networking.istio.io/v1alpha3
+kind: ServiceEntry
+metadata:
+  name: servicemesher-com
+spec:
+  hosts:
+  - www.servicemesher.com
+  ports:
+  - number: 80
+    name: http-port
+    protocol: HTTP
+  - number: 443
+    name: https-port
+    protocol: HTTPS
+  resolution: DNS
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: servicemesher-com
+spec:
+  hosts:
+  - www.servicemesher.com
+  http:
+  - match:
+    - port: 80
+    route:
+    - destination:
+        host: www.servicemesher.com
+        subset: tls-origination
+        port:
+          number: 443
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: DestinationRule
+metadata:
+  name: servicemesher-com
+spec:
+  host: www.servicemesher.com
+  subsets:
+  - name: tls-origination
+    trafficPolicy:
+      loadBalancer:
+        simple: ROUND_ROBIN
+      portLevelSettings:
+      - port:
+          number: 443
+        tls:
+          mode: SIMPLE # initiates HTTPS when accessing www.servicemesher.com
+EOF
+```
 
+如您所见`VirtualService`将 80 端口的请求重定向到 443 端口，并在相应的`DestinationRule`执行 TSL 发起。
+
+2. 如上一节一样，向`http://www.servicemesher.com/istio-handbook`发送 HTTP 请求：
+
+```
+[root@master istio-1.4.10]# kubectl exec -it $SOURCE_POD -- curl -sL -o /dev/null -D - http://www.servicemesher.com/istio-handbook/
+Defaulting container name to sleep.
+Use 'kubectl describe pod/sleep-8f795f47d-xgmlc -n default' to see all of the containers in this pod.
+HTTP/1.1 200 OK
+server: envoy
+date: Mon, 24 Aug 2020 21:29:38 GMT
+content-type: text/html
+content-length: 124949
+last-modified: Thu, 13 Aug 2020 03:27:22 GMT
+etag: "5f34b31a-1e815"
+accept-ranges: bytes
+x-envoy-upstream-service-time: 42
+
+[root@master istio-1.4.10]#
+```
+
+这次将会收到唯一的_200 OK_响应。 因为 Istio 为_curl_执行了 TLS 发起，原始的 HTTP 被升级为 HTTPS 并转发到`www.servicemesher.com`。 服务器直接返回内容而无需重定向。 这消除了客户端与服务器之间的请求冗余，使网格保持加密状态，隐藏了您的应用获取`www.servicemesher.com`中istio-handbook的事实。
 
