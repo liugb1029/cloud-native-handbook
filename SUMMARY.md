@@ -25,5 +25,5 @@
   * [6.Istio组件功能](istio/6istiozu-jian-gong-neng.md)
     * [6.1Pilot](istio/6istiozu-jian-gong-neng/61pilot.md)
     * [6.2Mixer](istio/6istiozu-jian-gong-neng/62mixer.md)
-    * 6.3Citadel和Galley
+    * [6.3Citadel和Galley](istio/6istiozu-jian-gong-neng/63citadelhe-galley.md)
 
