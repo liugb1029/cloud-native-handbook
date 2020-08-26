@@ -22,4 +22,8 @@
   * [3.Istio流量控制](istio/3istioliu-liang-kong-zhi.md)
   * [4.Istio可观测性](istio/4istioke-guan-ce-xing.md)
   * [5.Istio安全](istio/5istioan-quan.md)
+  * [6.Istio组件功能](istio/6istiozu-jian-gong-neng.md)
+    * [6.1Pilot](istio/6istiozu-jian-gong-neng/61pilot.md)
+    * 6.2Mixer
+    * 6.3Citadel和Galley
 
