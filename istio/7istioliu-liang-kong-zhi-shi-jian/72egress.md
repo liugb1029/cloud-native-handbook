@@ -237,8 +237,26 @@ istioctl manifest apply <the flags you used to install Istio> --set values.globa
 在更新`istio-sidecar-injector`configmap 和重新部署`sleep`程序后，Istio sidecar 将仅拦截和管理集群中的内部请求。 任何外部请求都会绕过 Sidecar，并直接到达其预期的目的地。举个例子：
 
 ```
-
+istioctl manifest apply --set profile=demo --set values.global.proxy.includeIPRanges="10.96.0.0/12"
 ```
 
-与通过 HTTP 和 HTTPS 访问外部服务不同，你不会看到任何与 Istio sidecar 有关的请求头， 并且发送到外部服务的请求既不会出现在 Sidecar 的日志中，也不会出现在 Mixer 日志中。 绕过 Istio sidecar 意味着你不能再监视对外部服务的访问。
+修改后无需重启sidecar-injector，并且只针对新部署的服务有效。
+
+与通过 HTTP 和 HTTPS 访问外部服务不同，你不会看到任何与** Istio sidecar 有关的请求头**， 并且发送到外部服务的请求既不会出现在 Sidecar 的日志中，也不会出现在 Mixer 日志中。 绕过 Istio sidecar 意味着你不能再监视对外部服务的访问。
+
+```
+[root@master istio-1.4.10]# export SOURCE_POD=$(kubectl get pod -l app=sleep -o jsonpath={.items..metadata.name})
+[root@master istio-1.4.10]# kubectl exec -it $SOURCE_POD -- sh
+/ # curl http://httpbin.org/headers
+{
+  "headers": {
+    "Accept": "*/*",
+    "Host": "httpbin.org",
+    "User-Agent": "curl/7.69.1",
+    "X-Amzn-Trace-Id": "Root=1-5f460aec-6cfe0a88b970720b344997c7"
+  }
+}
+```
+
+
 
