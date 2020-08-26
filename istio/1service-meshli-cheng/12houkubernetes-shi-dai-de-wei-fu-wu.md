@@ -192,7 +192,7 @@ xDS 协议是由[Envoy](https://www.servicemesher.com/istio-handbook/GLOSSARY.ht
 
 在阅读完上文对 Kubernetes 的`kube-proxy`组件、xDS 和[Istio](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#istio)中流量管理的抽象概念之后，下面将带您仅就流量管理方面比较下三者对应的组件/协议（注意，三者不可以完全等同）。
 
-|  Kubernetes | xDS |  |
+| Kubernetes | xDS | Istio Service Mesh |
 | :--- | :--- | :--- |
 | Endpoint | Endpoint | - |
 | [Service](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#service) | Route | VirtualService |
