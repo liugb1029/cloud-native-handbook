@@ -28,23 +28,10 @@
 
 * Kubernetes 的本质是应用的生命周期管理，具体来说就是部署和管理（扩缩容、自动恢复、发布）。
 * Kubernetes 为微服务提供了可扩展、高弹性的部署和管理平台。
-* [Service Mesh](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#service-mesh)
-  的基础是透明代理，通过
-  [sidecar](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#sidecar)
-  proxy 拦截到微服务间流量后再通过控制平面配置管理微服务的行为。
-* [Service Mesh](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#service-mesh)
-  将流量管理从 Kubernetes 中解耦，
-  [Service Mesh](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#service-mesh)
-  内部的流量无需
-  `kube-proxy`
-  组件的支持，通过为更接近微服务应用层的抽象，管理服务间的流量、安全性和可观察性。
-* xDS 定义了
-  [Service Mesh](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#service-mesh)
-  配置的协议标准。
-* [Service Mesh](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#service-mesh)
-  是对 Kubernetes 中的
-  [service](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#service)
-  更上层的抽象，它的下一步是 serverless。
+* [Service Mesh](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#service-mesh)的基础是透明代理，通过[sidecar](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#sidecar) proxy 拦截到微服务间流量后再通过控制平面配置管理微服务的行为。
+* [Service Mesh](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#service-mesh)将流量管理从 Kubernetes 中解耦，[Service Mesh](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#service-mesh)内部的流量无需`kube-proxy`组件的支持，通过为更接近微服务应用层的抽象，管理服务间的流量、安全性和可观察性。
+* xDS 定义了[Service Mesh](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#service-mesh)配置的协议标准
+* [Service Mesh](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#service-mesh)是对 Kubernetes 中的[service](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#service)更上层的抽象，它的下一步是 serverless。
 
 ## Kubernetes vs Service Mesh {#kubernetes-vs-service-mesh}
 
