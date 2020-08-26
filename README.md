@@ -4,16 +4,13 @@
 
 在讲云原生之前，我们先了解一下CNCF，即云原生计算基金会，2015年由谷歌牵头成立，基金会成员目前已有一百多企业与机构，包括亚马逊、微软。思科等巨头。
 
-![](//upload-images.jianshu.io/upload_images/7891228-53fadc92a3bf7635.png?imageMogr2/auto-orient/strip|imageView2/2/w/159/format/webp)
+                                                              ![](/image/cncf.png)
 
-cncf
+                                                                                cncf
 
 目前CNCF所托管的应用已达14个，下图为其公布的Cloud Native Landscape，给出了云原生生态的参考体系。
 
-  
 
-
-![](//upload-images.jianshu.io/upload_images/7891228-b180408dca8e144e.jpg?imageMogr2/auto-orient/strip|imageView2/2/w/1200/format/webp)
 
 Cloud Native Landscape
 
@@ -81,7 +78,7 @@ Docker可以解决虚拟机能够解决的问题，同时也能够解决虚拟�
 这个总结确实很贴切。编排调度的开源组件还有：Kubernetes、Mesos和Docker swarm。
 
 > Kubernetes是目前世界上关注度最高的开源项目，它是一个出色的容器编排系统。Kubernetes出身于互联网行业的巨头Google公司，它借鉴了由上百位工程师花费十多年时间打造Borg系统的理念，通过极其简易的安装，以及灵活的网络层对接方式，提供一站式的服务。
-
+>
 > Mesos则更善于构建一个可靠的平台，用以运行多任务关键工作负载，包括Docker容器、遗留应用程序\(例如Java\)和分布式数据服务\(例如Spark、Kafka、Cassandra、Elastic\)。Mesos采用两级调度的架构，开发人员可以很方便的结合公司业务场景自定制MesosFramework。
 
 他们为云原生应用提供的强有力的编排和调度能力，它们是云平台上的分布式操作系统。在单机上运行容器，无法发挥它的最大效能，只有形成集群，才能最大程度发挥容器的良好隔离、资源分配与编排管理的优势，而对于容器的编排管理，Swarm、Mesos和Kubernetes的大战已经基本宣告结束，kubernetes成为了无可争议的赢家。
@@ -113,8 +110,4 @@ Spring Cloud和Kubernetes有很大的不同，Spring Cloud和Kubernetes处理了
 ## 5. 总结
 
 技术架构的演变非常快，各种新的名词也是层出不穷。本文主要是对云原生的概述。云原生应用的三大特征：容器化封装、动态管理、面向微服务。首先由CNCF组织介绍了云原生的概念，然后分别对这三个特征进行详述。云原生架构是当下很火的讨论话题，是不同思想的集合，集目前各种热门技术之大成。
-
-
-
-
 
