@@ -16,9 +16,9 @@ kubeadm alpha certs check-expiration​
 
 三、查看当前使用版本
 
-kubeadm config images list
+`kubeadm config images list`
 
-W1022 09:19:08.524437    ......... client version: v1.16.1
+`W1022 09:19:08.524437    ......... client version: v1.16.1`
 
 四、根据上步版本下载源码
 
