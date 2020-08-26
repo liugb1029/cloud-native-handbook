@@ -169,14 +169,14 @@ Use 'kubectl describe pod/sleep-8f795f47d-djmjn -n default' to see all of the co
 
 1. 从用作测试源的 pod 内部，向外部服务`httpbin.org`的`/delay`endpoint 发出_curl_请求：
 
-1. ```
+2. ```
    kubectl exec -it $SOURCE_POD -c sleep sh
    time curl -o /dev/null -s -w "%{http_code}\n" http://httpbin.org/delay/5
    ```
 
    这个请求大约在 5 秒内返回 200 \(OK\)。
 
-2. 退出测试源 pod，使用`kubectl`设置调用外部服务`httpbin.org`的超时时间为 3 秒。
+3. 退出测试源 pod，使用`kubectl`设置调用外部服务`httpbin.org`的超时时间为 3 秒。
 
    ```
    $ kubectl apply -f - <<EOF
@@ -196,7 +196,7 @@ Use 'kubectl describe pod/sleep-8f795f47d-djmjn -n default' to see all of the co
    EOF
    ```
 
-3. 几秒后，重新发出_curl_请求：
+4. 几秒后，重新发出_curl_请求：
 
    ```
    $ kubectl exec -it $SOURCE_POD -c sleep sh
@@ -206,10 +206,39 @@ Use 'kubectl describe pod/sleep-8f795f47d-djmjn -n default' to see all of the co
    real    0m3.149s
    user    0m0.004s
    sys     0m0.004s
-
    ```
 
    这一次，在 3 秒后出现了 504 \(Gateway Timeout\)。Istio 在 3 秒后切断了响应时间为 5 秒的`httpbin.org`服务。
 
+## 直接访问外部服务 {#direct-access-to-external-services}
 
+如果要让特定范围的 ​​IP 完全绕过 Istio，则可以配置 Envoy sidecars 以防止它们[拦截](https://istio.io/latest/zh/docs/concepts/traffic-management/)外部请求。要设置绕过 Istio，请更改`global.proxy.includeIPRanges`或`global.proxy.excludeIPRanges`配置选项，并使用`kubectl apply`命令更新`istio-sidecar-injector`的[配置](https://istio.io/latest/zh/docs/reference/config/installation-options/)。`istio-sidecar-injector`配置的更新，影响的是新部署应用的 pod。
+
+> 与[Envoy 转发流量到外部服务](https://istio.io/latest/zh/docs/tasks/traffic-management/egress/egress-control/#envoy-passthrough-to-external-services)不同，后者使用`ALLOW_ANY`流量策略来让 Istio sidecar 代理将调用传递给未知服务， 该方法完全绕过了 sidecar，从而实质上禁用了指定 IP 的所有 Istio 功能。你不能像`ALLOW_ANY`方法那样为特定的目标增量添加 service entries。 因此，仅当出于性能或其他原因无法使用边车配置外部访问时，才建议使用此配置方法。
+
+排除所有外部 IP 重定向到 Sidecar 代理的一种简单方法是将`global.proxy.includeIPRanges`配置选项设置为内部集群服务使用的 IP 范围。这些 IP 范围值取决于集群所在的平台。
+
+### 配置代理绕行 {#configuring-the-proxy-bypass}
+
+删除本指南中先前部署的 service entry 和 virtual service。
+
+使用平台的 IP 范围更新`istio-sidecar-injector`的配置。比如，如果 IP 范围是 10.0.0.1/24，则使用一下命令：
+
+```
+istioctl manifest apply <the flags you used to install Istio> --set values.global.proxy.includeIPRanges="10.0.0.1/24"
+```
+
+在[安装 Istio](https://istio.io/latest/zh/docs/setup/install/istioctl)命令的基础上增加`--set values.global.proxy.includeIPRanges="10.0.0.1/24"`
+
+### 访问外部服务 {#access-the-external-services}
+
+由于绕行配置仅影响新的部署，因此您需要按照[开始之前](https://istio.io/latest/zh/docs/tasks/traffic-management/egress/egress-control/#before-you-begin)部分中的说明重新部署`sleep`程序。
+
+在更新`istio-sidecar-injector`configmap 和重新部署`sleep`程序后，Istio sidecar 将仅拦截和管理集群中的内部请求。 任何外部请求都会绕过 Sidecar，并直接到达其预期的目的地。举个例子：
+
+```
+
+```
+
+与通过 HTTP 和 HTTPS 访问外部服务不同，你不会看到任何与 Istio sidecar 有关的请求头， 并且发送到外部服务的请求既不会出现在 Sidecar 的日志中，也不会出现在 Mixer 日志中。 绕过 Istio sidecar 意味着你不能再监视对外部服务的访问。
 
