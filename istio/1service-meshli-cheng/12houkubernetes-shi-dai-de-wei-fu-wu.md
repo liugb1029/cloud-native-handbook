@@ -18,17 +18,9 @@
 
 * 说明 kube-proxy 的作用。
 * Kubernetes 在微服务管理上的局限性。
-* 介绍
-  [Istio](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#istio)
-  [Service Mesh](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#service-mesh)
-  的功能。
+* 介绍[Istio](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#istio)[Service Mesh](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#service-mesh)的功能。
 * 介绍 xDS 包含哪些内容。
-* 比较 Kubernetes、
-  [Envoy](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#envoy)
-  和
-  [Istio](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#istio)
-  [Service Mesh](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#service-mesh)
-  中的一些概念。
+* 比较 Kubernetes、[Envoy](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#envoy)和[Istio](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#istio) [Service Mesh](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#service-mesh)中的一些概念。
 
 ## 重要观点 {#重要观点}
 
