@@ -37,7 +37,7 @@
 
 下图展示的是 Kubernetes 与[Service Mesh](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#service-mesh)中的的服务访问关系（每个[pod](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#pod)一个[sidecar](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#sidecar)的模式）。
 
-[![](https://www.servicemesher.com/istio-handbook/images/kubernetes-vs-service-mesh.png "kubernetes 对比 service mesh")](https://www.servicemesher.com/istio-handbook/images/kubernetes-vs-service-mesh.png)
+![](/image/Istio/kubernetes-vs-service-mesh.png)
 
 图 2.1.2.1：kubernetes 对比
 
@@ -49,7 +49,7 @@ Kubernetes 集群的每个节点都部署了一个`kube-proxy`组件，该组件
 
 **服务发现**
 
-[![](https://www.servicemesher.com/istio-handbook/images/istio-service-registry.png "Service Mesh 中的服务注册")](https://www.servicemesher.com/istio-handbook/images/istio-service-registry.png)
+![](/image/Istio/istio-service-registry.png)
 
 图 2.1.2.2：
 
@@ -89,7 +89,7 @@ Kube-proxy 实现了流量在 Kubernetes[service](https://www.servicemesher.com/
 
 下面这张图大家在了解[Service Mesh](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#service-mesh)的时候可能都看到过，每个方块代表一个服务的实例，例如 Kubernetes 中的一个[Pod](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#pod)（其中包含了[sidecar](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#sidecar)proxy），xDS 协议控制了[Istio](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#istio)[Service Mesh](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#service-mesh)中所有流量的具体行为，即将下图中的方块链接到了一起。
 
-[![](https://www.servicemesher.com/istio-handbook/images/service-mesh-schematic-diagram.png "Service Mesh 示意图")](https://www.servicemesher.com/istio-handbook/images/service-mesh-schematic-diagram.png)
+![](/image/Istio/service-mesh-schematic-diagram.png)
 
 图 2.1.2.3：
 
@@ -101,7 +101,7 @@ xDS 协议是由[Envoy](https://envoyproxy.io/)提出的，在[Envoy](https://ww
 
 下面我们以各有两个实例的[service](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#service)，来看下 xDS 协议。
 
-[![](https://www.servicemesher.com/istio-handbook/images/xds-protocol.png "xDS 协议")](https://www.servicemesher.com/istio-handbook/images/xds-protocol.png)
+![](/image/Istio/xds-protocol.png)
 
 图 2.1.2.4：xDS 协议
 
@@ -109,20 +109,12 @@ xDS 协议是由[Envoy](https://envoyproxy.io/)提出的，在[Envoy](https://ww
 
 支持 xDS 协议的代理通过查询文件或管理服务器来动态发现资源。概括地讲，对应的发现服务及其相应的 API 被称作_xDS_。[Envoy](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#envoy)通过**订阅（subscription）**方式来获取资源，订阅方式有以下三种：
 
-* **文件订阅**
-  ：监控指定路径下的文件，发现动态资源的最简单方式就是将其保存于文件，并将路径配置在
-  [ConfigSource](https://www.envoyproxy.io/docs/envoy/latest/api-v2/api/v2/core/config_source.proto#core-configsource)
-  中的
-  `path`
-  参数中。
-* **gRPC 流式订阅**
-  ：每个 xDS API 可以单独配置
-  [`ApiConfigSource`](https://www.envoyproxy.io/docs/envoy/latest/api-v2/api/v2/core/config_source.proto#core-apiconfigsource)
-  ，指向对应的上游管理服务器的集群地址。
-* **轮询 REST-JSON 轮询订阅**
-  ：单个 xDS API 可对 REST 端点进行的同步（长）轮询。
+* **文件订阅**：监控指定路径下的文件，发现动态资源的最简单方式就是将其保存于文件，并将路径配置在[ConfigSource](https://www.envoyproxy.io/docs/envoy/latest/api-v2/api/v2/core/config_source.proto#core-configsource)
+  中的`path`参数中。
+* **gRPC 流式订阅**：每个 xDS API 可以单独配置[`ApiConfigSource`](https://www.envoyproxy.io/docs/envoy/latest/api-v2/api/v2/core/config_source.proto#core-apiconfigsource)，指向对应的上游管理服务器的集群地址。
+* **轮询 REST-JSON 轮询订阅**：单个 xDS API 可对 REST 端点进行的同步（长）轮询。
 
-以上的 xDS 订阅方式详情请参考[xDS 协议解析](https://jimmysong.io/istio-handbook/concepts/envoy-xds-protocol.html)。[Istio](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#istio)使用 gRPC 流式订阅的方式配置所有的数据平面的[sidecar](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#sidecar)proxy。
+以上的 xDS 订阅方式详情请参考[xDS 协议解析](https://jimmysong.io/istio-handbook/concepts/envoy-xds-protocol.html)。[Istio](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#istio)使用 gRPC 流式订阅的方式配置所有的数据平面的[sidecar](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#sidecar) proxy。
 
 文章中介绍了[Istio](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#istio)[pilot](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#pilot)的总体架构、proxy 配置的生成、[pilot](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#pilot)-discovery 模块的功能，以及 xDS 协议中的 CDS、EDS 及 ADS，关于 ADS 详情请参考[Envoy 官方文档](https://www.envoyproxy.io/docs/envoy/latest/api-v2/service/discovery/v2/ads.proto)。
 
