@@ -11,4 +11,5 @@
     * [1.6如何利用Curl命令访问Kubernetes API server](Kubernetes/1chang-jian-wen-ti-zong-jie/16ru-he-li-yong-curl-ming-ling-fang-wen-kubernetes-api-server.md)
     * [1.7通过Token访问k8s-apiserver](Kubernetes/1chang-jian-wen-ti-zong-jie/17tong-guo-token-fang-wen-k8s-apiserver.md)
     * [1.8Curl探索K8S-APISERVER](Kubernetes/1chang-jian-wen-ti-zong-jie/18curltan-suo-k8s-apiserver.md)
+    * [1.9curl访问Kubernetes  API接口实践](Kubernetes/1chang-jian-wen-ti-zong-jie/19curlfang-wenkubernetes-api-jie-kou-shi-jian.md)
 
