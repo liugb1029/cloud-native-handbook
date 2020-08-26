@@ -8,9 +8,9 @@ kubeadm alpha certs check-expiration​
 
 显示
 
-​CERTIFICATE      EXPIRES       RESIDUAL TIME   EXTERNALLY MANAGED
+`​CERTIFICATE      EXPIRES       RESIDUAL TIME   EXTERNALLY MANAGED`
 
-admin.conf   Oct 13, 2020 08:00 UTC   357d            no
+`admin.conf   Oct 13, 2020 08:00 UTC   357d            no`
 
 还剩357天，默认为一年
 
