@@ -58,7 +58,7 @@ Istio 里用于实现流量控制的 CRD 主要有以下几个：
 
 Istio 通过这些自定义资源，实现了对网格内部、网格外部、进出网格边界的流量的全面的控制。也就是说所有和网格产生交互的流量都可以被 Istio 所控制，其设计思路堪称完美。下图是这几种资源的示意图。
 
-[![](/chapter2/concept-trafficcontrol-crd.png "流量 CRD")](https://github.com/servicemesher/istio-handbook/blob/master/images/concept-trafficcontrol-crd.png)
+![](/image/Istio/concept-trafficcontrol-crd.png)
 
 ## 小结
 
