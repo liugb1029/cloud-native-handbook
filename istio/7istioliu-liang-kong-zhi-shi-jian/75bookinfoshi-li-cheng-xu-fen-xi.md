@@ -1,4 +1,4 @@
-\下面我们以`Bookinfo`为例对 Istio 中的流量管理实现机制，以及控制平面和数据平面的交互进行进一步分析。
+下面我们以`Bookinfo`为例对 Istio 中的流量管理实现机制，以及控制平面和数据平面的交互进行进一步分析。
 
 ### Bookinfo 程序结构 {#bookinfo-程序结构}
 
@@ -12,7 +12,23 @@
 
 #### Pilot 调试方法 {#pilot-调试方法}
 
-Pilot 在`9093`端口提供了下述[调试接口](https://github.com/istio/istio/tree/master/pilot/pkg/proxy/envoy/v2)下述方法查看 xDS 接口相关数据
+Pilot 在15014端口提供了下述[调试接口](https://github.com/istio/istio/tree/master/pilot/pkg/proxy/envoy/v2)下述方法查看 xDS 接口相关数据
+
+```
+PILOT=istio-pilot.istio-system:15014
+
+# What is sent to envoy
+# Listeners and routes
+curl  $PILOT/debug/adsz
+
+# Endpoints
+
+curl  $PILOT/debug/edsz
+
+
+# Clusters
+curl  $PILOT/debug/cdsz
+```
 
 
 
