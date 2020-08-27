@@ -67,17 +67,13 @@ admin commands are:
   /stats/recentlookups/clear: clear list of stat-name lookups and counter
   /stats/recentlookups/disable: disable recording of reset stat-name lookup names
   /stats/recentlookups/enable: enable recording of reset stat-name lookup names
-
 ```
 
 进入 productpage pod 中的 istio-proxy\(Envoy\) container，可以看到有下面的监听端口：
 
-* `9080`
-  : productpage 进程对外提供的服务端口
-* `15001`
-  : Envoy 的入口监听器，iptable 会将 pod 的流量导入该端口中由 Envoy 进行处理
-* `15000`
-  : Envoy 管理端口，该端口绑定在本地环回地址上，只能在 Pod 内访问。
+* `9080`: productpage 进程对外提供的服务端口
+* `15001`: Envoy 的入口监听器，iptable 会将 pod 的流量导入该端口中由 Envoy 进行处理
+* `15000`: Envoy 管理端口，该端口绑定在本地环回地址上，只能在 Pod 内访问。
 
 
 
