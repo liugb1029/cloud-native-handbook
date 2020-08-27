@@ -76,5 +76,24 @@ admin commands are:
 * `15000`: Envoy 管理端口，该端口绑定在本地环回地址上，只能在 Pod 内访问。
 * `15090: Envoy 监控指标端口，提供给Prometheus进行采集  http://x.x.x.x:15090/stats/prometheus`
 
+```
+[root@master ~]# curl http://127.0.0.1:15090/stats/prometheus
+# TYPE envoy_http_mixer_filter_total_remote_quota_calls counter
+envoy_http_mixer_filter_total_remote_quota_calls{} 0
+# TYPE envoy_tcp_mixer_filter_total_remote_call_other_errors counter
+envoy_tcp_mixer_filter_total_remote_call_other_errors{} 0
+# TYPE envoy_tcp_mixer_filter_total_quota_calls counter
+envoy_tcp_mixer_filter_total_quota_calls{} 0
+# TYPE envoy_tcp_mixer_filter_total_check_cache_misses counter
+envoy_tcp_mixer_filter_total_check_cache_misses{} 0
+# TYPE envoy_tcp_mixer_filter_total_remote_call_timeouts counter
+envoy_tcp_mixer_filter_total_remote_call_timeouts{} 0
+# TYPE envoy_http_mixer_filter_total_remote_report_send_errors counter
+envoy_http_mixer_filter_total_remote_report_send_errors{} 0
+# TYPE envoy_http_mixer_filter_total_remote_report_calls counter
+envoy_http_mixer_filter_total_remote_report_calls{} 0
+# TYPE envoy_tcp_mixer_filter_total_remote_report_successes
+```
+
 
 
