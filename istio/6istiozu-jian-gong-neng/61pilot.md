@@ -13,8 +13,34 @@
 服务列表中的istio-pilot是istio的控制中枢Pilot服务。如果把数据面的envoy 也看作一种agent， 则Pilot 类似传统C /S 架构中的服务端Master，下发指令控制客户端完成业务功能。和传统的微服务架构对比， Pilot 至少涵盖服务注册中心和Config Server等管理组件的功能。
 
 * 统一的服务模型（Abstract Model）
+
+Pilot 定义了网格中服务的标准模型，这个标准模型独立于各种底层平台。由于有了该标准模型，各个不同的平台可以通过适配器和 Pilot 对接，将自己特有的服务数据格式转换为标准格式，填充到 Pilot 的标准模型中。
+
+例如 Pilot 中的 Kubernetes 适配器通过`Kubernetes API`服务器得到 kubernetes 中 service 和 pod 的相关信息，然后翻译为标准模型提供给 Pilot 使用。通过适配器模式，Pilot 还可以从`Mesos`,`Cloud Foundry`,`Consul`等平台中获取服务信息，还可以开发适配器将其他提供服务发现的组件集成到 Pilot 中。
+
+
+
 * 标准数据面API
+
+Pilot 使用了一套起源于 Envoy 项目的标准数据平面 API 来将服务信息和流量规则下发到数据平面的`sidecar`中。
+
+通过采用该标准 API，Istio 将控制平面和数据平面进行了解耦，为多种数据平面 sidecar 实现提供了可能性。事实上基于该标准 API 已经实现了多种 Sidecar 代理和 Istio 的集成，除 Istio 目前集成的 Envoy 外，还可以和`Linkerd`,`Nginmesh`等第三方通信代理进行集成，也可以基于该 API 自己编写 Sidecar 实现。
+
+控制平面和数据平面解耦是 Istio 后来居上，风头超过 Service mesh 鼻祖`Linkerd`的一招妙棋。Istio 站在了控制平面的高度上，而 Linkerd 则成为了可选的一种 sidecar 实现，可谓**降维打击**的一个典型成功案例！
+
+数据平面标准 API 也有利于生态圈的建立，开源、商业的各种 sidecar 以后可能百花齐放，用户也可以根据自己的业务场景选择不同的 sidecar 和控制平面集成，如高吞吐量的，低延迟的，高安全性的等等。有实力的大厂商可以根据该 API 定制自己的 sidecar，例如蚂蚁金服开源的 Golang 版本的 Sidecar`MOSN`\(Modular Observable Smart Netstub\)（`SOFAMesh`中 Golang 版本的 Sidecar\)；小厂商则可以考虑采用成熟的开源项目或者提供服务的商业 sidecar 实现。
+
+Istio 和 Envoy 项目联合制定了`Envoy V2 API`,并采用该 API 作为 Istio 控制平面和数据平面流量管理的标准接口。
+
 * 规则DSL语言
+
+Pilot 还定义了一套`DSL`（Domain Specific Language）语言，DSL 语言提供了面向业务的高层抽象，可以被运维人员理解和使用。运维人员使用该 DSL 定义流量规则并下发到 Pilot，这些规则被 Pilot 翻译成数据平面的配置，再通过标准 API 分发到 Envoy 实例，可以在运行期对微服务的流量进行控制和调整。
+
+Pilot 的规则 DSL 是采用 K8S API Server 中的[Custom Resource \(CRD\)](https://kubernetes.io/docs/concepts/extend-kubernetes/api-extension/custom-resources/)实现的，因此和其他资源类型如 Service，Pod 和 Deployment 的创建和使用方法类似，都可以用`Kubectl`进行创建。
+
+通过运用不同的流量规则，可以对网格中微服务进行精细化的流量控制，如按版本分流，断路器，故障注入，灰度发布等。
+
+
 
 如下图所示：pilot直接从运行平台\(kubernetes,consul\)提取数据并将其构造和转换成istio的服务发现模型， 因此pilot只有服务发现功能，无须进行服务注册。这种抽象模型解耦Pilot 和底层平台的不同实现，可支持kubernetes，consul等平台
 
