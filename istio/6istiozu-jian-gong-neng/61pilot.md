@@ -115,7 +115,7 @@ Pilot 的规则 DSL 是采用 K8S API Server 中的[Custom Resource \(CRD\)](htt
 * 将服务信息和流量规则转化为数据平面可以理解的格式，通过标准的数据平面 API 下发到网格中的各个 sidecar 中
 
 * > * 监控服务注册中心（如 Kubernetes）的服务注册情况。在 Kubernetes 环境下，会监控`service`、`endpoint`、`pod`、`node`等资源信息。
-
+  >
   > * 监控[Istio](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#istio)控制面信息变化，在 Kubernetes 环境下，会监控包括Destination`Rule`、`VirtualService、Gateway`、`EgressRule`、`ServiceEntry`等以 Kubernetes [CRD](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#crd)形式存在的[Istio](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#istio)控制面配置信息。
   >
   > * 将上述两类信息合并组合为[sidecar](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#sidecar)可以理解的（遵循[Envoy](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#envoy)  [data plane](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#data-plane)  api 的）配置信息，并将这些信息以 gRPC 协议提供给[sidecar](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#sidecar)。
