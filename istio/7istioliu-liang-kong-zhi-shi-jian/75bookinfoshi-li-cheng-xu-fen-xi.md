@@ -29,6 +29,7 @@ curl  $PILOT/debug/edsz
 # Clusters
 curl  $PILOT/debug/cdsz
 
+#10.244.2.86为istio-pilot的地址
 http://10.244.2.86:15014/metrics
 ```
 
