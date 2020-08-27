@@ -169,10 +169,10 @@ COMMIT
 :ISTIO_OUTPUT - [0:0]
 :ISTIO_REDIRECT - [0:0]
 -A PREROUTING -p tcp -j ISTIO_INBOUND  # PREROUTING全部转发到INBOUND,PREROUTING发生在流入的数据包进入路由表之前
--A OUTPUT -p tcp -j ISTIO_OUTPUT   由本机产生的数据向外转发的
+-A OUTPUT -p tcp -j ISTIO_OUTPUT                      # 由本机产生的数据向外转发的
 -A ISTIO_INBOUND -p tcp -m tcp --dport 22 -j RETURN   # 22 15020的不转发到ISTIO_REDIRECT 
 -A ISTIO_INBOUND -p tcp -m tcp --dport 15020 -j RETURN
--A ISTIO_INBOUND -p tcp -j ISTIO_IN_REDIRECT
+-A ISTIO_INBOUND -p tcp -j ISTIO_IN_REDIRECT          # 剩余的进来的流量都转发到ISTIO_IN_REDIRECT
 -A ISTIO_IN_REDIRECT -p tcp -j REDIRECT --to-ports 15006
 -A ISTIO_OUTPUT -s 127.0.0.6/32 -o lo -j RETURN
 -A ISTIO_OUTPUT ! -d 127.0.0.1/32 -o lo -j ISTIO_IN_REDIRECT
