@@ -129,18 +129,10 @@ Istio 早期采用了 Envoy v1 API，目前的版本中则使用 V2 API，V1 已
 
 Istio 数据平面 API 定义了 xDS 服务接口，Pilot 通过该接口向数据平面 sidecar 下发动态配置信息，以对 Mesh 中的数据流量进行控制。xDS 中的 DS 表示`discovery service`，即发现服务，表示`xDS`接口使用动态发现的方式提供数据平面所需的配置数据。而 x 则是一个代词，表示有多种 discover service。这些发现服务及对应的数据结构如下：
 
-* `LDS`
-  \(Listener Discovery Service\) :
-  [envoy.api.v2.Listener](https://github.com/envoyproxy/data-plane-api/blob/master/envoy/api/v2/lds.proto)
-* `CDS`
-  \(Cluster Discovery Service\) :
-  [envoy.api.v2.RouteConfiguration](https://github.com/envoyproxy/data-plane-api/blob/master/envoy/api/v2/rds.proto)
-* `EDS`
-  \(Endpoint Discovery Service\) :
-  [envoy.api.v2.Cluster](https://github.com/envoyproxy/data-plane-api/blob/master/envoy/api/v2/cds.proto)
-* `RDS`
-  \(Route Discovery Service\) :
-  [envoy.api.v2.ClusterLoadAssignment](https://github.com/envoyproxy/data-plane-api/blob/master/envoy/api/v2/eds.proto)
+* `LDS`\(Listener Discovery Service\) :[envoy.api.v2.Listener](https://github.com/envoyproxy/data-plane-api/blob/master/envoy/api/v2/lds.proto)
+* `CDS`\(Cluster Discovery Service\) : [envoy.api.v2.RouteConfiguration](https://github.com/envoyproxy/data-plane-api/blob/master/envoy/api/v2/rds.proto)
+* `EDS`\(Endpoint Discovery Service\) :[envoy.api.v2.Cluster](https://github.com/envoyproxy/data-plane-api/blob/master/envoy/api/v2/cds.proto)
+* `RDS`\(Route Discovery Service\) : [envoy.api.v2.ClusterLoadAssignment](https://github.com/envoyproxy/data-plane-api/blob/master/envoy/api/v2/eds.proto)
 
 ### XDS 服务接口的最终一致性考虑 {#xds-服务接口的最终一致性考虑}
 
