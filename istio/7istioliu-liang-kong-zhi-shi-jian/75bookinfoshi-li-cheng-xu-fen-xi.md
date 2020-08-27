@@ -93,6 +93,16 @@ envoy_http_mixer_filter_total_remote_report_send_errors{} 0
 # TYPE envoy_http_mixer_filter_total_remote_report_calls counter
 envoy_http_mixer_filter_total_remote_report_calls{} 0
 # TYPE envoy_tcp_mixer_filter_total_remote_report_successes
+
+[root@master ~]# ss -ntulp
+Netid State      Recv-Q Send-Q                        Local Address:Port                                       Peer Address:Port
+tcp   LISTEN     0      128                                       *:9080                                                  *:*                   users:(("java",pid=27706,fd=180))
+tcp   LISTEN     0      128                               127.0.0.1:15000                                                 *:*                   users:(("envoy",pid=27857,fd=14))
+tcp   LISTEN     0      128                                       *:15001                                                 *:*                   users:(("envoy",pid=27857,fd=69))
+tcp   LISTEN     0      128                                       *:15006                                                 *:*                   users:(("envoy",pid=27857,fd=70))
+tcp   LISTEN     0      128                                       *:15090                                                 *:*                   users:(("envoy",pid=27857,fd=24))
+tcp   LISTEN     0      50                                127.0.0.1:54550                                                 *:*                   users:(("java",pid=27706,fd=86))
+tcp   LISTEN     0      128                                      :::15020                                                :::*                   users:(("pilot-agent",pid=27815,fd=3))
 ```
 
 
