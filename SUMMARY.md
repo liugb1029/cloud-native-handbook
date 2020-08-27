@@ -32,4 +32,5 @@
     * [7.1Ingress](istio/7istioliu-liang-kong-zhi-shi-jian/71ingress.md)
     * [7.2Egress-ServiceEntry](istio/7istioliu-liang-kong-zhi-shi-jian/72egress.md)
     * [7.3Egress-TLS Origination](istio/7istioliu-liang-kong-zhi-shi-jian/73egress-tls-origination.md)
+    * [7.4Istio流量管理实现机制](istio/7istioliu-liang-kong-zhi-shi-jian/74istioliu-liang-guan-li-shi-xian-ji-zhi.md)
 
