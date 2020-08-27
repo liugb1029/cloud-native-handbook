@@ -14,7 +14,7 @@ Istio 控制平面中负责流量管理的组件为`Pilot`，Pilot 的高层架�
 
 ![](https://hugo-picture.oss-cn-beijing.aliyuncs.com/images/5Zywav.jpg)
 
-Pilot Architecture（来自 \[Isio官网文档\]\([https://istio.io/docs/concepts/traffic-management/\)\](https://istio.io/docs/concepts/traffic-management/%29\)\)
+Pilot Architecture（来自 \[Isio官网文档\]\([https://istio.io/docs/concepts/traffic-management/\)\](https://istio.io/docs/concepts/traffic-management/%29%29\)
 
 根据上图,Pilot 主要实现了下述功能：
 
@@ -52,7 +52,7 @@ Pilot 的规则 DSL 是采用 K8S API Server 中的[Custom Resource \(CRD\)](htt
 
 ![](https://hugo-picture.oss-cn-beijing.aliyuncs.com/images/dCSUXw.jpg)
 
-Pilot Design Overview \(来自 \[Istio old\_pilot\_repo\]\([https://github.com/istio/old\_pilot\_repo/blob/master/doc/design.md\)\](https://github.com/istio/old_pilot_repo/blob/master/doc/design.md%29\)\)
+Pilot Design Overview \(来自 \[Istio old\_pilot\_repo\]\([https://github.com/istio/old\_pilot\_repo/blob/master/doc/design.md\)\](https://github.com/istio/old_pilot_repo/blob/master/doc/design.md%29%29\)
 
 图例说明：图中红色的线表示控制流，**黑色**的线表示数据流。蓝色部分为和Pilot相关的组件。
 
@@ -119,18 +119,11 @@ Istio 早期采用了 Envoy v1 API，目前的版本中则使用 V2 API，V1 已
 
 首先我们需要了解数据平面 API 中涉及到的一些基本概念：
 
-* `Host`
-  ：能够进行网络通信的实体（如移动设备、服务器上的应用程序）。在此文档中，主机是逻辑网络应用程序。一块物理硬件上可能运行有多个主机，只要它们是可以独立寻址的。在 EDS 接口中，也使用
-  `Endpoint`
-  来表示一个应用实例，对应一个 IP+Port 的组合。
-* `Downstream`
-  : 下游主机连接到 Envoy，发送请求并接收响应。
-* `Upstream`
-  : 上游主机接收来自 Envoy 的连接和请求，并返回响应。
-* `Listener`
-  : 监听器是命名网地址（例如，端口、unix domain socket 等\)，可以被下游客户端连接。Envoy 暴露一个或者多个监听器给下游主机连接。在 Envoy 中，Listener 可以绑定到端口上直接对外服务，也可以不绑定到端口上，而是接收其他 listener 转发的请求。
-* `Cluster`
-  : 集群是指 Envoy 连接到的逻辑上相同的一组上游主机。Envoy 通过服务发现来发现集群的成员。可以选择通过主动健康检查来确定集群成员的健康状态。Envoy 通过负载均衡策略决定将请求路由到哪个集群成员。
+* `Host`：能够进行网络通信的实体（如移动设备、服务器上的应用程序）。在此文档中，主机是逻辑网络应用程序。一块物理硬件上可能运行有多个主机，只要它们是可以独立寻址的。在 EDS 接口中，也使用`Endpoint`来表示一个应用实例，对应一个 IP+Port 的组合。
+* `Downstream`: 下游主机连接到 Envoy，发送请求并接收响应。
+* `Upstream`: 上游主机接收来自 Envoy 的连接和请求，并返回响应。
+* `Listener`: 监听器是命名网地址（例如，端口、unix domain socket 等\)，可以被下游客户端连接。Envoy 暴露一个或者多个监听器给下游主机连接。在 Envoy 中，Listener 可以绑定到端口上直接对外服务，也可以不绑定到端口上，而是接收其他 listener 转发的请求。
+* `Cluster`: 集群是指 Envoy 连接到的逻辑上相同的一组上游主机。Envoy 通过服务发现来发现集群的成员。可以选择通过主动健康检查来确定集群成员的健康状态。Envoy 通过负载均衡策略决定将请求路由到哪个集群成员。
 
 ### XDS 服务接口 {#xds-服务接口}
 
@@ -163,7 +156,7 @@ xDS 的几个接口是相互独立的，接口下发的配置数据是最终一�
 2. `EDS`更新相应 Cluster 的`Endpoint`信息（如果有变化）
 3. `LDS`更新 CDS/EDS 相应的`Listener`
 4. `RDS`最后更新新增 Listener 相关的`Route`配置
-5.  删除不再使用的 CDS cluster 和 EDS endpoints
+5. 删除不再使用的 CDS cluster 和 EDS endpoints
 
 ### ADS 聚合发现服务 {#ads-聚合发现服务}
 
