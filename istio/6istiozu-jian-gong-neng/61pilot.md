@@ -12,6 +12,10 @@
 
 服务列表中的istio-pilot是istio的控制中枢Pilot服务。如果把数据面的envoy 也看作一种agent， 则Pilot 类似传统C /S 架构中的服务端Master，下发指令控制客户端完成业务功能。和传统的微服务架构对比， Pilot 至少涵盖服务注册中心和Config Server等管理组件的功能。
 
+* 统一的服务模型（Abstract Model）
+* 标准数据面API
+* 规则DSL语言
+
 如下图所示：pilot直接从运行平台\(kubernetes,consul\)提取数据并将其构造和转换成istio的服务发现模型， 因此pilot只有服务发现功能，无须进行服务注册。这种抽象模型解耦Pilot 和底层平台的不同实现，可支持kubernetes，consul等平台
 
 ![](/image/Istio/pilot-discovery.png)
