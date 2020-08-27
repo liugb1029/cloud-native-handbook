@@ -74,7 +74,7 @@ admin commands are:
 * `9080`: productpage 进程对外提供的服务端口
 * `15001`: Envoy 的入口监听器，iptable 会将 pod 的流量导入该端口中由 Envoy 进行处理
 * `15000`: Envoy 管理端口，该端口绑定在本地环回地址上，只能在 Pod 内访问。
-*  `15000`
+* `15090: Envoy 监控指标端口，提供给Prometheus进行采集  http://x.x.x.x:15090/stats/prometheus`
 
 
 
