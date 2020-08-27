@@ -51,7 +51,9 @@ Kubernetes 集群的每个节点都部署了一个`kube-proxy`组件，该组件
 
 ![](/image/Istio/istio-service-registry.png)
 
-                                                             图 2.1.2.2：Service Mesh中的服务注册
+```
+                                                         图 2.1.2.2：Service Mesh中的服务注册
+```
 
 [Istio](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#istio)[Service Mesh](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#service-mesh)可以沿用了 Kubernetes 中的[service](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#service)做服务注册，还可以通过控制平面的平台适配器对接其他服务发现系统，然后生成数据平面的配置（使用[CRD](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#crd)声明，保存在 etcd 中），数据平面的**透明代理**（transparent proxy）以[sidecar](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#sidecar)容器的形式部署在每个应用服务的[pod](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#pod)中，这些 proxy 都需要请求控制平面来同步代理配置。之所以说是透明代理，是因为应用程序容器完全无感知代理的存在，该过程 kube-proxy 组件一样需要拦截流量，只不过`kube-proxy`拦截的是进出 Kubernetes 节点的流量，而[sidecar](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#sidecar)proxy 拦截的是进出该[Pod](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#pod)的流量，详见[理解 Istio Service Mesh 中 Envoy Sidecar 代理的路由转发](https://jimmysong.io/blog/envoy-sidecar-routing-of-istio-service-mesh-deep-dive/)。
 
