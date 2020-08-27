@@ -12,7 +12,7 @@
 
 #### Pilot 调试方法 {#pilot-调试方法}
 
-Pilot 在15014端口提供了下述[调试接口](https://github.com/istio/istio/tree/master/pilot/pkg/proxy/envoy/v2)下述方法查看 xDS 接口相关数据
+Pilot 在15014端口提供了下述[调试接口](https://github.com/istio/istio/tree/master/pilot/pkg/proxy/envoy/v2)下述方法查看 xDS 接口相关数据，同时15014也提供metrics接口
 
 ```
 PILOT=istio-pilot.istio-system:15014
@@ -28,6 +28,8 @@ curl  $PILOT/debug/edsz
 
 # Clusters
 curl  $PILOT/debug/cdsz
+
+http://10.244.2.86:15014/metrics
 ```
 
 
