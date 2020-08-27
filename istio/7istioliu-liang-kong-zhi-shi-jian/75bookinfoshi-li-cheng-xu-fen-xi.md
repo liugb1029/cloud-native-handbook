@@ -1,5 +1,5 @@
 ```
-PILOT=istio-pilot.istio-system:15014
+PILOT=istio-pilot.istio-system:15014  或者8080
 
 
 curl $PILOT/debug/adsz
@@ -12,8 +12,6 @@ curl $PILOT/debug/cdsz
 ```
 
 ```
-
-
 
 ```
 
