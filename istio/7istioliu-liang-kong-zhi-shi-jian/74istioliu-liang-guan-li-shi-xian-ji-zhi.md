@@ -14,7 +14,7 @@ Istio 控制平面中负责流量管理的组件为`Pilot`，Pilot 的高层架�
 
 ![](https://hugo-picture.oss-cn-beijing.aliyuncs.com/images/5Zywav.jpg)
 
-Pilot Architecture（来自 \[Isio官网文档\]\(https://istio.io/docs/concepts/traffic-management/\)\)
+Pilot Architecture（来自 \[Isio官网文档\]\([https://istio.io/docs/concepts/traffic-management/\)\](https://istio.io/docs/concepts/traffic-management/%29\)\)
 
 根据上图,Pilot 主要实现了下述功能：
 
@@ -52,7 +52,7 @@ Pilot 的规则 DSL 是采用 K8S API Server 中的[Custom Resource \(CRD\)](htt
 
 ![](https://hugo-picture.oss-cn-beijing.aliyuncs.com/images/dCSUXw.jpg)
 
-Pilot Design Overview \(来自 \[Istio old\_pilot\_repo\]\(https://github.com/istio/old\_pilot\_repo/blob/master/doc/design.md\)\)
+Pilot Design Overview \(来自 \[Istio old\_pilot\_repo\]\([https://github.com/istio/old\_pilot\_repo/blob/master/doc/design.md\)\](https://github.com/istio/old_pilot_repo/blob/master/doc/design.md%29\)\)
 
 图例说明：图中红色的线表示控制流，**黑色**的线表示数据流。蓝色部分为和Pilot相关的组件。
 
@@ -159,22 +159,11 @@ xDS 的几个接口是相互独立的，接口下发的配置数据是最终一�
 
 一般来说，为了避免 Envoy 配置数据更新过程中出现流量丢失的情况，xDS 接口应采用下面的顺序：
 
-1. `CDS`
-   首先更新
-   `Cluster`
-   数据（如果有变化）
-2. `EDS`
-   更新相应 Cluster 的
-   `Endpoint`
-   信息（如果有变化）
-3. `LDS`
-   更新 CDS/EDS 相应的
-   `Listener`
-4. `RDS`
-   最后更新新增 Listener 相关的
-   `Route`
-   配置
-5. 删除不再使用的 CDS cluster 和 EDS endpoints
+1. `CDS`首先更新`Cluster`数据（如果有变化）
+2. `EDS`更新相应 Cluster 的`Endpoint`信息（如果有变化）
+3. `LDS`更新 CDS/EDS 相应的`Listener`
+4. `RDS`最后更新新增 Listener 相关的`Route`配置
+5.  删除不再使用的 CDS cluster 和 EDS endpoints
 
 ### ADS 聚合发现服务 {#ads-聚合发现服务}
 
