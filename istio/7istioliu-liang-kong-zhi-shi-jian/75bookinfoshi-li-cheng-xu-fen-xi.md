@@ -1,7 +1,7 @@
 ```
 PILOT=istio-pilot.istio-system:15014  或者8080
 
-#Listenter and Route
+#Listenter and Routes
 curl $PILOT/debug/adsz
 
 # Endpoints
