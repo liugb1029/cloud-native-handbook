@@ -18,8 +18,6 @@ Pilot 定义了网格中服务的标准模型，这个标准模型独立于各�
 
 例如 Pilot 中的 Kubernetes 适配器通过`Kubernetes API`服务器得到 kubernetes 中 service 和 pod 的相关信息，然后翻译为标准模型提供给 Pilot 使用。通过适配器模式，Pilot 还可以从`Mesos`,`Cloud Foundry`,`Consul`等平台中获取服务信息，还可以开发适配器将其他提供服务发现的组件集成到 Pilot 中。
 
-
-
 * 标准数据面API
 
 Pilot 使用了一套起源于 Envoy 项目的标准数据平面 API 来将服务信息和流量规则下发到数据平面的`sidecar`中。
@@ -39,8 +37,6 @@ Pilot 还定义了一套`DSL`（Domain Specific Language）语言，DSL 语言�
 Pilot 的规则 DSL 是采用 K8S API Server 中的[Custom Resource \(CRD\)](https://kubernetes.io/docs/concepts/extend-kubernetes/api-extension/custom-resources/)实现的，因此和其他资源类型如 Service，Pod 和 Deployment 的创建和使用方法类似，都可以用`Kubectl`进行创建。
 
 通过运用不同的流量规则，可以对网格中微服务进行精细化的流量控制，如按版本分流，断路器，故障注入，灰度发布等。
-
-
 
 如下图所示：pilot直接从运行平台\(kubernetes,consul\)提取数据并将其构造和转换成istio的服务发现模型， 因此pilot只有服务发现功能，无须进行服务注册。这种抽象模型解耦Pilot 和底层平台的不同实现，可支持kubernetes，consul等平台
 
@@ -114,11 +110,15 @@ Pilot 的规则 DSL 是采用 K8S API Server 中的[Custom Resource \(CRD\)](htt
 
 `pilot-discovery`扮演服务注册中心、[Istio](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#istio)控制平面到[sidecar](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#sidecar)之间的桥梁作用。[pilot](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#pilot)-discovery 的主要功能如下：
 
-* 监控服务注册中心（如 Kubernetes）的服务注册情况。在 Kubernetes 环境下，会监控`service`、`endpoint`、`pod`、
-  `node`等资源信息。
-* 监控[Istio](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#istio)控制面信息变化，在 Kubernetes 环境下，会监控包括Destination`Rule`、`VirtualService、Gateway`、`EgressRule`、`ServiceEntry`等以 Kubernetes [CRD](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#crd)形式存在的[Istio](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#istio)控制面配置信息。
-* 将上述两类信息合并组合为[sidecar](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#sidecar)可以理解的（遵循[Envoy](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#envoy)  [data plane](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#data-plane)  api 的）配置信息，并将这些信息以 gRPC 协议提供给
-  [sidecar](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#sidecar)。
+* 从`Service provider`（如kubernetes或者consul）中获取服务信息
+* 从 K8S API Server 中获取流量规则（K8S CRD Resource）
+* 将服务信息和流量规则转化为数据平面可以理解的格式，通过标准的数据平面 API 下发到网格中的各个 sidecar 中
+
+* > * 监控服务注册中心（如 Kubernetes）的服务注册情况。在 Kubernetes 环境下，会监控`service`、`endpoint`、`pod`、`node`等资源信息。
+
+  > * 监控[Istio](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#istio)控制面信息变化，在 Kubernetes 环境下，会监控包括Destination`Rule`、`VirtualService、Gateway`、`EgressRule`、`ServiceEntry`等以 Kubernetes [CRD](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#crd)形式存在的[Istio](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#istio)控制面配置信息。
+  >
+  > * 将上述两类信息合并组合为[sidecar](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#sidecar)可以理解的（遵循[Envoy](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#envoy)  [data plane](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#data-plane)  api 的）配置信息，并将这些信息以 gRPC 协议提供给[sidecar](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#sidecar)。
 
 
 
