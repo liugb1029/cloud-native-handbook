@@ -33,5 +33,51 @@ curl  $PILOT/debug/cdsz
 http://10.244.2.86:15014/metrics
 ```
 
+#### Envoy 调试方法 {#envoy-调试方法}
+
+Envoy 提供了管理接口，缺省为 localhost 的`15000`端口，可以获取 listener，cluster 以及完整的配置数据导出功能。
+
+```
+$ kubectl exec productpage-v1-54b8b9f55-bx2dq -c istio-proxy curl http://127.0.0.1:15000/help
+admin commands are:
+  /: Admin home page
+  /certs: print certs on machine
+  /clusters: upstream cluster status
+  /config_dump: dump current Envoy configs (experimental)
+  /contention: dump current Envoy mutex contention stats (if enabled)
+  /cpuprofiler: enable/disable the CPU profiler
+  /drain_listeners: drain listeners
+  /healthcheck/fail: cause the server to fail health checks
+  /healthcheck/ok: cause the server to pass health checks
+  /heapprofiler: enable/disable the heap profiler
+  /help: print out list of admin commands
+  /hot_restart_version: print the hot restart compatibility version
+  /listeners: print listener info
+  /logging: query/change logging levels
+  /memory: print current allocation/heap usage
+  /quitquitquit: exit the server
+  /ready: print server state, return 200 if LIVE, otherwise return 503
+  /reset_counters: reset all counters to zero
+  /runtime: print runtime values
+  /runtime_modify: modify runtime values
+  /server_info: print server version/status information
+  /stats: print server stats
+  /stats/prometheus: print server stats in prometheus format
+  /stats/recentlookups: Show recent stat-name lookups
+  /stats/recentlookups/clear: clear list of stat-name lookups and counter
+  /stats/recentlookups/disable: disable recording of reset stat-name lookup names
+  /stats/recentlookups/enable: enable recording of reset stat-name lookup names
+
+```
+
+进入 productpage pod 中的 istio-proxy\(Envoy\) container，可以看到有下面的监听端口：
+
+* `9080`
+  : productpage 进程对外提供的服务端口
+* `15001`
+  : Envoy 的入口监听器，iptable 会将 pod 的流量导入该端口中由 Envoy 进行处理
+* `15000`
+  : Envoy 管理端口，该端口绑定在本地环回地址上，只能在 Pod 内访问。
+
 
 
