@@ -192,5 +192,9 @@ COMMIT
 # Completed on Thu Aug 27 17:12:34 2020
 ```
 
+> ISTIO\_INBOUND 链：所有进入Pod但非指定端口\(如22\)的流量全部重定向至15006端口\(envoy入口流量端口\)进行拦截处理。
+>
+> ISTIO\_OUTPUT 链：所有流出Pod由 istio-proxy 用户空间发出且目的地不为localhost的流量全部重定向至15001端口（envoy出口流量端口），其他流量全部直接放行至下一个POSTROUTING链，不用被envoy拦截处理。
+
 
 
