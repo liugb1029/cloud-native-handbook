@@ -108,9 +108,7 @@ tcp   LISTEN     0      50                                127.0.0.1:54550       
 tcp   LISTEN     0      128                                      :::15020                                                :::*                   users:(("pilot-agent",pid=27815,fd=3))
 ```
 
-#### Prxoyv2
-
-#### Envoy初始配置文件
+### Envoy的配置文件
 
 ### Istio 中的 sidecar 注入
 
