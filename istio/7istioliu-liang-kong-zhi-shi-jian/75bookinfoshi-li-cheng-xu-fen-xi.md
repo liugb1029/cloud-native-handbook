@@ -111,7 +111,7 @@ tcp   LISTEN     0      128                                      :::15020       
 
 [Envoy](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#envoy)是一个四层/七层代理，其架构非常灵活，采用了插件式的机制来实现各种功能，可以通过配置的方式对其功能进行定制。[Envoy](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#envoy)提供了两种配置的方式：通过配置文件向[Envoy](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#envoy)提供静态配置，或者通过 xDS 接口向[Envoy](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#envoy)下发动态配置。在[Istio](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#istio)中同时采用了这两种方式对[Envoy](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#envoy)的功能进行设置。本文假设读者对[Envoy](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#envoy)已有基本的了解，如需要了解[Envoy](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#envoy)的更多内容，请参考本书[Envoy](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#envoy)章节部分的介绍。
 
-### Envoy 初始化配置文件 {#envoy-初始化配置文件}
+#### Envoy 初始化配置文件
 
 在[Istio](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#istio)中，[Envoy](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#envoy)的大部分配置都来自于控制平面通过 xDS 接口下发的动态配置，包括网格中服务相关的[service](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#service)[cluster](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#cluster), listener, route 规则等。但[Envoy](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#envoy)是如何知道 xDS server 的地址呢？这就是在[Envoy](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#envoy)初始化配置文件中以静态资源的方式配置的。[Sidecar](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#sidecar)容器中有一个[pilot](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#pilot)-agent 进程，该进程根据启动参数生成[Envoy](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#envoy)的初始配置文件，并采用该配置文件来启动[Envoy](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#envoy)进程。
 
@@ -142,7 +142,7 @@ kubectl exec -it productpage-v1-7f9d9c48c8-xxq6f -c istio-proxy cat /etc/istio/p
 * static\_resources： 静态资源，包括预置的一些 listener 和[cluster](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#cluster)，例如调用跟踪和指标统计使用到的 listener 和[cluster](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#cluster)。
 * [tracing](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#tracing)： 分布式调用追踪的相关配置。
 
-Envoy 完整配置
+#### Envoy 完整配置
 
 从[Envoy](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#envoy)初始化配置文件中，我们可以看出[Istio](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#istio)中[Envoy](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#envoy)[sidecar](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#sidecar)真正的配置实际上是由两部分组成的。[Pilot](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#pilot)-agent 在启动[Envoy](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#envoy)时将 xDS server 信息通过静态资源的方式配置到[Envoy](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#envoy)的初始化配置文件中，[Envoy](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#envoy)启动后再通过 xDS server 获取网格中的服务信息、路由规则等动态资源。
 
