@@ -365,6 +365,58 @@ ENTRYPOINT ["/usr/local/bin/pilot-agent"]
 
 注意：在[Istio](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#istio)1.1 版本时还是使用`isito-iptables.sh`命令行来操作 IPtables。
 
+### Init 容器启动入口 {#init-容器启动入口}
+
+Init 容器的启动入口是`istio-iptables`命令行，该命令行工具的用法如下：
+
+```
+$ istio-iptables [flags]
+  -p: 指定重定向所有 TCP 流量的 sidecar 端口（默认为 $ENVOY_PORT = 15001）
+  -m: 指定入站连接重定向到 sidecar 的模式，“REDIRECT” 或 “TPROXY”（默认为 $ISTIO_INBOUND_INTERCEPTION_MODE)
+  -b: 逗号分隔的入站端口列表，其流量将重定向到 Envoy（可选）。使用通配符 “*” 表示重定向所有端口。为空时表示禁用所有入站重定向（默认为 $ISTIO_INBOUND_PORTS）
+  -d: 指定要从重定向到 sidecar 中排除的入站端口列表（可选），以逗号格式分隔。使用通配符“*” 表示重定向所有入站流量（默认为 $ISTIO_LOCAL_EXCLUDE_PORTS）
+  -o：逗号分隔的出站端口列表，不包括重定向到 Envoy 的端口。
+  -i: 指定重定向到 sidecar 的 IP 地址范围（可选），以逗号分隔的 CIDR 格式列表。使用通配符 “*” 表示重定向所有出站流量。空列表将禁用所有出站重定向（默认为 $ISTIO_SERVICE_CIDR）
+  -x: 指定将从重定向中排除的 IP 地址范围，以逗号分隔的 CIDR 格式列表。使用通配符 “*” 表示重定向所有出站流量（默认为 $ISTIO_SERVICE_EXCLUDE_CIDR）。
+  -k：逗号分隔的虚拟接口列表，其入站流量（来自虚拟机的）将被视为出站流量。
+  -g：指定不应用重定向的用户的 GID。(默认值与 -u param 相同)
+  -u：指定不应用重定向的用户的 UID。通常情况下，这是代理容器的 UID（默认值是 1337，即 istio-proxy 的 UID）。
+  -z: 所有进入 pod/VM 的 TCP 流量应被重定向到的端口（默认 $INBOUND_CAPTURE_PORT = 15006）。
+
+```
+
+以上传入的参数都会重新组装成[`iptables`](https://wangchujiang.com/linux-command/c/iptables.html)规则，关于该命令的详细用法请访问[tools/istio-iptables/pkg/cmd/root.go](https://github.com/istio/istio/blob/master/tools/istio-iptables/pkg/cmd/root.go)。
+
+该容器存在的意义就是让[sidecar](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#sidecar)代理可以拦截所有的进出[pod](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#pod)的流量，15090 端口（[Mixer](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#mixer)使用）和 15092 端口（Ingress Gateway）除外的所有入站（inbound）流量重定向到 15006 端口（[sidecar](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#sidecar)），再拦截应用容器的出站（outbound）流量经过[sidecar](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#sidecar)处理（通过 15001 端口监听）后再出站。关于[Istio](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#istio)中端口用途请参考[Istio 官方文档](https://istio.io/zh/docs/ops/deployment/requirements/)。
+
+**命令解析**
+
+这条启动命令的作用是：
+
+* 将应用容器的所有流量都转发到
+  [sidecar](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#sidecar)
+  的 15006 端口。
+* 使用
+  `istio-proxy`
+  用户身份运行， UID 为 1337，即
+  [sidecar](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#sidecar)
+  所处的用户空间，这也是
+  `istio-proxy`
+  容器默认使用的用户，见 YAML 配置中的
+  `runAsUser`
+  字段。
+* 使用默认的
+  `REDIRECT`
+  模式来重定向流量。
+* 将所有出站流量都重定向到
+  [sidecar](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#sidecar)
+  代理（通过 15001 端口）。
+
+因为 Init 容器初始化完毕后就会自动终止，因为我们无法登陆到容器中查看 iptables 信息，但是 Init 容器初始化结果会保留到应用容器和[sidecar](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#sidecar)容器中。
+
+  
+
+
 #### Prxoyv2
 
 #### Envoy初始配置文件
