@@ -350,14 +350,7 @@ $ istioctl kube-inject -f samples/bookinfo/platform/kube/bookinfo.yaml
 [Istio](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#istio)在[pod](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#pod)中注入的 Init 容器名为`istio-init`，我们在上面[Istio](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#istio)注入完成后的 YAML 文件中看到了该容器的启动命令是：
 
 ```
-istio-iptables -p 15001 -z 15006 -u 1337 -m REDIRECT -i 
-'*'
- -x 
-""
- -b 
-'*'
- -d 15090,15020
-
+istio-iptables -p 15001 -z 15006 -u 1337 -m REDIRECT -i '*' -x "" -b '*' -d 15020
 ```
 
 我们再检查下该容器的[Dockerfile](https://github.com/istio/istio/blob/master/pilot/docker/Dockerfile.proxyv2)看看`ENTRYPOINT`是怎么确定启动时执行的命令。
