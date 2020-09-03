@@ -110,8 +110,6 @@ tcp   LISTEN     0      128                                      :::15020       
 
 ### Envoy启动过程分析
 
-
-
 #### Prxoyv2
 
 #### Envoy初始配置文件
