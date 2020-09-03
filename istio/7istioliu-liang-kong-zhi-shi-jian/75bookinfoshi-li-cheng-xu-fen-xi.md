@@ -108,7 +108,11 @@ tcp   LISTEN     0      50                                127.0.0.1:54550       
 tcp   LISTEN     0      128                                      :::15020                                                :::*                   users:(("pilot-agent",pid=27815,fd=3))
 ```
 
-### Envoy的配置文件
+### Envoy 配置介绍
+
+[Envoy](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#envoy)是一个四层/七层代理，其架构非常灵活，采用了插件式的机制来实现各种功能，可以通过配置的方式对其功能进行定制。[Envoy](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#envoy)提供了两种配置的方式：通过配置文件向[Envoy](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#envoy)提供静态配置，或者通过 xDS 接口向[Envoy](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#envoy)下发动态配置。在[Istio](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#istio)中同时采用了这两种方式对[Envoy](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#envoy)的功能进行设置。本文假设读者对[Envoy](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#envoy)已有基本的了解，如需要了解[Envoy](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#envoy)的更多内容，请参考本书[Envoy](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#envoy)章节部分的介绍。
+
+
 
 ### Istio 中的 sidecar 注入
 
