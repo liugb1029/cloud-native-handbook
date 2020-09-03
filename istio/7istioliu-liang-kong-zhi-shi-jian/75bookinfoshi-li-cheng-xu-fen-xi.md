@@ -108,7 +108,55 @@ tcp   LISTEN     0      50                                127.0.0.1:54550       
 tcp   LISTEN     0      128                                      :::15020                                                :::*                   users:(("pilot-agent",pid=27815,fd=3))
 ```
 
-### Envoy启动过程分析
+## Istio 中的 sidecar 注入 {#istio-中的-sidecar-注入}
+
+[Istio](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#istio)中提供了以下两种[sidecar](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#sidecar)注入方式：
+
+* 使用`istioctl`手动注入。
+* 基于 Kubernetes 的[突变 webhook 入驻控制器（mutating webhook addmission controller](https://kubernetes.io/docs/reference/access-authn-authz/admission-controllers/)的自动[sidecar](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#sidecar)注入方式。
+
+不论是手动注入还是自动注入，[sidecar](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#sidecar)的注入过程都需要遵循如下步骤：
+
+1. Kubernetes 需要了解待注入的[sidecar](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#sidecar)所连接的[Istio](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#istio)集群及其配置；
+2. Kubernetes 需要了解待注入的[sidecar](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#sidecar)容器本身的配置，如镜像地址、启动参数等；
+3. Kubernetes 根据[sidecar](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#sidecar)注入模板和以上配置填充[sidecar](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#sidecar)的配置参数，将以上配置注入到应用容器的一侧；
+
+使用下面的命令可以手动注入[sidecar](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#sidecar)。
+
+```
+istioctl kube-inject -f ${YAML_FILE}|kuebectl apply -f -
+```
+
+该命令会使用[Istio](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#istio)内置的[sidecar](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#sidecar)配置来注入，下面使用[Istio](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#istio)详细配置请参考[Istio 官网](https://istio.io/docs/setup/additional-setup/sidecar-injection/#manual-sidecar-injection)。
+
+注入完成后您将看到[Istio](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#istio)为原有[pod](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#pod)template 注入了`initContainer`及[sidecar](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#sidecar)proxy相关的配置。
+
+### Init 容器 {#init-容器}
+
+Init 容器是一种专用容器，它在应用程序容器启动之前运行，用来包含一些应用镜像中不存在的实用工具或安装脚本。
+
+一个[Pod](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#pod)中可以指定多个 Init 容器，如果指定了多个，那么 Init 容器将会按顺序依次运行。只有当前面的 Init 容器必须运行成功后，才可以运行下一个 Init 容器。当所有的 Init 容器运行完成后，Kubernetes 才初始化[Pod](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#pod)和运行应用容器。
+
+Init 容器使用 Linux Namespace，所以相对应用程序容器来说具有不同的文件系统视图。因此，它们能够具有访问 Secret 的权限，而应用程序容器则不能。
+
+在[Pod](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#pod)启动过程中，Init 容器会按顺序在网络和数据卷初始化之后启动。每个容器必须在下一个容器启动之前成功退出。如果由于运行时或失败退出，将导致容器启动失败，它会根据[Pod](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#pod)的`restartPolicy`指定的策略进行重试。然而，如果[Pod](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#pod)的`restartPolicy`设置为 Always，Init 容器失败时会使用`RestartPolicy`策略。
+
+在所有的 Init 容器没有成功之前，[Pod](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#pod)将不会变成`Ready`状态。Init 容器的端口将不会在[Service](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#service)中进行聚集。 正在初始化中的[Pod](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#pod)处于`Pending`状态，但应该会将`Initializing`状态设置为 true。Init 容器运行完成以后就会自动终止。
+
+关于 Init 容器的详细信息请参考[Init 容器 - Kubernetes 中文指南/云原生应用架构实践手册](https://jimmysong.io/kubernetes-handbook/concepts/init-containers.html)。
+
+## Sidecar 注入示例分析 {#sidecar-注入示例分析}
+
+以[Istio](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#istio)官方提供的`bookinfo`中`productpage`的 YAML 为例，关于`bookinfo`应用的详细 YAML 配置请参考[bookinfo.yaml](https://github.com/istio/istio/blob/master/samples/bookinfo/platform/kube/bookinfo.yaml)。
+
+下文将从以下几个方面讲解：
+
+* [Sidecar](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#sidecar)
+  容器的注入
+* iptables 规则的创建
+* 路由的详细过程
+
+
 
 #### Prxoyv2
 
