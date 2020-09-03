@@ -76,8 +76,7 @@ admin commands are:
 * `15000`: Envoy 管理端口，该端口绑定在本地环回地址上，只能在 Pod 内访问。
 * `15090: Envoy 监控指标端口，提供给Prometheus进行采集  http://x.x.x.x:15090/stats/prometheus`
 * `15020`: pilot-agent端口，用于与pilot-discover通信。
-* `15006`: Envoy 的入口监听器，监控入站流量\(inbound\)，iptable 会将访问 pod 的流量导入该端口中由 Envoy 进行处理----**针对访问pod业务的流量重定向**
-  * 
+* `15006`: Envoy 的入口监听器，监控入站流量\(inbound\)，iptable 会将访问 pod 的流量导入该端口中由 Envoy 进行处理----**针对访问pod业务的流量重定向。**
 
 ```
 [root@master ~]# curl http://127.0.0.1:15090/stats/prometheus
@@ -111,8 +110,6 @@ tcp   LISTEN     0      128                                      :::15020       
 ### Envoy 配置介绍
 
 [Envoy](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#envoy)是一个四层/七层代理，其架构非常灵活，采用了插件式的机制来实现各种功能，可以通过配置的方式对其功能进行定制。[Envoy](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#envoy)提供了两种配置的方式：通过配置文件向[Envoy](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#envoy)提供静态配置，或者通过 xDS 接口向[Envoy](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#envoy)下发动态配置。在[Istio](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#istio)中同时采用了这两种方式对[Envoy](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#envoy)的功能进行设置。本文假设读者对[Envoy](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#envoy)已有基本的了解，如需要了解[Envoy](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#envoy)的更多内容，请参考本书[Envoy](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#envoy)章节部分的介绍。
-
-
 
 ### Istio 中的 sidecar 注入
 
