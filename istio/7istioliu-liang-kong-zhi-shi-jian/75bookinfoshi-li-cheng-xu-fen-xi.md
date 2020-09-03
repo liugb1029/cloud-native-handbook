@@ -399,9 +399,11 @@ $ istio-iptables [flags]
 
 因为 Init 容器初始化完毕后就会自动终止，因为我们无法登陆到容器中查看 iptables 信息，但是 Init 容器初始化结果会保留到应用容器和[sidecar](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#sidecar)容器中。
 
-#### Prxoyv2
+为了查看 iptables 配置，我们需要登陆到[sidecar](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#sidecar)容器中使用 root 用户来查看，因为`kubectl`无法使用特权模式来远程操作 docker 容器，所以我们需要登陆到`productpage`[pod](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#pod)所在的主机上使用`docker`命令登陆容器中查看。
 
-#### Envoy初始配置文件
+查看 iptables 配置，列出 NAT（网络地址转换）表的所有规则，因为在 Init 容器启动的时候选择给`istio-iptables`传递的参数中指定将入站流量重定向到[sidecar](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#sidecar)的模式为`REDIRECT`，因此在 iptables 中将只有 NAT 表的规格配置，如果选择`TPROXY`还会有`mangle`表配置。`iptables`命令的详细用法请参考[iptables](https://wangchujiang.com/linux-command/c/iptables.html)，规则配置请参考[iptables 规则配置](http://www.zsythink.net/archives/1517)。
+
+我们仅查看与`productpage`有关的 iptables 规则如下。
 
 ### istio-proxy内部iptables规则
 
