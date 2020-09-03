@@ -242,7 +242,9 @@ CMD ["python", "productpage.py", "9080"]
 $ istioctl kube-inject -f samples/bookinfo/platform/kube/bookinfo.yaml
 ```
 
-#### 
+我们只截取其中与`productpage`相关的`Deployment`配置中的部分 YAML 配置。
+
+
 
 #### Prxoyv2
 
