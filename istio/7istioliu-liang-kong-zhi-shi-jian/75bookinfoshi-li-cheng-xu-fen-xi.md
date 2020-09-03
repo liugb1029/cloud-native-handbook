@@ -246,7 +246,7 @@ $ istioctl kube-inject -f samples/bookinfo/platform/kube/bookinfo.yaml
 
 ```
   containers:
-  - image: docker.io/istio/examples-bookinfo-productpage-v1:1.15.1
+  - image: docker.io/istio/examples-bookinfo-productpage-v1:1.15.1  # 业务容器
     imagePullPolicy: IfNotPresent
     name: productpage
     ports:
@@ -295,7 +295,7 @@ $ istioctl kube-inject -f samples/bookinfo/platform/kube/bookinfo.yaml
     - --applicationPorts
     - "9080"
     - --trust-domain=cluster.local
-    image: docker.io/istio/proxyv2:1.4.10
+    image: docker.io/istio/proxyv2:1.4.10  # sidecar
     imagePullPolicy: IfNotPresent
     name: istio-proxy
     ports:
@@ -312,34 +312,6 @@ $ istioctl kube-inject -f samples/bookinfo/platform/kube/bookinfo.yaml
       periodSeconds: 2
       successThreshold: 1
       timeoutSeconds: 1
-    resources:
-      limits:
-        cpu: "2"
-        memory: 1Gi
-      requests:
-        cpu: 10m
-        memory: 40Mi
-    securityContext:
-      allowPrivilegeEscalation: false
-      capabilities:
-        drop:
-        - ALL
-      privileged: false
-      readOnlyRootFilesystem: true
-      runAsGroup: 1337
-      runAsNonRoot: true
-      runAsUser: 1337
-    terminationMessagePath: /dev/termination-log
-    terminationMessagePolicy: File
-    volumeMounts:
-    - mountPath: /etc/istio/proxy
-      name: istio-envoy
-    - mountPath: /etc/certs/
-      name: istio-certs
-      readOnly: true
-    - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
-      name: bookinfo-productpage-token-mmc9m
-      readOnly: true
   dnsPolicy: ClusterFirst
   enableServiceLinks: true
   initContainers:
@@ -361,10 +333,17 @@ $ istioctl kube-inject -f samples/bookinfo/platform/kube/bookinfo.yaml
     - '*'
     - -d
     - "15020"
-    image: docker.io/istio/proxyv2:1.4.10
+    image: docker.io/istio/proxyv2:1.4.10  # init容器
     imagePullPolicy: IfNotPresent
     name: istio-init
 ```
+
+[Istio](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#istio)给应用[Pod](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#pod)注入的配置主要包括：
+
+* Init 容器`istio-init`：用于[pod](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#pod)中设置 iptables 端口转发
+* [Sidecar](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#sidecar)容器`istio-proxy`：运行[sidecar](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#sidecar)代理，如[Envoy](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#envoy)或[MOSN](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#mosn)
+
+接下来将分别解析下这两个容器
 
 #### Prxoyv2
 
