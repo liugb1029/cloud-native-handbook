@@ -111,6 +111,55 @@ tcp   LISTEN     0      128                                      :::15020       
 
 [Envoy](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#envoy)是一个四层/七层代理，其架构非常灵活，采用了插件式的机制来实现各种功能，可以通过配置的方式对其功能进行定制。[Envoy](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#envoy)提供了两种配置的方式：通过配置文件向[Envoy](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#envoy)提供静态配置，或者通过 xDS 接口向[Envoy](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#envoy)下发动态配置。在[Istio](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#istio)中同时采用了这两种方式对[Envoy](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#envoy)的功能进行设置。本文假设读者对[Envoy](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#envoy)已有基本的了解，如需要了解[Envoy](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#envoy)的更多内容，请参考本书[Envoy](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#envoy)章节部分的介绍。
 
+### Envoy 初始化配置文件 {#envoy-初始化配置文件}
+
+在[Istio](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#istio)中，[Envoy](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#envoy)的大部分配置都来自于控制平面通过 xDS 接口下发的动态配置，包括网格中服务相关的[service](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#service)[cluster](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#cluster), listener, route 规则等。但[Envoy](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#envoy)是如何知道 xDS server 的地址呢？这就是在[Envoy](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#envoy)初始化配置文件中以静态资源的方式配置的。[Sidecar](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#sidecar)容器中有一个[pilot](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#pilot)-agent 进程，该进程根据启动参数生成[Envoy](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#envoy)的初始配置文件，并采用该配置文件来启动[Envoy](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#envoy)进程。
+
+可以使用下面的命令将productpage[pod](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#pod)中该文件导出来查看其中的内容：
+
+```
+kubectl exec -it productpage-v1-7f9d9c48c8-xxq6f -c istio-proxy cat /etc/istio/proxy/envoy-rev0.json > envoy-rev0.json
+```
+
+该初始化配置文件的结构如下所示：
+
+```
+{
+    "node": {...},
+    "stats_config": {...},
+    "admin": {...},
+    "dynamic_resources": {...},
+    "static_resources": {...},
+    "tracing": {...}
+}
+```
+
+该配置文件中包含了下面的内容：
+
+* node： 包含了[Envoy](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#envoy)所在节点的相关信息，如节点的 id，节点所属的 Kubernetes 集群，节点的 IP 地址，等等。
+* admin：[Envoy](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#envoy)的日志路径以及管理端口。
+* dynamic\_resources： 动态资源,即来自 xDS 服务器下发的配置。
+* static\_resources： 静态资源，包括预置的一些 listener 和[cluster](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#cluster)，例如调用跟踪和指标统计使用到的 listener 和[cluster](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#cluster)。
+* [tracing](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#tracing)： 分布式调用追踪的相关配置。
+
+Envoy 完整配置
+
+从[Envoy](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#envoy)初始化配置文件中，我们可以看出[Istio](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#istio)中[Envoy](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#envoy)[sidecar](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#sidecar)真正的配置实际上是由两部分组成的。[Pilot](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#pilot)-agent 在启动[Envoy](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#envoy)时将 xDS server 信息通过静态资源的方式配置到[Envoy](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#envoy)的初始化配置文件中，[Envoy](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#envoy)启动后再通过 xDS server 获取网格中的服务信息、路由规则等动态资源。
+
+[Envoy](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#envoy)完整配置的生成流程如下图所示：
+
+[![](https://www.servicemesher.com/istio-handbook/images/envoy-config-init.png "Envoy 配置生成流程")](https://www.servicemesher.com/istio-handbook/images/envoy-config-init.png)
+
+1. Pilot-agent 根据启动参数生成 Envoy 的初始配置文件 envoy-rev0.json，该文件告诉 Envoy 从指定的 xDS server 中获取动态配置信息，并配置了 xDS server 的地址信息，即控制平面的 Pilot 服务器地址。
+2. Pilot-agent 使用 envoy-rev0.json 启动 Envoy 进程。
+3. Envoy 根据初始配置获得 Pilot 地址，采用 xDS 接口从 Pilot 获取到 listener，cluster，route 等动态配置信息。
+4. Envoy 根据获取到的动态配置启动 Listener，并根据 listener 的配置，结合 route 和 cluster 对拦截到的流量进行处理。
+
+
+
+可以看到，[Envoy](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#envoy)中实际生效的配置是由初始化配置文件中的静态配置和从[Pilot](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#pilot)获取的动态配置一起组成的。因此只对[envoy](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#envoy)-rev0 .json 进行分析并不能看到网络中流量管理的全貌。那么有没有办法可以看到[Envoy](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#envoy)中实际生效的完整配置呢？[Envoy](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#envoy)提供了相应的管理接口，我们可以采用下面的命令导出 productpage-v1 服务[sidecar](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#sidecar)的完整配置。  
+
+
 ### Istio 中的 sidecar 注入
 
 [Istio](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#istio)中提供了以下两种[sidecar](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#sidecar)注入方式：
