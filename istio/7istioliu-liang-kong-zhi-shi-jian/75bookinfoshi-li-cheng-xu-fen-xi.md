@@ -382,7 +382,6 @@ $ istio-iptables [flags]
   -g：指定不应用重定向的用户的 GID。(默认值与 -u param 相同)
   -u：指定不应用重定向的用户的 UID。通常情况下，这是代理容器的 UID（默认值是 1337，即 istio-proxy 的 UID）。
   -z: 所有进入 pod/VM 的 TCP 流量应被重定向到的端口（默认 $INBOUND_CAPTURE_PORT = 15006）。
-
 ```
 
 以上传入的参数都会重新组装成[`iptables`](https://wangchujiang.com/linux-command/c/iptables.html)规则，关于该命令的详细用法请访问[tools/istio-iptables/pkg/cmd/root.go](https://github.com/istio/istio/blob/master/tools/istio-iptables/pkg/cmd/root.go)。
@@ -393,29 +392,12 @@ $ istio-iptables [flags]
 
 这条启动命令的作用是：
 
-* 将应用容器的所有流量都转发到
-  [sidecar](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#sidecar)
-  的 15006 端口。
-* 使用
-  `istio-proxy`
-  用户身份运行， UID 为 1337，即
-  [sidecar](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#sidecar)
-  所处的用户空间，这也是
-  `istio-proxy`
-  容器默认使用的用户，见 YAML 配置中的
-  `runAsUser`
-  字段。
-* 使用默认的
-  `REDIRECT`
-  模式来重定向流量。
-* 将所有出站流量都重定向到
-  [sidecar](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#sidecar)
-  代理（通过 15001 端口）。
+* 将应用容器的所有流量都转发到[sidecar](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#sidecar)的 15006 端口。
+* 使用`istio-proxy`用户身份运行， UID 为 1337，即 [sidecar](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#sidecar) 所处的用户空间，这也是`istio-proxy`容器默认使用的用户，见 YAML 配置中的`runAsUser`字段。
+* 使用默认的`REDIRECT`模式来重定向流量。
+* 将所有出站流量都重定向到 [sidecar](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#sidecar) 代理（通过 15001 端口）。
 
 因为 Init 容器初始化完毕后就会自动终止，因为我们无法登陆到容器中查看 iptables 信息，但是 Init 容器初始化结果会保留到应用容器和[sidecar](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#sidecar)容器中。
-
-  
-
 
 #### Prxoyv2
 
