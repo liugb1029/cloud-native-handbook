@@ -156,7 +156,58 @@ Init 容器使用 Linux Namespace，所以相对应用程序容器来说具有�
 * iptables 规则的创建
 * 路由的详细过程
 
+```
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: productpage
+    version: v1
+  name: productpage-v1
+  namespace: default
+  resourceVersion: "921447"
+  selfLink: /apis/apps/v1/namespaces/default/deployments/productpage-v1
+  uid: 5fd33e5d-cd93-4449-8d9c-7b1ada675b7b
+spec:
+  progressDeadlineSeconds: 600
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      app: productpage
+      version: v1
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: productpage
+        version: v1
+    spec:
+      containers:
+      - image: docker.io/istio/examples-bookinfo-productpage-v1:1.15.1
+        imagePullPolicy: IfNotPresent
+        name: productpage
+        ports:
+        - containerPort: 9080
+          protocol: TCP
+        resources: {}
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      serviceAccount: bookinfo-productpage
+      serviceAccountName: bookinfo-productpage
+      terminationGracePeriodSeconds: 30
+```
 
+#### 
 
 #### Prxoyv2
 
