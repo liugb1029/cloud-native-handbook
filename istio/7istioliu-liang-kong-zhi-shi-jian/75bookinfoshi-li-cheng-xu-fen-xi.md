@@ -345,6 +345,33 @@ $ istioctl kube-inject -f samples/bookinfo/platform/kube/bookinfo.yaml
 
 接下来将分别解析下这两个容器
 
+## Init 容器解析 {#init-容器解析}
+
+[Istio](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#istio)在[pod](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#pod)中注入的 Init 容器名为`istio-init`，我们在上面[Istio](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#istio)注入完成后的 YAML 文件中看到了该容器的启动命令是：
+
+```
+istio-iptables -p 15001 -z 15006 -u 1337 -m REDIRECT -i 
+'*'
+ -x 
+""
+ -b 
+'*'
+ -d 15090,15020
+
+```
+
+我们再检查下该容器的[Dockerfile](https://github.com/istio/istio/blob/master/pilot/docker/Dockerfile.proxyv2)看看`ENTRYPOINT`是怎么确定启动时执行的命令。
+
+```
+# 前面的内容省略
+# The pilot-agent will bootstrap Envoy.
+ENTRYPOINT ["/usr/local/bin/pilot-agent"]
+```
+
+我们看到`istio-init`容器的入口是`/usr/local/bin/istio-iptables`命令行，该命令行工具的代码的位置在[Istio](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#istio)源码仓库的[tools/istio-iptables](https://github.com/istio/istio/tree/master/tools/istio-iptables)目录。
+
+注意：在[Istio](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#istio)1.1 版本时还是使用`isito-iptables.sh`命令行来操作 IPtables。
+
 #### Prxoyv2
 
 #### Envoy初始配置文件
