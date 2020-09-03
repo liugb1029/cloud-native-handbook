@@ -244,7 +244,185 @@ $ istioctl kube-inject -f samples/bookinfo/platform/kube/bookinfo.yaml
 
 我们只截取其中与`productpage`相关的`Deployment`配置中的部分 YAML 配置。
 
-
+```
+  containers:
+  - image: docker.io/istio/examples-bookinfo-productpage-v1:1.15.1
+    imagePullPolicy: IfNotPresent
+    name: productpage
+    ports:
+    - containerPort: 9080
+      protocol: TCP
+    resources: {}
+    terminationMessagePath: /dev/termination-log
+    terminationMessagePolicy: File
+    volumeMounts:
+    - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+      name: bookinfo-productpage-token-mmc9m
+      readOnly: true
+  - args:
+    - proxy
+    - sidecar
+    - --domain
+    - $(POD_NAMESPACE).svc.cluster.local
+    - --configPath
+    - /etc/istio/proxy
+    - --binaryPath
+    - /usr/local/bin/envoy
+    - --serviceCluster
+    - productpage.$(POD_NAMESPACE)
+    - --drainDuration
+    - 45s
+    - --parentShutdownDuration
+    - 1m0s
+    - --discoveryAddress
+    - istio-pilot.istio-system:15010
+    - --zipkinAddress
+    - zipkin.istio-system:9411
+    - --proxyLogLevel=warning
+    - --proxyComponentLogLevel=misc:error
+    - --connectTimeout
+    - 10s
+    - --proxyAdminPort
+    - "15000"
+    - --concurrency
+    - "2"
+    - --controlPlaneAuthPolicy
+    - NONE
+    - --dnsRefreshRate
+    - 300s
+    - --statusPort
+    - "15020"
+    - --applicationPorts
+    - "9080"
+    - --trust-domain=cluster.local
+    env:
+    - name: POD_NAME
+      valueFrom:
+        fieldRef:
+          apiVersion: v1
+          fieldPath: metadata.name
+    - name: POD_NAMESPACE
+      valueFrom:
+        fieldRef:
+          apiVersion: v1
+          fieldPath: metadata.namespace
+    - name: INSTANCE_IP
+      valueFrom:
+        fieldRef:
+          apiVersion: v1
+          fieldPath: status.podIP
+    - name: SERVICE_ACCOUNT
+      valueFrom:
+        fieldRef:
+          apiVersion: v1
+          fieldPath: spec.serviceAccountName
+    - name: HOST_IP
+      valueFrom:
+        fieldRef:
+          apiVersion: v1
+          fieldPath: status.hostIP
+    - name: ISTIO_META_POD_PORTS
+      value: |-
+        [
+            {"containerPort":9080,"protocol":"TCP"}
+        ]
+    - name: ISTIO_META_CLUSTER_ID
+      value: Kubernetes
+    - name: ISTIO_META_POD_NAME
+      valueFrom:
+        fieldRef:
+          apiVersion: v1
+          fieldPath: metadata.name
+    - name: ISTIO_META_CONFIG_NAMESPACE
+      valueFrom:
+        fieldRef:
+          apiVersion: v1
+          fieldPath: metadata.namespace
+    - name: SDS_ENABLED
+      value: "false"
+    - name: ISTIO_META_INTERCEPTION_MODE
+      value: REDIRECT
+    - name: ISTIO_META_INCLUDE_INBOUND_PORTS
+      value: "9080"
+    - name: ISTIO_METAJSON_LABELS
+      value: |
+        {"app":"productpage","pod-template-hash":"7f9d9c48c8","version":"v1"}
+    - name: ISTIO_META_WORKLOAD_NAME
+      value: productpage-v1
+    - name: ISTIO_META_OWNER
+      value: kubernetes://apis/apps/v1/namespaces/default/deployments/productpage-v1
+    - name: ISTIO_META_MESH_ID
+      value: cluster.local
+    image: docker.io/istio/proxyv2:1.4.10
+    imagePullPolicy: IfNotPresent
+    name: istio-proxy
+    ports:
+    - containerPort: 15090
+      name: http-envoy-prom
+      protocol: TCP
+    readinessProbe:
+      failureThreshold: 30
+      httpGet:
+        path: /healthz/ready
+        port: 15020
+        scheme: HTTP
+      initialDelaySeconds: 1
+      periodSeconds: 2
+      successThreshold: 1
+      timeoutSeconds: 1
+    resources:
+      limits:
+        cpu: "2"
+        memory: 1Gi
+      requests:
+        cpu: 10m
+        memory: 40Mi
+    securityContext:
+      allowPrivilegeEscalation: false
+      capabilities:
+        drop:
+        - ALL
+      privileged: false
+      readOnlyRootFilesystem: true
+      runAsGroup: 1337
+      runAsNonRoot: true
+      runAsUser: 1337
+    terminationMessagePath: /dev/termination-log
+    terminationMessagePolicy: File
+    volumeMounts:
+    - mountPath: /etc/istio/proxy
+      name: istio-envoy
+    - mountPath: /etc/certs/
+      name: istio-certs
+      readOnly: true
+    - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+      name: bookinfo-productpage-token-mmc9m
+      readOnly: true
+  dnsPolicy: ClusterFirst
+  enableServiceLinks: true
+  initContainers:
+  - command:
+    - istio-iptables
+    - -p
+    - "15001"
+    - -z
+    - "15006"
+    - -u
+    - "1337"
+    - -m
+    - REDIRECT
+    - -i
+    - '*'
+    - -x
+    - ""
+    - -b
+    - '*'
+    - -d
+    - "15020"
+    image: docker.io/istio/proxyv2:1.4.10
+    imagePullPolicy: IfNotPresent
+    name: istio-init
+```
 
 #### Prxoyv2
 
