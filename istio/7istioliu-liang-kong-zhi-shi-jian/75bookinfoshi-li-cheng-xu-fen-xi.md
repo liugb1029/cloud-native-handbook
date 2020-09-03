@@ -198,5 +198,23 @@ COMMIT
 >
 > ISTIO\_OUTPUT 链：所有流出Pod由 istio-proxy 用户空间发出且目的地不为localhost的流量全部重定向至15001端口（envoy出口流量端口），其他流量全部直接放行至下一个POSTROUTING链，不用被envoy拦截处理。
 
+![](/image/Istio/istio-sidecar.png)
+
+1. productpage 服务对reviews 服务发送 TCP 连接请求
+2. 请求进入reviews服务所在Pod内核空间，被netfilter拦截入口流量，经过PREROUTING链然后转发至ISTIO\_INBOUND链
+3. 在被ISTIO\_INBOUND链被这个规则-A ISTIO\_INBOUND -p tcp -j ISTIO\_IN\_REDIRECT拦截再次转发至ISTIO\_IN\_REDIRECT链
+4. ISTIO\_IN\_REDIRECT链直接重定向至 envoy监听的 15006 入口流量端口
+5. 在 envoy 内部经过一系列入口流量治理动作后，发出TCP连接请求 reviews 服务，这一步对envoy来说属于出口流量，会被netfilter拦截转发至出口流量OUTPUT链
+6. OUTPUT链转发流量至ISTIO\_OUTPUT链
+7. 目的地为localhost，不能匹配到转发规则链，直接RETURN到下一个链，即POSTROUTING链
+8. sidecar发出的请求到达reviews服务9080端口
+9. reviews服务处理完业务逻辑后响应sidecar，这一步对reviews服务来说属于出口流量，再次被netfilter拦截转发至出口流量OUTPUT链
+10. OUTPUT链转发流量至ISTIO\_OUTPUT链
+11. 发送非localhost请求且为istio-proxy用户空间的流量被转发至ISTIO\_REDIRECT链
+12. ISTIO\_REDIRECT链直接重定向至 envoy监听的 15001 出口流量端口
+13. 在 envoy 内部经过一系列出口流量治理动作后继续发送响应数据，响应时又会被netfilter拦截转发至出口流量OUTPUT链
+14. OUTPUT链转发流量至ISTIO\_OUTPUT链
+15. 流量直接RETURN到下一个链，即POSTROUTING链
+
 
 
