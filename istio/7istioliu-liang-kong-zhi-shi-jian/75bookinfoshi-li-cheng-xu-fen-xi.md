@@ -112,6 +112,10 @@ tcp   LISTEN     0      128                                      :::15020       
 
 #### Proxy\_init
 
+#### Prxoyv2
+
+#### Envoy初始配置文件
+
 ### istio-proxy内部iptables规则
 
 ```
