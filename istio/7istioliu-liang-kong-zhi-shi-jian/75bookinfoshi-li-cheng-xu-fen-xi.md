@@ -108,7 +108,11 @@ tcp   LISTEN     0      50                                127.0.0.1:54550       
 tcp   LISTEN     0      128                                      :::15020                                                :::*                   users:(("pilot-agent",pid=27815,fd=3))
 ```
 
-## Istio 中的 sidecar 注入 {#istio-中的-sidecar-注入}
+#### Prxoyv2
+
+#### Envoy初始配置文件
+
+### Istio 中的 sidecar 注入
 
 [Istio](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#istio)中提供了以下两种[sidecar](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#sidecar)注入方式：
 
@@ -131,7 +135,7 @@ istioctl kube-inject -f ${YAML_FILE}|kuebectl apply -f -
 
 注入完成后您将看到[Istio](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#istio)为原有[pod](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#pod)template 注入了`initContainer`及[sidecar](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#sidecar)proxy相关的配置。
 
-### Init 容器 {#init-容器}
+#### Init 容器
 
 Init 容器是一种专用容器，它在应用程序容器启动之前运行，用来包含一些应用镜像中不存在的实用工具或安装脚本。
 
@@ -145,7 +149,7 @@ Init 容器使用 Linux Namespace，所以相对应用程序容器来说具有�
 
 关于 Init 容器的详细信息请参考[Init 容器 - Kubernetes 中文指南/云原生应用架构实践手册](https://jimmysong.io/kubernetes-handbook/concepts/init-containers.html)。
 
-## Sidecar 注入示例分析 {#sidecar-注入示例分析}
+#### Sidecar 注入示例分析
 
 以[Istio](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#istio)官方提供的`bookinfo`中`productpage`的 YAML 为例，关于`bookinfo`应用的详细 YAML 配置请参考[bookinfo.yaml](https://github.com/istio/istio/blob/master/samples/bookinfo/platform/kube/bookinfo.yaml)。
 
@@ -345,7 +349,7 @@ $ istioctl kube-inject -f samples/bookinfo/platform/kube/bookinfo.yaml
 
 接下来将分别解析下这两个容器
 
-## Init 容器解析 {#init-容器解析}
+### Init 容器解析
 
 [Istio](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#istio)在[pod](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#pod)中注入的 Init 容器名为`istio-init`，我们在上面[Istio](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#istio)注入完成后的 YAML 文件中看到了该容器的启动命令是：
 
@@ -365,7 +369,7 @@ ENTRYPOINT ["/usr/local/bin/pilot-agent"]
 
 注意：在[Istio](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#istio)1.1 版本时还是使用`isito-iptables.sh`命令行来操作 IPtables。
 
-### Init 容器启动入口 {#init-容器启动入口}
+#### Init 容器启动入口
 
 Init 容器的启动入口是`istio-iptables`命令行，该命令行工具的用法如下：
 
@@ -388,7 +392,7 @@ $ istio-iptables [flags]
 
 该容器存在的意义就是让[sidecar](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#sidecar)代理可以拦截所有的进出[pod](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#pod)的流量，15090 端口（[Mixer](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#mixer)使用）和 15092 端口（Ingress Gateway）除外的所有入站（inbound）流量重定向到 15006 端口（[sidecar](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#sidecar)），再拦截应用容器的出站（outbound）流量经过[sidecar](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#sidecar)处理（通过 15001 端口监听）后再出站。关于[Istio](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#istio)中端口用途请参考[Istio 官方文档](https://istio.io/zh/docs/ops/deployment/requirements/)。
 
-**命令解析**
+#### **命令解析**
 
 这条启动命令的作用是：
 
