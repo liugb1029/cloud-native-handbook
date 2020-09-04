@@ -174,6 +174,8 @@ kubectl exec -it productpage-v1-7f9d9c48c8-xxq6f -c istio-proxy curl http://127.
 
 该配置文件的内容如下：
 
+![](/image/Istio/envoy-config-dump.png)
+
 从导出的文件中可以看到[Envoy](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#envoy)中主要由以下几部分内容组成：
 
 * BootstrapConfigDump： 初始化配置，来自于初始化配置文件中配置的内容。
@@ -183,6 +185,14 @@ kubectl exec -it productpage-v1-7f9d9c48c8-xxq6f -c istio-proxy curl http://127.
 * SecretsConfigDump： TLS 双向认证相关的配置，包括自身的证书以及用于验证请求方的 CA 根证书。
 
 下面我们对该配置文件中和流量路由相关的配置一一进行详细分析。
+
+#### Bootstrap {#bootstrap}
+
+从名字可以看出这是[Envoy](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#envoy)的初始化配置，打开该节点，可以看到其中的内容和[envoy](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#envoy)-rev0.json 是一致的，这里不再赘述。 需要注意的是在 bootstrap 部分配置的一些内容也会被用于其他部分，例如 clusters 部分就包含了 bootstrap 中定义的一些静态[cluster](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#cluster)资源。
+
+![](/image/Istio/envoy-bootstrap.png)
+
+
 
 ### Istio 中的 sidecar 注入
 
