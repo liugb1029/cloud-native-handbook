@@ -176,6 +176,16 @@ kubectl exec -it productpage-v1-7f9d9c48c8-xxq6f -c istio-proxy curl http://127.
 
 
 
+从导出的文件中可以看到[Envoy](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#envoy)中主要由以下几部分内容组成：
+
+* BootstrapConfigDump： 初始化配置，来自于初始化配置文件中配置的内容。
+* ClustersConfigDump： 集群配置，包括对应于外部服务的 outbound [cluster](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#cluster)和 自身所在节点服务的 inbound [cluster](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#cluster)。
+* ListenersConfigDump： 监听器配置，包括用于处理对外业务请求的 outbound listener，处理入向业务请求的 inbound listener，以及作为流量处理入口的 virtual listener。
+* RoutesConfigDump： 路由配置，用于 HTTP 请求的路由处理。
+* SecretsConfigDump： TLS 双向认证相关的配置，包括自身的证书以及用于验证请求方的 CA 根证书。
+
+下面我们对该配置文件中和流量路由相关的配置一一进行详细分析。
+
 ### Istio 中的 sidecar 注入
 
 [Istio](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#istio)中提供了以下两种[sidecar](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#sidecar)注入方式：
