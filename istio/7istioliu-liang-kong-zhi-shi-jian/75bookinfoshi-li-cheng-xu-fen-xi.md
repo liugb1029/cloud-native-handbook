@@ -172,8 +172,6 @@ kubectl exec -it productpage-v1-7f9d9c48c8-xxq6f -c istio-proxy cat /etc/istio/p
 kubectl exec -it productpage-v1-7f9d9c48c8-xxq6f -c istio-proxy curl http://127.0.0.1:15000/config_dump > config_dump.json
 ```
 
-
-
 ### Istio 中的 sidecar 注入
 
 [Istio](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#istio)中提供了以下两种[sidecar](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#sidecar)注入方式：
