@@ -174,8 +174,6 @@ kubectl exec -it productpage-v1-7f9d9c48c8-xxq6f -c istio-proxy curl http://127.
 
 该配置文件的内容如下：
 
-
-
 从导出的文件中可以看到[Envoy](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#envoy)中主要由以下几部分内容组成：
 
 * BootstrapConfigDump： 初始化配置，来自于初始化配置文件中配置的内容。
