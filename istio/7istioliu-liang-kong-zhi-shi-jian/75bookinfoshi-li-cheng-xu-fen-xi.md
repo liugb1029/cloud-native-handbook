@@ -168,8 +168,6 @@ kubectl exec -it productpage-v1-7f9d9c48c8-xxq6f -c istio-proxy cat /etc/istio/p
 
 可以看到，[Envoy](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#envoy)中实际生效的配置是由初始化配置文件中的静态配置和从[Pilot](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#pilot)获取的动态配置一起组成的。因此只对[envoy](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#envoy)-rev0 .json 进行分析并不能看到网络中流量管理的全貌。那么有没有办法可以看到[Envoy](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#envoy)中实际生效的完整配置呢？[Envoy](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#envoy)提供了相应的管理接口，我们可以采用下面的命令导出 productpage-v1 服务[sidecar](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#sidecar)的完整配置。
 
-
-
 ### Istio 中的 sidecar 注入
 
 [Istio](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#istio)中提供了以下两种[sidecar](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#sidecar)注入方式：
