@@ -196,9 +196,9 @@ kubectl exec -it productpage-v1-7f9d9c48c8-xxq6f -c istio-proxy curl http://127.
 
 这部分配置定义了[Envoy](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#envoy)中所有的[cluster](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#cluster)，即服务集群，[cluster](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#cluster)中包含一个到多个 endpoint，每个 endpoint 都可以提供服务，[Envoy](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#envoy)根据负载均衡算法将请求发送到这些 endpoint 中。
 
-从配置文件结构中可以看到，在 productpage 的 clusters 配置中包含 static\_clusters 和 dynamic\_active\_clusters 两部分，其中 static\_clusters 是来自于[envoy](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#envoy)-rev0.json 的初始化配置中的 prometheus\_stats、xDS server、zipkin server 信息。dynamic\_active\_clusters 是[Envoy](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#envoy)通过 xDS 接口从[Istio](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#istio)控制平面获取的服务信息。
+从配置文件结构中可以看到，在 productpage 的 clusters 配置中包含 **static\_clusters **和 **dynamic\_active\_clusters **两部分，其中 **static\_clusters **是来自于[envoy](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#envoy)-rev0.json 的初始化配置中的 **prometheus\_stats、xDS server、zipkin server **信息。dynamic\_active\_clusters 是[Envoy](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#envoy)通过 xDS 接口从[Istio](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#istio)控制平面获取的服务信息。
 
-其中 dynamic[cluster](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#cluster)又分为以下几类：
+其中 dynamic [cluster](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#cluster)又分为以下几类：
 
 ##### Outbound Cluster {#outbound-cluster}
 
