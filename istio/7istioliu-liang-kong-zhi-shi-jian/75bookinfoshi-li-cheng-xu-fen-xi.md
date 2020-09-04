@@ -194,6 +194,24 @@ kubectl exec -it productpage-v1-7f9d9c48c8-xxq6f -c istio-proxy curl http://127.
 
 
 
+
+
+#### Clusters {#clusters}
+
+这部分配置定义了[Envoy](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#envoy)中所有的[cluster](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#cluster)，即服务集群，[cluster](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#cluster)中包含一个到多个 endpoint，每个 endpoint 都可以提供服务，[Envoy](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#envoy)根据负载均衡算法将请求发送到这些 endpoint 中。
+
+从配置文件结构中可以看到，在 productpage 的 clusters 配置中包含 static\_clusters 和 dynamic\_active\_clusters 两部分，其中 static\_clusters 是来自于[envoy](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#envoy)-rev0.json 的初始化配置中的 prometheus\_stats、xDS server、zipkin server 信息。dynamic\_active\_clusters 是[Envoy](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#envoy)通过 xDS 接口从[Istio](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#istio)控制平面获取的服务信息。
+
+其中 dynamic[cluster](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#cluster)又分为以下几类：
+
+##### Outbound Cluster {#outbound-cluster}
+
+这部分的[cluster](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#cluster)占了绝大多数，该类[cluster](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#cluster)对应于[Envoy](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#envoy)所在节点的外部服务。以 reviews 为例，对于 productpage 来说,reviews 是一个外部服务，因此其[cluster](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#cluster)名称中包含 outbound 字样。
+
+从 reviews 服务对应的[cluster](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#cluster)配置中可以看到，其类型为 EDS，即表示该[cluster](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#cluster)的 endpoint 来自于动态发现，动态发现中 eds\_config 则指向了ads，最终指向 static resource 中配置的 xds-grpc[cluster](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#cluster)，即[Pilot](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#pilot)的地址。
+
+
+
 ### Istio 中的 sidecar 注入
 
 [Istio](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#istio)中提供了以下两种[sidecar](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#sidecar)注入方式：
