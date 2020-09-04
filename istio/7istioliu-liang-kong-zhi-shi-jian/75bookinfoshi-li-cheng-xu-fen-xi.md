@@ -137,6 +137,9 @@ kubectl exec -it productpage-v1-7f9d9c48c8-xxq6f -c istio-proxy cat /etc/istio/p
 该配置文件中包含了下面的内容：
 
 * node： 包含了[Envoy](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#envoy)所在节点的相关信息，如节点的 id，节点所属的 Kubernetes 集群，节点的 IP 地址，等等。
+
+
+
 * admin：[Envoy](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#envoy)的日志路径以及管理端口。
 * dynamic\_resources： 动态资源,即来自 xDS 服务器下发的配置。
 * static\_resources： 静态资源，包括预置的一些 listener 和[cluster](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#cluster)，例如调用跟踪和指标统计使用到的 listener 和[cluster](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#cluster)。
@@ -160,6 +163,8 @@ kubectl exec -it productpage-v1-7f9d9c48c8-xxq6f -c istio-proxy cat /etc/istio/p
 4. Envoy 根据获取到的动态配置启动 Listener，并根据 listener 的配置，结合 route 和 cluster 对拦截到的流量进行处理。
 
 可以看到，[Envoy](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#envoy)中实际生效的配置是由初始化配置文件中的静态配置和从[Pilot](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#pilot)获取的动态配置一起组成的。因此只对[envoy](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#envoy)-rev0 .json 进行分析并不能看到网络中流量管理的全貌。那么有没有办法可以看到[Envoy](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#envoy)中实际生效的完整配置呢？[Envoy](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#envoy)提供了相应的管理接口，我们可以采用下面的命令导出 productpage-v1 服务[sidecar](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#sidecar)的完整配置。
+
+
 
 ### Istio 中的 sidecar 注入
 
