@@ -417,6 +417,114 @@ Envoy 是如何做到按请求的目的端口进行分发的呢？ 从下面 Vir
 * 如果 outboundTrafficPolicy 设置为 ALLOW\_ANY：这表明网格允许发向任何外部服务的请求，无论该服务是否在 Pilot 的服务注册表中。在该策略下，Pilot 将会在下发给 Envoy 的 VirtualOutbound listener 加入一个 upstream cluster 为 PassthroughCluster 的 TCP proxy filter，找不到匹配端口 listener 的请求会被该 TCP proxy filter 处理，请求将会被发送到其 IP 头中的原始目的地地址。
 * 如果 outboundTrafficPolicy 设置为 REGISTRY\_ONLY：只允许发向 Pilot 服务注册表中存在的服务的对外请求。在该策略下，Pilot 将会在下发给 Enovy 的 VirtualOutbound listener 加入一个 upstream cluster 为 BlackHoleCluster 的 TCP proxy filter，找不到匹配端口 listener 的请求会被该 TCP proxy filter 处理，由于 BlackHoleCluster 中没有配置 upstteam host，请求实际上会被丢弃。
 
+下图是 bookinfo 例子中 productpage 服务中 Enovy Proxy 的 Virutal Outbound Listener 配置。由于 outboundTrafficPolicy 的默认配置为`ALLOW_ANY`，因此 listener 的 filterchain 中第二个 filter chain 中是一个 upstream[cluster](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#cluster)为 PassthroughCluster 的 TCP proxy filter。注意该 filter 没有 filter\_chain\_match 匹配条件，因此如果进入该 listener 的请求在配置中找不到匹配其目的端口的 listener，就会缺省进入该 filter 进行处理。
+
+filterchain 中的第一个 filter chain 中是一个 upstream[cluster](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#cluster)为 BlackHoleCluster 的 TCP proxy filter，该 filter 设置了 filter\_chain\_match 匹配条件，只有发向 10.40.0.18 这个 IP 的出向请求才会进入该 filter 处理。10.40.0.18 是 productpage 服务自身的IP地址。该 filter 的目的是为了防止服务向自己发送请求可能导致的死循环。
+
+```
+{
+     "version_info": "2020-09-16T03:34:38Z/32",
+     "listener": {
+      "name": "virtualOutbound",
+      "address": {
+       "socket_address": {
+        "address": "0.0.0.0",
+        "port_value": 15001
+       }
+      },
+      "filter_chains": [
+       {
+        "filter_chain_match": {
+         "prefix_ranges": [
+          {
+           "address_prefix": "10.244.1.25",
+           "prefix_len": 32
+          }
+         ]
+        },
+        "filters": [
+         {
+          "name": "envoy.tcp_proxy",
+          "typed_config": {
+           "@type": "type.googleapis.com/envoy.config.filter.network.tcp_proxy.v2.TcpProxy",
+           "stat_prefix": "BlackHoleCluster",
+           "cluster": "BlackHoleCluster"
+          }
+         }
+        ]
+       },
+       {
+        "filters": [
+         {
+          "name": "mixer",
+          "typed_config": {
+           "@type": "type.googleapis.com/istio.mixer.v1.config.client.TcpClientConfig",
+           "transport": {
+            "network_fail_policy": {
+             "policy": "FAIL_CLOSE",
+             "base_retry_wait": "0.080s",
+             "max_retry_wait": "1s"
+            },
+            "check_cluster": "outbound|9091||istio-policy.istio-system.svc.cluster.local",
+            "report_cluster": "outbound|9091||istio-telemetry.istio-system.svc.cluster.local",
+            "report_batch_max_entries": 100,
+            "report_batch_max_time": "1s"
+           },
+           "mixer_attributes": {
+            "attributes": {
+             "context.proxy_version": {
+              "string_value": "1.4.10"
+             },
+             "context.reporter.kind": {
+              "string_value": "outbound"
+             },
+             "context.reporter.uid": {
+              "string_value": "kubernetes://productpage-v1-7f9d9c48c8-thvxq.default"
+             },
+             "destination.service.host": {
+              "string_value": "PassthroughCluster"
+             },
+             "destination.service.name": {
+              "string_value": "PassthroughCluster"
+             },
+             "source.namespace": {
+              "string_value": "default"
+             },
+             "source.uid": {
+              "string_value": "kubernetes://productpage-v1-7f9d9c48c8-thvxq.default"
+             }
+            }
+           },
+           "disable_check_calls": true
+          }
+         },
+         {
+          "name": "envoy.tcp_proxy",
+          "typed_config": {
+           "@type": "type.googleapis.com/envoy.config.filter.network.tcp_proxy.v2.TcpProxy",
+           "stat_prefix": "PassthroughCluster",
+           "access_log": [
+            {
+             "name": "envoy.file_access_log",
+             "typed_config": {
+              "@type": "type.googleapis.com/envoy.config.accesslog.v2.FileAccessLog",
+              "path": "/dev/stdout",
+              "format": "[%START_TIME%] \"%REQ(:METHOD)% %REQ(X-ENVOY-ORIGINAL-PATH?:PATH)% %PROTOCOL%\" %RESPONSE_CODE% %RESPONSE_FLAGS% \"%DYNAMIC_METADATA(istio.mixer:status)%\" \"%UPSTREAM_TRANSPORT_FAILURE_REASON%\" %BYTES_RECEIVED% %BYTES_SENT% %DURATION% %RESP(X-ENVOY-UPSTREAM-SERVICE-TIME)% \"%REQ(X-FORWARDED-FOR)%\" \"%REQ(USER-AGENT)%\" \"%REQ(X-REQUEST-ID)%\" \"%REQ(:AUTHORITY)%\" \"%UPSTREAM_HOST%\" %UPSTREAM_CLUSTER% %UPSTREAM_LOCAL_ADDRESS% %DOWNSTREAM_LOCAL_ADDRESS% %DOWNSTREAM_REMOTE_ADDRESS% %REQUESTED_SERVER_NAME% %ROUTE_NAME%\n"
+             }
+            }
+           ],
+           "cluster": "PassthroughCluster"
+          }
+         }
+        ]
+       }
+      ],
+      "use_original_dst": true
+     },
+     "last_updated": "2020-09-16T03:34:46.401Z"
+    },
+```
+
 ### Istio 中的 sidecar 注入
 
 [Istio](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#istio)中提供了以下两种[sidecar](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#sidecar)注入方式：
