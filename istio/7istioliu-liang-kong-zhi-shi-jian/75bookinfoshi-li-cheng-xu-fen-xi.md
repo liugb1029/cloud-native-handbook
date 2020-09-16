@@ -320,8 +320,11 @@ curl http://10.244.2.14:15014/debug/edsz > pilot_eds_dump
   ]
 }]
 ```
+
 ##### Inbound Cluster
+
 对于 Envoy 来说，inbound cluster 对应于入向请求的 upstream 集群， 即 Envoy 自身所在节点的服务。对于 productpage Pod 上的 Envoy，其对应的 Inbound cluster 只有一个，即 productpage。该 cluster 对应的 host 为127.0.0.1，即回环地址上 productpage 的监听端口。由于 iptable 规则中排除了127.0.0.1，入站请求通过该 Inbound cluster 处理后将跳过 Envoy，直接发送给 productpage 进程处理。
+
 ```
 [root@master envoy]# istioctl pc cluster productpage-v1-7f9d9c48c8-thvxq --direction inbound --fqdn productpage.default.svc.cluster.local -ojson
 [
@@ -361,53 +364,58 @@ curl http://10.244.2.14:15014/debug/edsz > pilot_eds_dump
     }
 ]
 ```
+
 #### BlackHoleCluster
+
 这是一个特殊的 cluster ，其中并没有配置后端处理请求的 host。如其名字所表明的一样，请求进入该 cluster 后如同进入了一个黑洞，将被丢弃掉，而不是发向一个 upstream host。
 
-{
-     "version_info": "2020-03-11T08:13:39Z/22",
-     "cluster": {
-      "@type": "type.googleapis.com/envoy.api.v2.Cluster",
-      "name": "BlackHoleCluster",
-      "type": "STATIC",
-      "connect_timeout": "1s",
-      "filters": []
-     },
-     "last_updated": "2020-03-11T08:14:04.665Z"
-#### PassthroughCluster
-该 cluster 的 type 被设置为 ORIGINAL_DST 类型， 表明任何发向该 cluster 的请求都会被直接发送到其请求中的原始目地的，Envoy 不会对请求进行重新路由。
+{  
+     "version\_info": "2020-03-11T08:13:39Z/22",  
+     "cluster": {  
+      "@type": "type.googleapis.com/envoy.api.v2.Cluster",  
+      "name": "BlackHoleCluster",  
+      "type": "STATIC",  
+      "connect\_timeout": "1s",  
+      "filters": \[\]  
+     },  
+     "last\_updated": "2020-03-11T08:14:04.665Z"
 
-{
- "version_info": "2020-03-11T08:13:39Z/22",
- "cluster": {
-  "@type": "type.googleapis.com/envoy.api.v2.Cluster",
-  "name": "PassthroughCluster",
-  "type": "ORIGINAL_DST",
-  "connect_timeout": "1s",
-  "lb_policy": "CLUSTER_PROVIDED",
-  "circuit_breakers": {
-   "thresholds": []
-  },
-  "filters": []
- },
- "last_updated": "2020-03-11T08:14:04.666Z"
+#### PassthroughCluster
+
+该 cluster 的 type 被设置为 ORIGINAL\_DST 类型， 表明任何发向该 cluster 的请求都会被直接发送到其请求中的原始目地的，Envoy 不会对请求进行重新路由。
+
+{  
+ "version\_info": "2020-03-11T08:13:39Z/22",  
+ "cluster": {  
+  "@type": "type.googleapis.com/envoy.api.v2.Cluster",  
+  "name": "PassthroughCluster",  
+  "type": "ORIGINAL\_DST",  
+  "connect\_timeout": "1s",  
+  "lb\_policy": "CLUSTER\_PROVIDED",  
+  "circuit\_breakers": {  
+   "thresholds": \[\]  
+  },  
+  "filters": \[\]  
+ },  
+ "last\_updated": "2020-03-11T08:14:04.666Z"  
 }
 
 #### Listeners
+
 Envoy 采用 listener 来接收并处理 downstream 发过来的请求，listener 采用了插件式的架构，可以通过配置不同的 filter 在 listener 中插入不同的处理逻辑。
 
 Listener 可以绑定到 IP Socket 或者 Unix Domain Socket 上，以接收来自客户端的请求；也可以不绑定，而是接收从其他 listener 转发来的数据。Istio 利用了 Envoy listener 的这一特点，通过 VirtualOutboundListener 在一个端口接收所有出向请求，然后再按照请求的端口分别转发给不同的 listener 分别处理。
 
 ##### VirtualOutbound Listener
+
 Istio 在 Envoy 中配置了一个在 15001 端口监听的虚拟入口监听器。Iptable 规则将 Envoy 所在 pod 的对外请求拦截后发向本地的 15001 端口，该监听器接收后并不进行业务处理，而是根据请求的目的端口分发给其他监听器处理。这就是该监听器取名为 "virtual”（虚拟）监听器的原因。
 
-Envoy 是如何做到按请求的目的端口进行分发的呢？ 从下面 VirtualOutbound listener 的配置中可以看到 use_original_dest 属性被设置为 true, 这表示该监听器在接收到来自 downstream 的请求后，会将请求转交给匹配该请求原目的地址的 listener（即名字格式为 0.0.0.0_ 请求目的端口 的 listener）进行处理。
+Envoy 是如何做到按请求的目的端口进行分发的呢？ 从下面 VirtualOutbound listener 的配置中可以看到 use_original\_dest 属性被设置为 true, 这表示该监听器在接收到来自 downstream 的请求后，会将请求转交给匹配该请求原目的地址的 listener（即名字格式为 0.0.0.0_ 请求目的端口 的 listener）进行处理。
 
 如果在 Enovy 的配置中找不到匹配请求目的端口的 listener，则将会根据 Istio 的 outboundTrafficPolicy 全局配置选项进行处理。存在两种情况：
 
-如果 outboundTrafficPolicy 设置为 ALLOW_ANY：这表明网格允许发向任何外部服务的请求，无论该服务是否在 Pilot 的服务注册表中。在该策略下，Pilot 将会在下发给 Envoy 的 VirtualOutbound listener 加入一个 upstream cluster 为 PassthroughCluster 的 TCP proxy filter，找不到匹配端口 listener 的请求会被该 TCP proxy filter 处理，请求将会被发送到其 IP 头中的原始目的地地址。
-如果 outboundTrafficPolicy 设置为 REGISTRY_ONLY：只允许发向 Pilot 服务注册表中存在的服务的对外请求。在该策略下，Pilot 将会在下发给 Enovy 的 VirtualOutbound listener 加入一个 upstream cluster 为 BlackHoleCluster 的 TCP proxy filter，找不到匹配端口 listener 的请求会被该 TCP proxy filter 处理，由于 BlackHoleCluster 中没有配置 upstteam host，请求实际上会被丢弃。
-
+如果 outboundTrafficPolicy 设置为 ALLOW\_ANY：这表明网格允许发向任何外部服务的请求，无论该服务是否在 Pilot 的服务注册表中。在该策略下，Pilot 将会在下发给 Envoy 的 VirtualOutbound listener 加入一个 upstream cluster 为 PassthroughCluster 的 TCP proxy filter，找不到匹配端口 listener 的请求会被该 TCP proxy filter 处理，请求将会被发送到其 IP 头中的原始目的地地址。  
+如果 outboundTrafficPolicy 设置为 REGISTRY\_ONLY：只允许发向 Pilot 服务注册表中存在的服务的对外请求。在该策略下，Pilot 将会在下发给 Enovy 的 VirtualOutbound listener 加入一个 upstream cluster 为 BlackHoleCluster 的 TCP proxy filter，找不到匹配端口 listener 的请求会被该 TCP proxy filter 处理，由于 BlackHoleCluster 中没有配置 upstteam host，请求实际上会被丢弃。
 
 ### Istio 中的 sidecar 注入
 
