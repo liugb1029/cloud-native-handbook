@@ -64,9 +64,7 @@ Pilot Design Overview \(来自 \[Istio old\_pilot\_repo\]\([https://github.com/i
 
 对应的 docker 镜像为`gcr.io/istio-release/pilot`,进程为`pilot-discovery`，该组件的功能包括：
 
-* 从
-  `Service provider`
-  （如kubernetes或者consul）中获取服务信息
+* 从`Service provider`（如kubernetes或者consul）中获取服务信息
 * 从 K8S API Server 中获取流量规则（K8S CRD Resource）
 * 将服务信息和流量规则转化为数据平面可以理解的格式，通过标准的数据平面 API 下发到网格中的各个 sidecar 中
 
