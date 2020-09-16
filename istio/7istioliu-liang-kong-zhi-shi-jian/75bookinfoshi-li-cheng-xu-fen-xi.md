@@ -595,6 +595,15 @@ ADDRESS         PORT     TYPE
 NOTE: This output only contains routes loaded via RDS.
 NAME     VIRTUAL HOSTS
 9080     5
+
+[root@master envoy]# istioctl pc route productpage-v1-7f9d9c48c8-thvxq --name 9080 -ojson
+
+[root@master envoy]# istioctl pc endpoint productpage-v1-7f9d9c48c8-thvxq --cluster 'outbound|9080||reviews.default.svc.cluster.local'
+ENDPOINT             STATUS      OUTLIER CHECK     CLUSTER
+10.244.0.63:9080     HEALTHY     OK                outbound|9080||reviews.default.svc.cluster.local
+10.244.1.24:9080     HEALTHY     OK                outbound|9080||reviews.default.svc.cluster.local
+10.244.2.24:9080     HEALTHY     OK                outbound|9080||reviews.default.svc.cluster.local
+[root@master envoy]#
 ```
 
 ##### VirtualInbound Listener {#virtualinbound-listener}
