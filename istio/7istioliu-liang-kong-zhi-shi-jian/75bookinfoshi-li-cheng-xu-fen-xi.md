@@ -206,13 +206,89 @@ kubectl exec -it productpage-v1-7f9d9c48c8-xxq6f -c istio-proxy curl http://127.
 
 从 reviews 服务对应的[cluster](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#cluster)配置中可以看到，其类型为 EDS，即表示该[cluster](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#cluster)的 endpoint 来自于动态发现，动态发现中 eds\_config 则指向了ads，最终指向 static resource 中配置的 xds-grpc[cluster](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#cluster)，即[Pilot](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#pilot)的地址。
 
+可以通过Pilot的调试接口来获取该cluster的endpoint：
 
+```
+curl http://10.244.2.14:15014/debug/edsz > pilot_eds_dump
+```
 
+从导出的文件内容可以看到，reviews cluster配置类3个endpoint地址，是reviews的pod ip。
 
-
-可以通过Pilot的调试接口
-
-
+```
+{
+  "clusterName": "outbound|9080||reviews.default.svc.cluster.local",
+  "endpoints": [
+    {
+      "lbEndpoints": [
+        {
+          "endpoint": {
+            "address": {
+              "socketAddress": {
+                "address": "10.244.0.63",
+                "portValue": 9080
+              }
+            }
+          },
+          "metadata": {
+            "filterMetadata": {
+              "envoy.transport_socket_match": {
+                  "tlsMode": "istio"
+                },
+              "istio": {
+                  "uid": "kubernetes://reviews-v3-57fcb844b7-qd44m.default"
+                }
+            }
+          },
+          "loadBalancingWeight": 1
+        },
+        {
+          "endpoint": {
+            "address": {
+              "socketAddress": {
+                "address": "10.244.1.24",
+                "portValue": 9080
+              }
+            }
+          },
+          "metadata": {
+            "filterMetadata": {
+              "envoy.transport_socket_match": {
+                  "tlsMode": "istio"
+                },
+              "istio": {
+                  "uid": "kubernetes://reviews-v1-d5b6b667f-tkfhw.default"
+                }
+            }
+          },
+          "loadBalancingWeight": 1
+        },
+        {
+          "endpoint": {
+            "address": {
+              "socketAddress": {
+                "address": "10.244.2.24",
+                "portValue": 9080
+              }
+            }
+          },
+          "metadata": {
+            "filterMetadata": {
+              "envoy.transport_socket_match": {
+                  "tlsMode": "istio"
+                },
+              "istio": {
+                  "uid": "kubernetes://reviews-v2-784495d9bc-9lpkb.default"
+                }
+            }
+          },
+          "loadBalancingWeight": 1
+        }
+      ],
+      "loadBalancingWeight": 3
+    }
+  ]
+}]
+```
 
 ### Istio 中的 sidecar 注入
 
