@@ -526,7 +526,6 @@ filterchain 中的第一个 filter chain 中是一个 upstream [cluster](https:/
         "useOriginalDst": true
     }
 ]
-    
 ```
 
 ##### Outbound Listener {#outbound-listener}
@@ -591,7 +590,14 @@ ADDRESS         PORT     TYPE
                                 },
                                 "routeConfigName": "9080"
                             },
+                            
+[root@master envoy]# istioctl pc route productpage-v1-7f9d9c48c8-thvxq --name 9080
+NOTE: This output only contains routes loaded via RDS.
+NAME     VIRTUAL HOSTS
+9080     5
 ```
+
+### 
 
 ### Istio 中的 sidecar 注入
 
