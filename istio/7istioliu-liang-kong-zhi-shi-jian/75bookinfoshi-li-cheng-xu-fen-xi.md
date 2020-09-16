@@ -609,6 +609,13 @@ NAME     VIRTUAL HOSTS
 
 这部分配置是[Envoy](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#envoy)的 HTTP 路由规则。在前面 listener 的分析中，我们看到 Outbound listener 是以端口为最小粒度来进行处理的，而不同的服务可能采用了相同的端口，因此需要通过 Route 来进一步对发向同一目的端口的不同服务的请求进行区分和处理。[Istio](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#istio)在下发给[sidecar](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#sidecar)的缺省路由规则中为每个端口设置了一个路由规则，然后再根据 host 来对请求进行路由分发。
 
+```
+[root@master envoy]# istioctl pc route productpage-v1-7f9d9c48c8-thvxq --name 9080
+NOTE: This output only contains routes loaded via RDS.
+NAME     VIRTUAL HOSTS
+9080     5
+```
+
 ### Istio 中的 sidecar 注入
 
 [Istio](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#istio)中提供了以下两种[sidecar](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#sidecar)注入方式：
