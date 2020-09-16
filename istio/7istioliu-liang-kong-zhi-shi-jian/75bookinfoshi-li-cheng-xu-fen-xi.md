@@ -423,110 +423,110 @@ Envoy 是如何做到按请求的目的端口进行分发的呢？ 从下面 Vir
 
 下图是 bookinfo 例子中 productpage 服务中 Enovy Proxy 的 Virutal Outbound Listener 配置。由于 outboundTrafficPolicy 的默认配置为`ALLOW_ANY`，因此 listener 的 filterchain 中第二个 filter chain 中是一个 upstream[cluster](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#cluster)为 PassthroughCluster 的 TCP proxy filter。注意该 filter 没有 filter\_chain\_match 匹配条件，因此如果进入该 listener 的请求在配置中找不到匹配其目的端口的 listener，就会缺省进入该 filter 进行处理。
 
-filterchain 中的第一个 filter chain 中是一个 upstream[cluster](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#cluster)为 BlackHoleCluster 的 TCP proxy filter，该 filter 设置了 filter\_chain\_match 匹配条件，只有发向 10.40.0.18 这个 IP 的出向请求才会进入该 filter 处理。10.40.0.18 是 productpage 服务自身的IP地址。该 filter 的目的是为了防止服务向自己发送请求可能导致的死循环。
+filterchain 中的第一个 filter chain 中是一个 upstream [cluster](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#cluster)为 BlackHoleCluster 的 TCP proxy filter，该 filter 设置了 filter\_chain\_match 匹配条件，只有发向 10.244.1.25 这个 IP 的出向请求才会进入该 filter 处理。10.244.1.25 是 productpage 服务自身的IP地址。该 filter 的目的是为了防止服务向自己发送请求可能导致的死循环。
 
 ```
-{
-     "version_info": "2020-09-16T03:34:38Z/32",
-     "listener": {
-      "name": "virtualOutbound",
-      "address": {
-       "socket_address": {
-        "address": "0.0.0.0",
-        "port_value": 15001
-       }
-      },
-      "filter_chains": [
-       {
-        "filter_chain_match": {
-         "prefix_ranges": [
-          {
-           "address_prefix": "10.244.1.25",
-           "prefix_len": 32
-          }
-         ]
+[root@master envoy]# istioctl pc listener productpage-v1-7f9d9c48c8-thvxq --port 15001 -ojson
+[
+    {
+        "name": "virtualOutbound",
+        "address": {
+            "socketAddress": {
+                "address": "0.0.0.0",
+                "portValue": 15001
+            }
         },
-        "filters": [
-         {
-          "name": "envoy.tcp_proxy",
-          "typed_config": {
-           "@type": "type.googleapis.com/envoy.config.filter.network.tcp_proxy.v2.TcpProxy",
-           "stat_prefix": "BlackHoleCluster",
-           "cluster": "BlackHoleCluster"
-          }
-         }
-        ]
-       },
-       {
-        "filters": [
-         {
-          "name": "mixer",
-          "typed_config": {
-           "@type": "type.googleapis.com/istio.mixer.v1.config.client.TcpClientConfig",
-           "transport": {
-            "network_fail_policy": {
-             "policy": "FAIL_CLOSE",
-             "base_retry_wait": "0.080s",
-             "max_retry_wait": "1s"
-            },
-            "check_cluster": "outbound|9091||istio-policy.istio-system.svc.cluster.local",
-            "report_cluster": "outbound|9091||istio-telemetry.istio-system.svc.cluster.local",
-            "report_batch_max_entries": 100,
-            "report_batch_max_time": "1s"
-           },
-           "mixer_attributes": {
-            "attributes": {
-             "context.proxy_version": {
-              "string_value": "1.4.10"
-             },
-             "context.reporter.kind": {
-              "string_value": "outbound"
-             },
-             "context.reporter.uid": {
-              "string_value": "kubernetes://productpage-v1-7f9d9c48c8-thvxq.default"
-             },
-             "destination.service.host": {
-              "string_value": "PassthroughCluster"
-             },
-             "destination.service.name": {
-              "string_value": "PassthroughCluster"
-             },
-             "source.namespace": {
-              "string_value": "default"
-             },
-             "source.uid": {
-              "string_value": "kubernetes://productpage-v1-7f9d9c48c8-thvxq.default"
-             }
-            }
-           },
-           "disable_check_calls": true
-          }
-         },
-         {
-          "name": "envoy.tcp_proxy",
-          "typed_config": {
-           "@type": "type.googleapis.com/envoy.config.filter.network.tcp_proxy.v2.TcpProxy",
-           "stat_prefix": "PassthroughCluster",
-           "access_log": [
+        "filterChains": [
             {
-             "name": "envoy.file_access_log",
-             "typed_config": {
-              "@type": "type.googleapis.com/envoy.config.accesslog.v2.FileAccessLog",
-              "path": "/dev/stdout",
-              "format": "[%START_TIME%] \"%REQ(:METHOD)% %REQ(X-ENVOY-ORIGINAL-PATH?:PATH)% %PROTOCOL%\" %RESPONSE_CODE% %RESPONSE_FLAGS% \"%DYNAMIC_METADATA(istio.mixer:status)%\" \"%UPSTREAM_TRANSPORT_FAILURE_REASON%\" %BYTES_RECEIVED% %BYTES_SENT% %DURATION% %RESP(X-ENVOY-UPSTREAM-SERVICE-TIME)% \"%REQ(X-FORWARDED-FOR)%\" \"%REQ(USER-AGENT)%\" \"%REQ(X-REQUEST-ID)%\" \"%REQ(:AUTHORITY)%\" \"%UPSTREAM_HOST%\" %UPSTREAM_CLUSTER% %UPSTREAM_LOCAL_ADDRESS% %DOWNSTREAM_LOCAL_ADDRESS% %DOWNSTREAM_REMOTE_ADDRESS% %REQUESTED_SERVER_NAME% %ROUTE_NAME%\n"
-             }
+                "filterChainMatch": {
+                    "prefixRanges": [
+                        {
+                            "addressPrefix": "10.244.1.25",
+                            "prefixLen": 32
+                        }
+                    ]
+                },
+                "filters": [
+                    {
+                        "name": "envoy.tcp_proxy",
+                        "typedConfig": {
+                            "@type": "type.googleapis.com/envoy.config.filter.network.tcp_proxy.v2.TcpProxy",
+                            "statPrefix": "BlackHoleCluster",
+                            "cluster": "BlackHoleCluster"
+                        }
+                    }
+                ]
+            },
+            {
+                "filters": [
+                    {
+                        "name": "mixer",
+                        "typedConfig": {
+                            "@type": "type.googleapis.com/istio.mixer.v1.config.client.TcpClientConfig",
+                            "transport": {
+                                "networkFailPolicy": {
+                                    "policy": "FAIL_CLOSE",
+                                    "baseRetryWait": "0.080s",
+                                    "maxRetryWait": "1s"
+                                },
+                                "checkCluster": "outbound|9091||istio-policy.istio-system.svc.cluster.local",
+                                "reportCluster": "outbound|9091||istio-telemetry.istio-system.svc.cluster.local",
+                                "reportBatchMaxEntries": 100,
+                                "reportBatchMaxTime": "1s"
+                            },
+                            "mixerAttributes": {
+                                "attributes": {
+                                    "context.proxy_version": {
+                                        "stringValue": "1.4.10"
+                                    },
+                                    "context.reporter.kind": {
+                                        "stringValue": "outbound"
+                                    },
+                                    "context.reporter.uid": {
+                                        "stringValue": "kubernetes://productpage-v1-7f9d9c48c8-thvxq.default"
+                                    },
+                                    "destination.service.host": {
+                                        "stringValue": "PassthroughCluster"
+                                    },
+                                    "destination.service.name": {
+                                        "stringValue": "PassthroughCluster"
+                                    },
+                                    "source.namespace": {
+                                        "stringValue": "default"
+                                    },
+                                    "source.uid": {
+                                        "stringValue": "kubernetes://productpage-v1-7f9d9c48c8-thvxq.default"
+                                    }
+                                }
+                            },
+                            "disableCheckCalls": true
+                        }
+                    },
+                    {
+                        "name": "envoy.tcp_proxy",
+                        "typedConfig": {
+                            "@type": "type.googleapis.com/envoy.config.filter.network.tcp_proxy.v2.TcpProxy",
+                            "statPrefix": "PassthroughCluster",
+                            "cluster": "PassthroughCluster",
+                            "accessLog": [
+                                {
+                                    "name": "envoy.file_access_log",
+                                    "typedConfig": {
+                                        "@type": "type.googleapis.com/envoy.config.accesslog.v2.FileAccessLog",
+                                        "path": "/dev/stdout",
+                                        "format": "[%START_TIME%] \"%REQ(:METHOD)% %REQ(X-ENVOY-ORIGINAL-PATH?:PATH)% %PROTOCOL%\" %RESPONSE_CODE% %RESPONSE_FLAGS% \"%DYNAMIC_METADATA(istio.mixer:status)%\" \"%UPSTREAM_TRANSPORT_FAILURE_REASON%\" %BYTES_RECEIVED% %BYTES_SENT% %DURATION% %RESP(X-ENVOY-UPSTREAM-SERVICE-TIME)% \"%REQ(X-FORWARDED-FOR)%\" \"%REQ(USER-AGENT)%\" \"%REQ(X-REQUEST-ID)%\" \"%REQ(:AUTHORITY)%\" \"%UPSTREAM_HOST%\" %UPSTREAM_CLUSTER% %UPSTREAM_LOCAL_ADDRESS% %DOWNSTREAM_LOCAL_ADDRESS% %DOWNSTREAM_REMOTE_ADDRESS% %REQUESTED_SERVER_NAME% %ROUTE_NAME%\n"
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                ]
             }
-           ],
-           "cluster": "PassthroughCluster"
-          }
-         }
-        ]
-       }
-      ],
-      "use_original_dst": true
-     },
-     "last_updated": "2020-09-16T03:34:46.401Z"
-    },
+        ],
+        "useOriginalDst": true
+    }
+]
+    
 ```
 
 ##### Outbound Listener {#outbound-listener}
