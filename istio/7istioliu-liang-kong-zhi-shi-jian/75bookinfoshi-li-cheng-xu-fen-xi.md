@@ -206,6 +206,14 @@ kubectl exec -it productpage-v1-7f9d9c48c8-xxq6f -c istio-proxy curl http://127.
 
 从 reviews 服务对应的[cluster](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#cluster)配置中可以看到，其类型为 EDS，即表示该[cluster](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#cluster)的 endpoint 来自于动态发现，动态发现中 eds\_config 则指向了ads，最终指向 static resource 中配置的 xds-grpc[cluster](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#cluster)，即[Pilot](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#pilot)的地址。
 
+
+
+
+
+可以通过Pilot的调试接口
+
+
+
 ### Istio 中的 sidecar 注入
 
 [Istio](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#istio)中提供了以下两种[sidecar](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#sidecar)注入方式：
