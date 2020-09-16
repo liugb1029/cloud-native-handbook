@@ -590,14 +590,24 @@ ADDRESS         PORT     TYPE
                                 },
                                 "routeConfigName": "9080"
                             },
-                            
+
 [root@master envoy]# istioctl pc route productpage-v1-7f9d9c48c8-thvxq --name 9080
 NOTE: This output only contains routes loaded via RDS.
 NAME     VIRTUAL HOSTS
 9080     5
 ```
 
-### 
+##### VirtualInbound Listener {#virtualinbound-listener}
+
+在较早的版本中，[Istio](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#istio)采用同一个 VirtualListener 在端口 15001 上同时处理入向和出向的请求。该方案存在一些潜在的问题，例如可能会导致出现死循环，参见[这个 PR](https://github.com/istio/istio/pull/15713)。在 1.4 版本之后，[Istio](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#istio)为[Envoy](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#envoy)单独创建了 一个 VirtualInboundListener，在 15006 端口监听入向请求，原来的 15001 端口只用于处理出向请求。
+
+另外一个变化是当 VirtualInboundListener 接收到请求后，将直接在 VirtualInboundListener 采用一系列 filterChain 对入向请求进行处理，而不是像 VirtualOutboundListener 一样分发给其它独立的 listener 进行处理。
+
+这样修改后，[Envoy](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#envoy)配置中入向和出向的请求处理流程被完全拆分开，请求处理流程更为清晰，可以避免由于配置导致的一些潜在错误。
+
+#### Routes {#routes}
+
+这部分配置是[Envoy](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#envoy)的 HTTP 路由规则。在前面 listener 的分析中，我们看到 Outbound listener 是以端口为最小粒度来进行处理的，而不同的服务可能采用了相同的端口，因此需要通过 Route 来进一步对发向同一目的端口的不同服务的请求进行区分和处理。[Istio](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#istio)在下发给[sidecar](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#sidecar)的缺省路由规则中为每个端口设置了一个路由规则，然后再根据 host 来对请求进行路由分发。
 
 ### Istio 中的 sidecar 注入
 
