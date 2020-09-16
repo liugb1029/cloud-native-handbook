@@ -529,7 +529,17 @@ filterchain 中的第一个 filter chain 中是一个 upstream[cluster](https://
     },
 ```
 
-### 
+##### Outbound Listener {#outbound-listener}
+
+[Envoy](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#envoy)为网格中的外部服务按端口创建多个 Outbound listener，以用于处理出向请求。bookinfo 示例程序中使用了9080作为微服务的业务端口，因此我们这里主要分析9080这个业务端口的 listener。和其他所有 Outbound listener 一样，该 listener 配置了"bind\_to\_port”: false 属性，因此该 listener 没有被绑定到 tcp 端口上，其接收到的所有请求都转发自15001端口的 Virtual listener。
+
+该listener 的名称为0.0.0.0\_9080,因此会匹配发向任意 IP 的9080端口的请求，bookinfo 程序中的 productpage,revirews,ratings,details 四个服务都使用了9080端口，那么[Envoy](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#envoy)如何区别处理这四个服务呢？
+
+> 备注： 根据业务逻辑，实际上 productpage 并不会调用 ratings 服务，但[Istio](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#istio)并不知道各个业务之间会如何调用，因此将所有的服务信息都下发到了[Envoy](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#envoy)中。这样做对[Envoy](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#envoy)的内存占用和效率有一定影响，如果希望去掉[Envoy](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#envoy)配置中的无用数据，可以通过[sidecar](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#sidecar)[CRD](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#crd)对[Envoy](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#envoy)的 ingress 和 egress[service](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#service)配置进行调整。
+
+首先，iptables 拦截到 productpage 向外发出的 HTTP 请求，并转发到同一[pod](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#pod)中的[Envoy](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#envoy)[sidecar](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#sidecar)监听的 15001 virtualOutbound listener 进行处理。[Envoy](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#envoy)根据目的端口匹配到`0.0.0.0_9080`这个 Outbound listener，并转交给该 listener。
+
+如下面的配置所示，当`0.0.0.0_9080`接收到出向请求后，并不会直接发送到一个 downstream[cluster](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#cluster)，而是配置了一个路由规则 9080，在该路由规则中会根据不同的请求目的地对请求进行处理。
 
 ### 
 
