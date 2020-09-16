@@ -72,22 +72,11 @@ Pilot Design Overview \(来自 \[Istio old\_pilot\_repo\]\([https://github.com/i
 
 提供 Pilot 相关的 CRD Resource 的增、删、改、查。和 Pilot 相关的`CRD`有以下几种：
 
-* Virtualservice
-  : 用于定义路由规则，如根据来源或 Header 制定规则，或在不同服务版本之间分拆流量。
-* DestinationRule
-  : 定义目的服务的配置策略以及可路由子集。策略包括断路器、负载均衡以及 TLS 等。
-* ServiceEntry
-  : 用
-  [ServiceEntry](https://istio.io/docs/reference/config/istio.networking.v1alpha3/#ServiceEntry)
-  可以向 Istio 中加入附加的服务条目，以使网格内可以向 Istio 服务网格之外的服务发出请求。
-* Gateway
-  : 为网格配置网关，以允许一个服务可以被网格外部访问。
-* EnvoyFilter
-  : 可以为 Envoy 配置过滤器。由于 Envoy 已经支持
-  `Lua`
-  过滤器，因此可以通过
-  `EnvoyFilter`
-  启用 Lua 过滤器，动态改变 Envoy 的过滤链行为。我之前一直在考虑如何才能动态扩展 Envoy 的能力，EnvoyFilter 提供了很灵活的扩展性。
+* Virtualservice: 用于定义路由规则，如根据来源或 Header 制定规则，或在不同服务版本之间分拆流量。
+* DestinationRule: 定义目的服务的配置策略以及可路由子集。策略包括断路器、负载均衡以及 TLS 等。
+* ServiceEntry: 用[ServiceEntry](https://istio.io/docs/reference/config/istio.networking.v1alpha3/#ServiceEntry)可以向 Istio 中加入附加的服务条目，以使网格内可以向 Istio 服务网格之外的服务发出请求。
+* Gateway: 为网格配置网关，以允许一个服务可以被网格外部访问。
+* EnvoyFilter: 可以为 Envoy 配置过滤器。由于 Envoy 已经支持`Lua`过滤器，因此可以通过`EnvoyFilter`启用 Lua 过滤器，动态改变 Envoy 的过滤链行为。我之前一直在考虑如何才能动态扩展 Envoy 的能力，EnvoyFilter 提供了很灵活的扩展性。
 
 ### 数据平面组件 {#数据平面组件}
 
