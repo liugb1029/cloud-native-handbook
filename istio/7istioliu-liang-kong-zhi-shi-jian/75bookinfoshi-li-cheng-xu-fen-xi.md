@@ -541,7 +541,57 @@ filterchain 中的第一个 filter chain 中是一个 upstream[cluster](https://
 
 如下面的配置所示，当`0.0.0.0_9080`接收到出向请求后，并不会直接发送到一个 downstream[cluster](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#cluster)，而是配置了一个路由规则 9080，在该路由规则中会根据不同的请求目的地对请求进行处理。
 
-### 
+```
+[root@master envoy]# istioctl pc listener productpage-v1-7f9d9c48c8-thvxq --port 9080
+ADDRESS         PORT     TYPE
+10.244.1.25     9080     HTTP
+0.0.0.0         9080     TCP
+[root@master envoy]#
+[root@master envoy]# istioctl pc listener productpage-v1-7f9d9c48c8-thvxq --port 9080 --type tcp  -ojson
+[
+    {
+        "name": "0.0.0.0_9080",
+        "address": {
+            "socketAddress": {
+                "address": "0.0.0.0",
+                "portValue": 9080
+            }
+        },
+        "filterChains": [
+            {
+                "filterChainMatch": {
+                    "prefixRanges": [
+                        {
+                            "addressPrefix": "10.244.1.25",
+                            "prefixLen": 32
+                        }
+                    ]
+                },
+                "filters": [
+                    {
+                        "name": "envoy.tcp_proxy",
+                        "typedConfig": {
+                            "@type": "type.googleapis.com/envoy.config.filter.network.tcp_proxy.v2.TcpProxy",
+                            "statPrefix": "BlackHoleCluster",
+                            "cluster": "BlackHoleCluster"
+                        }
+                    }
+                ]
+            },
+            {
+                "filters": [
+                    {
+                        "name": "envoy.http_connection_manager",
+                        "typedConfig": {
+                            "@type": "type.googleapis.com/envoy.config.filter.network.http_connection_manager.v2.HttpConnectionManager",
+                            "statPrefix": "outbound_0.0.0.0_9080",
+                            "rds": {
+                                "configSource": {
+                                    "ads": {}
+                                },
+                                "routeConfigName": "9080"
+                            },
+```
 
 ### Istio 中的 sidecar 注入
 
