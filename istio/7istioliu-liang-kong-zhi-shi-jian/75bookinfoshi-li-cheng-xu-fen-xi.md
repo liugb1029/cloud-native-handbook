@@ -369,36 +369,40 @@ curl http://10.244.2.14:15014/debug/edsz > pilot_eds_dump
 
 这是一个特殊的 cluster ，其中并没有配置后端处理请求的 host。如其名字所表明的一样，请求进入该 cluster 后如同进入了一个黑洞，将被丢弃掉，而不是发向一个 upstream host。
 
-{  
-     "version\_info": "2020-03-11T08:13:39Z/22",  
-     "cluster": {  
-      "@type": "type.googleapis.com/envoy.api.v2.Cluster",  
-      "name": "BlackHoleCluster",  
-      "type": "STATIC",  
-      "connect\_timeout": "1s",  
-      "filters": \[\]  
-     },  
-     "last\_updated": "2020-03-11T08:14:04.665Z"
+```
+{
+     "version_info": "2020-03-11T08:13:39Z/22",
+     "cluster": {
+      "@type": "type.googleapis.com/envoy.api.v2.Cluster",
+      "name": "BlackHoleCluster",
+      "type": "STATIC",
+      "connect_timeout": "1s",
+      "filters": []
+     },
+     "last_updated": "2020-03-11T08:14:04.665Z"
+```
 
 #### PassthroughCluster
 
 该 cluster 的 type 被设置为 ORIGINAL\_DST 类型， 表明任何发向该 cluster 的请求都会被直接发送到其请求中的原始目地的，Envoy 不会对请求进行重新路由。
 
-{  
- "version\_info": "2020-03-11T08:13:39Z/22",  
- "cluster": {  
-  "@type": "type.googleapis.com/envoy.api.v2.Cluster",  
-  "name": "PassthroughCluster",  
-  "type": "ORIGINAL\_DST",  
-  "connect\_timeout": "1s",  
-  "lb\_policy": "CLUSTER\_PROVIDED",  
-  "circuit\_breakers": {  
-   "thresholds": \[\]  
-  },  
-  "filters": \[\]  
- },  
- "last\_updated": "2020-03-11T08:14:04.666Z"  
+```
+{
+ "version_info": "2020-03-11T08:13:39Z/22",
+ "cluster": {
+  "@type": "type.googleapis.com/envoy.api.v2.Cluster",
+  "name": "PassthroughCluster",
+  "type": "ORIGINAL_DST",
+  "connect_timeout": "1s",
+  "lb_policy": "CLUSTER_PROVIDED",
+  "circuit_breakers": {
+   "thresholds": []
+  },
+  "filters": []
+ },
+ "last_updated": "2020-03-11T08:14:04.666Z"
 }
+```
 
 #### Listeners
 
