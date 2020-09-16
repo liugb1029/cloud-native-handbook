@@ -35,4 +35,5 @@
     * [7.4Istio流量管理实现机制](istio/7istioliu-liang-kong-zhi-shi-jian/74istioliu-liang-guan-li-shi-xian-ji-zhi.md)
     * [7.5Bookinfo示例程序分析](istio/7istioliu-liang-kong-zhi-shi-jian/75bookinfoshi-li-cheng-xu-fen-xi.md)
     * [7.6istioctl命令行工具](istio/7istioliu-liang-kong-zhi-shi-jian/76istioctlming-ling-xing-gong-ju.md)
+    * 7.7Bookinfo 端到端调用分析
 
