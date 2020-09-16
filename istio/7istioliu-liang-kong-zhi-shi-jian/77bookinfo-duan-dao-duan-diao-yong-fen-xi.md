@@ -119,7 +119,8 @@ Productpage 发起对 reviews 服务的调用：
 ]
 ```
 
-1. 根据`0.0.0.0_9080`listener 的`http_connection_manager`filter 配置，该请求采用 9080 route 进行分发。
-2. 
+5. 根据`0.0.0.0_9080`listener 的`http_connection_manager`filter 配置，该请求采用 9080 route 进行分发。
+
+1. 
 
 
