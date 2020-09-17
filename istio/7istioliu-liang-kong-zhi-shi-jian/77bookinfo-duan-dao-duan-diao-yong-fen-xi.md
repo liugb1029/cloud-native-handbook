@@ -197,11 +197,11 @@ ENDPOINT             STATUS      OUTLIER CHECK     CLUSTER
 
 8.请求被转发到其中一个 endpoint`10.244.0.63`，即`reviews-v1`所在的[Pod](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#pod)。
 
-9. 然后该请求被 iptable 规则拦截，重定向到本地的 15006 端口。
+9.然后该请求被 iptable 规则拦截，重定向到本地的 15006 端口。
 
 10.在 15006 端口上监听的 VirtualInbound listener 收到了该请求。
 
-11. 根据匹配条件，请求被 VirtualInbound listener 内部配置的 Http connection manager filter 处理，该 filter 设置的路由配置为将其发送给`inbound|9080|http|reviews.default.svc.cluster.local`这个 inbound[cluster](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#cluster)。
+11.根据匹配条件，请求被 VirtualInbound listener 内部配置的 Http connection manager filter 处理，该 filter 设置的路由配置为将其发送给`inbound|9080|http|reviews.default.svc.cluster.local`这个 inbound[cluster](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#cluster)。
 
 ```
 [root@master envoy]# istioctl pc listeners reviews-v1-d5b6b667f-tkfhw  --port 15006 -ojson
@@ -287,6 +287,4 @@ ENDPOINT             STATUS      OUTLIER CHECK     CLUSTER
 ```
 
 13.请求被转发到`127.0.0.1:9080`，即 reviews 服务进行业务处理。
-
-
 
