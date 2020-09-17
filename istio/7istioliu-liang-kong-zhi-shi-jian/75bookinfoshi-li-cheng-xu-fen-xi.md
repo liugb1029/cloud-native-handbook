@@ -1,16 +1,16 @@
 下面我们以`Bookinfo`为例对 Istio 中的流量管理实现机制，以及控制平面和数据平面的交互进行进一步分析。
 
-### Bookinfo 程序结构 {#bookinfo-程序结构}
+### Bookinfo 程序结构 
 
 下图显示了 Bookinfo 示例程序中各个组件的 IP 地址，端口和调用关系，以用于后续的分析。
 
 ![](https://hugo-picture.oss-cn-beijing.aliyuncs.com/images/fONobF.jpg)
 
-### xDS 接口调试方法 {#xds-接口调试方法}
+### xDS 接口调试方法
 
 首先我们看看如何对 xDS 接口的相关数据进行查看和分析。Envoy v2 接口采用了`gRPC`，由于 gRPC 是基于二进制的 RPC 协议，无法像 V1 的`REST`接口一样通过 curl 和浏览器进行进行分析。但我们还是可以通过 Pilot 和 Envoy 的调试接口查看 xDS 接口的相关数据。
 
-#### Pilot 调试方法 {#pilot-调试方法}
+#### Pilot 调试方法
 
 Pilot 在15014端口提供了下述[调试接口](https://github.com/istio/istio/tree/master/pilot/pkg/proxy/envoy/v2)下述方法查看 xDS 接口相关数据，同时15014也提供metrics接口
 
@@ -33,7 +33,7 @@ curl  $PILOT/debug/cdsz
 http://10.244.2.86:15014/metrics
 ```
 
-#### Envoy 调试方法 {#envoy-调试方法}
+#### Envoy 调试方法
 
 Envoy 提供了管理接口，缺省为 localhost 的`15000`端口，可以获取 listener，cluster 以及完整的配置数据导出功能。
 
@@ -186,13 +186,13 @@ kubectl exec -it productpage-v1-7f9d9c48c8-xxq6f -c istio-proxy curl http://127.
 
 下面我们对该配置文件中和流量路由相关的配置一一进行详细分析。
 
-#### Bootstrap {#bootstrap}
+#### Bootstrap 
 
 从名字可以看出这是[Envoy](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#envoy)的初始化配置，打开该节点，可以看到其中的内容和[envoy](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#envoy)-rev0.json 是一致的，这里不再赘述。 需要注意的是在 bootstrap 部分配置的一些内容也会被用于其他部分，例如 clusters 部分就包含了 bootstrap 中定义的一些静态[cluster](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#cluster)资源。
 
 ![](/image/Istio/envoy-bootstrap.png)
 
-#### Clusters {#clusters}
+#### Clusters
 
 这部分配置定义了[Envoy](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#envoy)中所有的[cluster](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#cluster)，即服务集群，[cluster](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#cluster)中包含一个到多个 endpoint，每个 endpoint 都可以提供服务，[Envoy](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#envoy)根据负载均衡算法将请求发送到这些 endpoint 中。
 
@@ -200,7 +200,7 @@ kubectl exec -it productpage-v1-7f9d9c48c8-xxq6f -c istio-proxy curl http://127.
 
 其中 dynamic [cluster](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#cluster)又分为以下几类：
 
-##### Outbound Cluster {#outbound-cluster}
+##### Outbound Cluster
 
 这部分的[cluster](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#cluster)占了绝大多数，该类[cluster](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#cluster)对应于[Envoy](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#envoy)所在节点的外部服务。以 reviews 为例，对于 productpage 来说,reviews 是一个外部服务，因此其[cluster](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#cluster)名称中包含 outbound 字样。
 
@@ -528,7 +528,7 @@ filterchain 中的第一个 filter chain 中是一个 upstream [cluster](https:/
 ]
 ```
 
-##### Outbound Listener {#outbound-listener}
+##### Outbound Listener 
 
 [Envoy](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#envoy)为网格中的外部服务按端口创建多个 Outbound listener，以用于处理出向请求。bookinfo 示例程序中使用了9080作为微服务的业务端口，因此我们这里主要分析9080这个业务端口的 listener。和其他所有 Outbound listener 一样，该 listener 配置了"bind\_to\_port”: false 属性，因此该 listener 没有被绑定到 tcp 端口上，其接收到的所有请求都转发自15001端口的 Virtual listener。
 
@@ -606,7 +606,7 @@ ENDPOINT             STATUS      OUTLIER CHECK     CLUSTER
 [root@master envoy]#
 ```
 
-##### VirtualInbound Listener {#virtualinbound-listener}
+##### VirtualInbound Listener
 
 在较早的版本中，[Istio](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#istio)采用同一个 VirtualListener 在端口 15001 上同时处理入向和出向的请求。该方案存在一些潜在的问题，例如可能会导致出现死循环，参见[这个 PR](https://github.com/istio/istio/pull/15713)。在 1.4 版本之后，[Istio](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#istio)为[Envoy](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#envoy)单独创建了 一个 VirtualInboundListener，在 15006 端口监听入向请求，原来的 15001 端口只用于处理出向请求。
 
@@ -614,7 +614,7 @@ ENDPOINT             STATUS      OUTLIER CHECK     CLUSTER
 
 这样修改后，[Envoy](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#envoy)配置中入向和出向的请求处理流程被完全拆分开，请求处理流程更为清晰，可以避免由于配置导致的一些潜在错误。
 
-#### Routes {#routes}
+#### Routes
 
 这部分配置是[Envoy](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#envoy)的 HTTP 路由规则。在前面 listener 的分析中，我们看到 Outbound listener 是以端口为最小粒度来进行处理的，而不同的服务可能采用了相同的端口，因此需要通过 Route 来进一步对发向同一目的端口的不同服务的请求进行区分和处理。[Istio](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#istio)在下发给[sidecar](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#sidecar)的缺省路由规则中为每个端口设置了一个路由规则，然后再根据 host 来对请求进行路由分发。
 

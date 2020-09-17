@@ -2,7 +2,7 @@
 
 ### Kubectl Context and Configuration
 
-### BASH {#bash}
+### BASH 
 
 ```bash
 source <(kubectl completion bash) # setup autocomplete in bash into the current shell, bash-completion package should be installed first.
@@ -18,7 +18,7 @@ alias k=kubectl
 complete -F __start_kubectl k
 ```
 
-### ZSH {#zsh}
+### ZSH 
 
 ```bash
 source <(kubectl completion zsh)  # setup autocomplete in zsh into the current shell
@@ -28,7 +28,7 @@ echo "[[ $commands[kubectl] ]] && source <(kubectl completion zsh)" >> ~/.zshrc 
 
 ### Kubectl Context and Configuration
 
-```
+```bash
 kubectl config view 
 
 kubectl config view # Show Merged kubeconfig settings.
@@ -68,7 +68,7 @@ kubectl config unset users.foo                       # delete user foo
 kubectl apply -f ./my-manifest.yaml
 ```
 
-```
+```bash
 kubectl apply -f ./my-manifest.yaml            # create resource(s)
 kubectl apply -f ./my1.yaml -f ./my2.yaml      # create from multiple files
 kubectl apply -f ./dir                         # create resource(s) in all manifest files in dir
@@ -120,7 +120,7 @@ EOF
 
 ### Viewing, Finding Resources
 
-```
+```bash
 # Get commands with basic output
 # Get commands with basic output
 kubectl get services                          # List all services in the namespace
@@ -194,9 +194,9 @@ kubectl get nodes -o json | jq -c 'path(..)|[.[]|tostring]|join(".")'
 kubectl get pods -o json | jq -c 'path(..)|[.[]|tostring]|join(".")'
 ```
 
-## Updating Resources {#updating-resources}
+## Updating Resources 
 
-```
+```bash
 kubectl set image deployment/frontend www=image:v2               # Rolling update "www" containers of "frontend" deployment, updating the image
 kubectl rollout history deployment/frontend                      # Check the history of deployments including the revision 
 kubectl rollout undo deployment/frontend                         # Rollback to the previous deployment
@@ -221,9 +221,9 @@ kubectl annotate pods my-pod icon-url=http://goo.gl/XXBTWq       # Add an annota
 kubectl autoscale deployment foo --min=2 --max=10                # Auto scale a deployment "foo"
 ```
 
-## Patching Resources {#patching-resources}
+## Patching Resources 
 
-```
+```bash
 # Partially update a node
 kubectl patch node k8s-node-1 -p '{"spec":{"unschedulable":true}}'
 
@@ -240,27 +240,27 @@ kubectl patch deployment valid-deployment  --type json   -p='[{"op": "remove", "
 kubectl patch sa default --type='json' -p='[{"op": "add", "path": "/secrets/1", "value": {"name": "whatever" } }]'
 ```
 
-## Editing Resources {#editing-resources}
+## Editing Resources 
 
 Edit any API resource in your preferred editor.
 
-```
+```bash
 kubectl edit svc/docker-registry                      # Edit the service named docker-registry
 KUBE_EDITOR="nano" kubectl edit svc/docker-registry   # Use an alternative editor
 ```
 
-## Scaling Resources {#scaling-resources}
+## Scaling Resources 
 
-```
+```bash
 kubectl scale --replicas=3 rs/foo                                 # Scale a replicaset named 'foo' to 3
 kubectl scale --replicas=3 -f foo.yaml                            # Scale a resource specified in "foo.yaml" to 3
 kubectl scale --current-replicas=2 --replicas=3 deployment/mysql  # If the deployment named mysql's current size is 2, scale mysql to 3
 kubectl scale --replicas=5 rc/foo rc/bar rc/baz                   # Scale multiple replication controllers
 ```
 
-## Deleting Resources {#deleting-resources}
+## Deleting Resources 
 
-```
+```bash
 kubectl delete -f ./pod.json                                              # Delete a pod using the type and name specified in pod.json
 kubectl delete pod,service baz foo                                        # Delete pods and services with same names "baz" and "foo"
 kubectl delete pods,services -l name=myLabel                              # Delete pods and services with label name=myLabel
@@ -269,9 +269,9 @@ kubectl -n my-ns delete pod,svc --all                                      # Del
 kubectl get pods  -n mynamespace --no-headers=true | awk '/pattern1|pattern2/{print $1}' | xargs  kubectl delete -n mynamespace pod
 ```
 
-## Interacting with running Pods {#interacting-with-running-pods}
+## Interacting with running Pods 
 
-```
+```bash
 kubectl logs my-pod                                 # dump pod logs (stdout)
 kubectl logs -l name=myLabel                        # dump pod logs, with label name=myLabel (stdout)
 kubectl logs my-pod --previous                      # dump pod logs (stdout) for a previous instantiation of a container
@@ -294,9 +294,9 @@ kubectl exec my-pod -c my-container -- ls /         # Run command in existing po
 kubectl top pod POD_NAME --containers               # Show metrics for a given pod and its containers
 ```
 
-## Interacting with Nodes and Cluster {#interacting-with-nodes-and-cluster}
+## Interacting with Nodes and Cluster
 
-```
+```bash
 kubectl cordon my-node                                                # Mark my-node as unschedulable
 kubectl drain my-node                                                 # Drain my-node in preparation for maintenance
 kubectl uncordon my-node                                              # Mark my-node as schedulable
@@ -309,17 +309,17 @@ kubectl cluster-info dump --output-directory=/path/to/cluster-state   # Dump cur
 kubectl taint nodes foo dedicated=special-user:NoSchedule
 ```
 
-### Resource types {#resource-types}
+### Resource types
 
 List all supported resource types along with their shortnames,[API group](https://kubernetes.io/docs/concepts/overview/kubernetes-api/#api-groups), whether they are[namespaced](https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces), and[Kind](https://kubernetes.io/docs/concepts/overview/working-with-objects/kubernetes-objects):
 
-```
+```bash
 kubectl api-resources
 ```
 
 Other operations for exploring API resources:
 
-```
+```bash
 kubectl api-resources --namespaced=true      # All namespaced resources
 kubectl api-resources --namespaced=false     # All non-namespaced resources
 kubectl api-resources -o name                # All resources with simple output (just the resource name)
@@ -327,6 +327,4 @@ kubectl api-resources -o wide                # All resources with expanded (aka 
 kubectl api-resources --verbs=list,get       # All resources that support the "list" and "get" request verbs
 kubectl api-resources --api-group=extensions # All resources in the "extensions" API group
 ```
-
-
 

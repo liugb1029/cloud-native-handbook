@@ -4,25 +4,27 @@
 
 二、查看证书过期时间
 
+```
 kubeadm alpha certs check-expiration​
-
-显示
-
-`​CERTIFICATE      EXPIRES       RESIDUAL TIME   EXTERNALLY MANAGED`
-
-`admin.conf   Oct 13, 2020 08:00 UTC   357d            no`
+# 显示
+CERTIFICATE      EXPIRES       RESIDUAL TIME   EXTERNALLY MANAGED
+admin.conf   Oct 13, 2020 08:00 UTC   357d            no
+```
 
 还剩357天，默认为一年
 
 三、查看当前使用版本
 
-`kubeadm config images list`
-
-`W1022 09:19:08.524437    ......... client version: v1.16.1`
+```
+kubeadm config images list
+W1022 09:19:08.524437    ......... client version: v1.16.1
+```
 
 四、根据上步版本下载源码
 
+```
 git clone --branch v1.16.1 [https://github.com/kubernetes/kubernetes.git​](https://github.com/kubernetes/kubernetes.git​)
+```
 
 五、进入源码目录，查看相关的文件
 
@@ -46,23 +48,30 @@ make WHAT=cmd/kubeadm GOFLAGS=-v
 
 先备份
 
+```
 cp /usr/bin/kubeadm /usr/bin/kubeadm.backup​
+```
 
 再替换
 
+```
 cp \_output/bin/kubeadm /usr/bin/kubeadm​
+```
 
 八、证书更新
 
 1、仍是先备份
 
+```
 cp -r /etc/kubernetes/pki /etc/kubernetes/pki.backup​
+```
 
 2、开始生成
 
+```
 cd /etc/kubernetes/pki
-
 kubeadm alpha certs renew all
+```
 
 注，如果你生成集群时自己指定的conf, 则需要使用kubeadm alpha certs renew all --config=/yourpath/kubeadm/kubeadm-config.yaml
 
@@ -70,9 +79,11 @@ kubeadm alpha certs renew all
 
 ![](/image/kubernetes/kubeadm证书-1.png)
 
-​九、验证更新结果
+九、验证更新结果
 
-​ kubeadm alpha certs check-expiration
+ ```
+kubeadm alpha certs check-expiration
+ ```
 
 ![](/image/kubernetes/kubeadm证书-2.png)
 

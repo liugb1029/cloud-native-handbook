@@ -1,4 +1,4 @@
-# Pilot {#pilot}
+# Pilot
 
 在应用从单体架构向微服务架构演进的过程中，微服务之间的服务发现、负载均衡、熔断、限流等服务治理需求是无法回避的问题。
 
@@ -8,7 +8,7 @@
 
 [Istio](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#istio)是近年来[Service Mesh](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#service-mesh)的代表作，而[Istio](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#istio)流量管理的核心组件就是是[Pilot](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#pilot)。[Pilot](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#pilot)主要功能就是管理和配置部署在特定[Istio](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#istio)服务网格中的所有[sidecar](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#sidecar)代理实例。它管理[sidecar](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#sidecar)代理之间的路由流量规则，并配置故障恢复功能，如超时、重试和熔断。
 
-## Pilot 架构 {#pilot-架构}
+## Pilot 架构
 
 服务列表中的istio-pilot是istio的控制中枢Pilot服务。如果把数据面的envoy 也看作一种agent， 则Pilot 类似传统C /S 架构中的服务端Master，下发指令控制客户端完成业务功能。和传统的微服务架构对比， Pilot 至少涵盖服务注册中心和Config Server等管理组件的功能。
 
@@ -50,13 +50,13 @@ Pilot 的规则 DSL 是采用 K8S API Server 中的[Custom Resource \(CRD\)](htt
 
 根据上图，[Pilot](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#pilot)几个关键的模块如下。
 
-### 抽象模型 （Abstract Model） {#抽象模型-（abstract-model）}
+### 抽象模型 （Abstract Model） 
 
 为了实现对不同服务注册中心 （Kubernetes、consul） 的支持，[Pilot](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#pilot)需要对不同的输入来源的数据有一个统一的存储格式，也就是抽象模型。
 
 抽象模型中定义的关键成员包括 HostName（[service](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#service)名称）、Ports（[service](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#service)端口）、Address（[service](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#service)ClusterIP）、Resolution （负载均衡策略） 等。
 
-### 平台适配器 （Platform adapters） {#平台适配器-（platform-adapters）}
+### 平台适配器 （Platform adapters） 
 
 [Pilot](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#pilot)的实现是基于平台适配器（Platform adapters） 的，借助平台适配器[Pilot](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#pilot)可以实现服务注册中心数据到抽象模型之间的数据转换。
 
@@ -64,7 +64,7 @@ Pilot 的规则 DSL 是采用 K8S API Server 中的[Custom Resource \(CRD\)](htt
 
 通过平台适配器模式，[Pilot](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#pilot)还可以从 Consul 等平台中获取服务信息，还可以开发适配器将其他提供服务发现的组件集成到[Pilot](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#pilot)中。
 
-### xDS API {#xds-api}
+### xDS API
 
 [Pilot](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#pilot)使用了一套起源于[Envoy](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#envoy)项目的标准数据面 API 来将服务信息和流量规则下发到数据面的[sidecar](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#sidecar)中。这套标准数据面 API，也叫 xDS。
 
@@ -78,7 +78,7 @@ Pilot 的规则 DSL 是采用 K8S API Server 中的[Custom Resource \(CRD\)](htt
 
 通过采用该标准 API，[Istio](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#istio)将控制面和数据面进行了解耦，为多种数据平面[sidecar](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#sidecar)实现提供了可能性。例如蚂蚁金服开源的 Golang 版本的[Sidecar](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#sidecar)[MOSN \(Modular Observable Smart Network\)](https://github.com/mosn/mosn)。
 
-### 用户 API （User API） {#用户-api-（user-api）}
+### 用户 API （User API）
 
 [Pilot](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#pilot)还定义了一套用户 API， 用户 API 提供了面向业务的高层抽象，可以被运维人员理解和使用。
 
@@ -86,9 +86,9 @@ Pilot 的规则 DSL 是采用 K8S API Server 中的[Custom Resource \(CRD\)](htt
 
 通过运用不同的流量规则，可以对网格中微服务进行精细化的流量控制，如按版本分流、断路器、故障注入、灰度发布等。
 
-## Pilot 实现 {#pilot-实现}
+## Pilot 实现 
 
-![](/image/Istio/pilot.png)
+![](/image/istio/pilot.png)
 
 图中实线连线表示控制流，虚线连线表示数据流。带`[pilot]`的组件表示为[Pilot](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#pilot)组件，图中关键的组件如下：
 
@@ -99,14 +99,14 @@ Pilot 的规则 DSL 是采用 K8S API Server 中的[Custom Resource \(CRD\)](htt
 
 下面介绍下[Pilot](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#pilot)相关的组件[pilot](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#pilot)-agent、[pilot](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#pilot)-discovery 的关键实现。
 
-### pilot-agent {#pilot-agent}
+### pilot-agent 
 
 [pilot](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#pilot)-agent 负责的主要工作如下：
 
 * 生成[sidecar](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#sidecar)的配置
 * [Sidecar](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#sidecar)的启动与监控
 
-### pilot-discovery {#pilot-discovery}
+### pilot-discovery 
 
 `pilot-discovery`扮演服务注册中心、[Istio](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#istio)控制平面到[sidecar](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#sidecar)之间的桥梁作用。[pilot](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#pilot)-discovery 的主要功能如下：
 

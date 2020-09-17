@@ -183,7 +183,3 @@ x-envoy-upstream-service-time: 3
 [2020-08-24T11:07:49.208Z] "HEAD /health HTTP/1.1" 200 - "-" "-" 0 0 4 3 "10.244.0.0" "curl/7.29.0" "21453292-1e0d-900e-a8a3-1a304a2a2c2c" "abc.k8s.com" "10.244.2.81:9080" outbound|9080||details.default.svc.cluster.local - 10.244.1.55:80 10.244.0.0:8394 - -
 ```
 
-### 
-
-
-

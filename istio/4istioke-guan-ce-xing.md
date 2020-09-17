@@ -1,4 +1,4 @@
-# 可观察性 {#可观察性}
+# 可观察性 
 
 面对复杂的应用环境和不断扩展的业务需求，即使再完备的测试也难以覆盖所有场景，无法保证服务不会出现故障。正因为如此，才需要“可观察性”来对服务的运行时状态进行监控、上报、分析，以提高服务可靠性。具有可观察性的系统，可以在服务出现故障时大大降低问题定位的难度，甚至可以在出现问题之前及时发现问题以降低风险。具体来说，可观察性可以：
 
@@ -19,7 +19,7 @@
 
 本节内容仅仅简单介绍了[Istio](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#istio)中可观察性的相关概念，而未深入具体的细节，希望都能能够凭此建立起对可观察性初步的印象。更加详细的相关内容将在本书的实践篇介绍。
 
-## 指标 {#metrics}
+## 指标
 
 **指标（Metric）提供了一种以聚合的方式监控和理解行为的方法**。
 
@@ -29,7 +29,7 @@
 
 Istio 指标收集由运维人员配置来驱动。运维人员决定如何以及何时收集指标，以及指标本身的详细程度。这使得它能够灵活地调整指标收集来满足个性化需求。
 
-### 代理级别指标 {#proxy-level-metrics}
+### 代理级别指标
 
 Istio 指标收集从 sidecar 代理（Envoy）开始。每个代理为通过它的所有流量（入站和出站）生成一组丰富的指标。代理还提供关于它本身管理功能的详细统计信息，包括配置信息和健康信息。
 
@@ -53,7 +53,7 @@ envoy_cluster_lb_subsets_removed{cluster_name="xds-grpc"} 0
 envoy_cluster_internal_upstream_rq{response_code="503",cluster_name="xds-grpc"} 1
 ```
 
-### 服务级别指标 {#service-level-metrics}
+### 服务级别指标
 
 除了代理级别指标之外，Istio 还提供了一组用于监控服务通信的面向服务的指标。这些指标涵盖了四个基本的服务监控需求：延迟、流量、错误和饱和情况。Istio 带有一组默认的[仪表板](https://istio.io/latest/zh/docs/tasks/observability/metrics/using-istio-dashboard/)，用于监控基于这些指标的服务行为。
 
@@ -88,7 +88,7 @@ istio_requests_total{
 } 214
 ```
 
-### 控制平面指标 {#control-plane-metrics}
+### 控制平面指标
 
 每一个 Istio 的组件（Pilot、Galley、Mixer）都提供了对自身监控指标的集合。这些指标容许监控 Istio 自己的行为（这与网格内的服务有所不同）。
 

@@ -1,0 +1,51 @@
+{
+    "title": "Cloud Native",
+    "description": "Cloud Native",
+    "author": "liuguobing",
+    "language": "zh-hans",
+    "root": ".",
+    "plugins": [
+        "github",
+        "codesnippet",
+        "code",
+        "splitter",
+        "page-toc-button",
+        "image-captions",
+        "editlink",
+        "back-to-top-button",
+        "-lunr", "-search", "search-plus",
+        "github-buttons@2.1.0",
+        "favicon@^0.0.2",
+        "tbfed-pagefooter@^0.0.1",
+        "theme-default",
+        "-highlight", "prism", "prism-themes",
+        "lightbox",
+        "page-treeview",
+        "chapter-fold",
+        "emphasize",
+        "expandable-chapters"
+    ],
+
+    "pluginsConfig": {
+        "github-buttons": {
+            "repo": "liugb1029/cloud-native-handbook",
+            "types": ["star"],
+            "size": "small"
+        },
+        "github": {
+            "url": "https://github.com/liugb1029/cloud-native-handbook"
+        },
+        "editlink": {
+            "base": "https://github.com/liugb1029/cloud-native-handbook/blob/master",
+            "label": "Edit This Page"
+        },
+        "page-treeview": {
+            "minHeaderCount": "2",
+            "minHeaderDeep": "2"
+        },
+        "page-toc-button": {
+            "maxTocDepth": 3,
+            "minTocSize": 1
+       }
+    }
+}

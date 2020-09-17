@@ -1,4 +1,4 @@
-## K8S Pod 内抓包快速定位网络问题 {#activity-name}
+## K8S Pod 内抓包快速定位网络问题 
 
 ## 前言
 
@@ -13,42 +13,17 @@ nsenter [options] [program [arguments]]
 
 options:
 
-
 -t, --target pid：指定被进入命名空间的目标进程的pid
-
-
 -m, --mount[=file]：进入mount命名空间。如果指定了file，则进入file的命名空间
-
-
 -u, --uts[=file]：进入uts命名空间。如果指定了file，则进入file的命名空间
-
-
 -i, --ipc[=file]：进入ipc命名空间。如果指定了file，则进入file的命名空间
-
-
 -n, --net[=file]：进入net命名空间。如果指定了file，则进入file的命名空间
-
-
 -p, --pid[=file]：进入pid命名空间。如果指定了file，则进入file的命名空间
-
-
 -U, --user[=file]：进入user命名空间。如果指定了file，则进入file的命名空间
-
-
 -G, --setgid gid：设置运行程序的gid
-
-
 -S, --setuid uid：设置运行程序的uid
-
-
 -r, --root[=directory]：设置根目录
-
-
 -w, --wd[=directory]：设置工作目录
-
-
-
-
 如果没有给出program，则默认执行 $SHELL。
 ```
 

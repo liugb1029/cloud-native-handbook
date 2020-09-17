@@ -1,10 +1,10 @@
-## 背景信息 {#title-oe3-5ye-pls}
+## 背景信息 
 
 灰度及蓝绿发布是为新版本创建一个与老版本完全一致的生产环境，在不影响老版本的前提下，按照一定的规则把部分流量切换到新版本，当新版本试运行一段时间没有问题后，将用户的全量流量从老版本迁移至新版本。
 
 其中A/B测试就是一种灰度发布方式，一部分用户继续使用老版本的服务，将一部分用户的流量切换到新版本，如果新版本运行稳定，则逐步将所有用户迁移到新版本。
 
-## 应用场景 {#title-cr9-zmd-fq3}
+## 应用场景 
 
 场景一
 
@@ -69,9 +69,9 @@ Ingress-Nginx 是一个K8S ingress工具，支持配置 Ingress Annotations 来�
 
 注意： Ingress-Nginx 实在0.21.0 版本 中，引入的Canary 功能，因此要确保ingress版本OK
 
-## 测试 {#测试}
+## 测试
 
-### 应用准备 {#应用准备}
+### 应用准备 
 
 两个版本的服务，正常版本：
 
@@ -137,7 +137,7 @@ public class RestPrometheusApplication {
 {"hello":"ambassador, this is a gray version"}
 ```
 
-### 基于Request Header ingress 配置 {#ingress-配置}
+### 基于Request Header ingress 配置
 
 我们部署好两个服务，springboot-rest-demo是正常的服务，springboot-rest-demo-gray是灰度服务，我们来配置ingress，通过canary-by-header来实现：
 
@@ -206,7 +206,7 @@ ingress.extensions/springboot-rest-demo-gray created
 {"hello":"ambassador, this is a gray version"}
 ```
 
-## 基于Weight 的 Ingress配置 {#多实例ingress-controllers}
+## 基于Weight 的 Ingress配置 
 
 ```
 apiVersion: extensions/v1beta1
@@ -231,14 +231,14 @@ spec:
             path: /
 ```
 
-## 多实例Ingress controllers {#多实例ingress-controllers}
+## 多实例Ingress controllers 
 
-## 参考 {#参考}
+## 参考
 
 * [https://kubesphere.com.cn/docs/v2.0/zh-CN/quick-start/ingress-canary/\#ingress-nginx-annotation-简介](https://kubesphere.com.cn/docs/v2.0/zh-CN/quick-start/ingress-canary/#ingress-nginx-annotation-简介)
 * [https://kubernetes.github.io/ingress-nginx/user-guide/nginx-configuration/annotations/\#canary](https://kubernetes.github.io/ingress-nginx/user-guide/nginx-configuration/annotations/#canary)
 
-## 路由规则`nginx.ingress.kubernetes.io/service-match` {#h2-url-1}
+## 路由规则`nginx.ingress.kubernetes.io/service-match` 
 
 该Annotation用来配置新版本服务的路由匹配规则，格式如下：
 
@@ -284,7 +284,7 @@ new-nginx: cookie("foo", /^sticky-.+$/)
 new-nginx: query("foo", "bar")
 ```
 
-## 服务权重`nginx.ingress.kubernetes.io/service-weight` {#h2-url-2}
+## 服务权重`nginx.ingress.kubernetes.io/service-weight`
 
 该Annotation用来配置新老版本服务的流量权重，格式如下：
 
