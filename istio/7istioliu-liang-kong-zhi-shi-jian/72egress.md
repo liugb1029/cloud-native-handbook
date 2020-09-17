@@ -16,7 +16,7 @@
 
 ### 1、部署sleep服务\(带curl\)
 
-```
+```bash
 [root@master istio-1.4.10]# kubectl apply -f samples/sleep/sleep.yaml
 [root@master istio-1.4.10]# kubectl get pod
 NAME                              READY   STATUS    RESTARTS   AGE
@@ -34,7 +34,7 @@ sleep-8f795f47d-djmjn             2/2     Running   0          2m9s
 
 使用外部[http://httpbin.org来测试http请求](http://httpbin.org来测试http请求)
 
-```
+```bash
 # 由于Istio默认是允许访问外部服务的，所以下面测试访问是正常的。
 [root@master istio-1.4.10]# kubectl exec -it sleep-8f795f47d-djmjn -- sh
 / # curl http://httpbin.org/headers
@@ -63,7 +63,7 @@ Istio 有一个[安装选项](https://istio.io/latest/zh/docs/reference/config/i
 
 运行以下命令以确认配置是正确的：
 
-```
+```bash
 $ kubectl get configmap istio -n istio-system -o yaml | grep -o "mode: ALLOW_ANY"
 mode: ALLOW_ANY
 ```
@@ -72,13 +72,13 @@ mode: ALLOW_ANY
 
 如果你显式地设置了`REGISTRY_ONLY`模式，可以用以下的命令来改变它：
 
-```
+```bash
 kubectl get configmap istio -n istio-system -o yaml | sed 's/mode: REGISTRY_ONLY/mode: ALLOW_ANY/g' | kubectl replace -n istio-system -f -
 ```
 
 参考链接 [https://archive.istio.io/v1.4/docs/tasks/traffic-management/egress/egress-control/](https://archive.istio.io/v1.4/docs/tasks/traffic-management/egress/egress-control/)
 
-```
+```bash
 [root@master istio-1.4.10]# kubectl get configmap istio -n istio-system -o yaml | sed 's/mode: ALLOW_ANY/mode: REGISTRY_ONLY/g' | kubectl replace -n istio-system -f -
 
 # 关闭后访问外部服务返回502
@@ -118,7 +118,7 @@ EOF
 
 ### 5、配置ServiceEntry---访问一个外部的HTTPS服务
 
-```
+```bash
 [root@master istio-1.4.10]# kubectl apply -f - <<EOF
 apiVersion: networking.istio.io/v1alpha3
 kind: ServiceEntry
@@ -138,7 +138,7 @@ EOF
 
 ### 6. 测试连通性
 
-```
+```bash
 [root@master istio-1.4.10]# kubectl exec -it sleep-8f795f47d-djmjn -- sh
 Defaulting container name to sleep.
 Use 'kubectl describe pod/sleep-8f795f47d-djmjn -n default' to see all of the containers in this pod.
@@ -169,7 +169,7 @@ Use 'kubectl describe pod/sleep-8f795f47d-djmjn -n default' to see all of the co
 
 1. 从用作测试源的 pod 内部，向外部服务`httpbin.org`的`/delay`endpoint 发出_curl_请求：
 
-2. ```
+2. ```bash
    kubectl exec -it $SOURCE_POD -c sleep sh
    time curl -o /dev/null -s -w "%{http_code}\n" http://httpbin.org/delay/5
    ```
@@ -198,7 +198,7 @@ Use 'kubectl describe pod/sleep-8f795f47d-djmjn -n default' to see all of the co
 
 4. 几秒后，重新发出_curl_请求：
 
-   ```
+   ```bash
    $ kubectl exec -it $SOURCE_POD -c sleep sh
    $ time curl -o /dev/null -s -w "%{http_code}\n" http://httpbin.org/delay/5
    504
@@ -224,7 +224,7 @@ Use 'kubectl describe pod/sleep-8f795f47d-djmjn -n default' to see all of the co
 
 使用平台的 IP 范围更新`istio-sidecar-injector`的配置。比如，如果 IP 范围是 10.0.0.1/24，则使用一下命令：
 
-```
+```bash
 istioctl manifest apply <the flags you used to install Istio> --set values.global.proxy.includeIPRanges="10.0.0.1/24"
 ```
 
@@ -236,7 +236,7 @@ istioctl manifest apply <the flags you used to install Istio> --set values.globa
 
 在更新`istio-sidecar-injector`configmap 和重新部署`sleep`程序后，Istio sidecar 将仅拦截和管理集群中的内部请求。 任何外部请求都会绕过 Sidecar，并直接到达其预期的目的地。举个例子：
 
-```
+```bash
 istioctl manifest apply --set profile=demo --set values.global.proxy.includeIPRanges="10.96.0.0/12"
 ```
 
@@ -244,7 +244,7 @@ istioctl manifest apply --set profile=demo --set values.global.proxy.includeIPRa
 
 与通过 HTTP 和 HTTPS 访问外部服务不同，你不会看到任何与** Istio sidecar 有关的请求头**， 并且发送到外部服务的请求既不会出现在 Sidecar 的日志中，也不会出现在 Mixer 日志中。 绕过 Istio sidecar 意味着你不能再监视对外部服务的访问。
 
-```
+```bash
 [root@master istio-1.4.10]# export SOURCE_POD=$(kubectl get pod -l app=sleep -o jsonpath={.items..metadata.name})
 [root@master istio-1.4.10]# kubectl exec -it $SOURCE_POD -- sh
 / # curl http://httpbin.org/headers

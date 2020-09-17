@@ -14,7 +14,7 @@
 
 #### 1、事先部署好bookinfo demo
 
-```
+```bash
 [root@master ~]# kubectl get pod
 NAME                              READY   STATUS    RESTARTS   AGE
 details-v1-6c9f8bcbcb-fgv29       2/2     Running   0          4h1m
@@ -109,7 +109,7 @@ spec:
 
 hosts中设置具体的域名
 
-```
+```bash
 [root@master ~]# cat details-gateway.yaml
 apiVersion: networking.istio.io/v1alpha3
 kind: Gateway
@@ -154,7 +154,7 @@ spec:
 
 #### 4、测试
 
-```
+```bash
 # 不带Host: abc.k8s.com 访问报404
 [root@master ~]# curl -I -s http://192.168.56.100:30175/health
 HTTP/1.1 404 Not Found

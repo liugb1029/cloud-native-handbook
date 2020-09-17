@@ -12,7 +12,7 @@
 
 启动[sleep](https://github.com/istio/istio/tree/release-1.7/samples/sleep)示例，该示例将用作外部调用的测试源
 
-```
+```bash
 kubectl apply -f samples/sleep/sleep.yaml
 ```
 
@@ -63,7 +63,7 @@ EOF
 
 1. 向外部的 HTTP 服务发送请求：
 
-```
+```bash
 [root@master istio-1.4.10]# kubectl exec -it $SOURCE_POD -- curl -sL -o /dev/null -D - http://www.servicemesher.com/istio-handbook/
 Defaulting container name to sleep.
 Use 'kubectl describe pod/sleep-8f795f47d-xgmlc -n default' to see all of the containers in this pod.
@@ -98,7 +98,7 @@ Accept-Ranges: bytes
 
 1. 重新定义上一节的`ServiceEntry`和`VirtualService`以重写 HTTP 请求端口，并添加一个`DestinationRule`以执行 TLS 发起。
 
-```
+```bash
 kubectl apply -f - <<EOF
 apiVersion: networking.istio.io/v1alpha3
 kind: ServiceEntry
@@ -156,7 +156,7 @@ EOF
 
 1. 如上一节一样，向`http://www.servicemesher.com/istio-handbook`发送 HTTP 请求：
 
-```
+```bash
 [root@master istio-1.4.10]# kubectl exec -it $SOURCE_POD -- curl -sL -o /dev/null -D - http://www.servicemesher.com/istio-handbook/
 Defaulting container name to sleep.
 Use 'kubectl describe pod/sleep-8f795f47d-xgmlc -n default' to see all of the containers in this pod.
