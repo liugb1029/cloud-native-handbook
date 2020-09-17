@@ -50,7 +50,6 @@ $ export PATH=$PATH:$HOME/.istioctl/bin
       verify-install  Verifies Istio Installation Status or performs pre-check for the cluster before Istio installation
       version         Prints out build version information
 
-
 如上所示，istioctl 工具的介绍里写明这是一个为服务操作人员提供的基于命令行的程序，用于调试和诊断 Istio 服务网格的。每个命令都可以通过对应的介绍说明看出它的基本作用，如果希望详细了解下具体某个命令的用法，可以通过执行`istioctl [command] -h`来查看详细介绍，大部分命令都提供了参数说明和使用示例，上手非常容易。
 
 支持的命令里，manifest 、kube-inject、operator、profile、register、deregister、upgrade 等主要侧重于安装运维等，本书其它章节另有讲解，此章不做深入展开介绍，有兴趣的读者可参阅相应章节或者直接查看命令使用帮助，下文将重点讲解与网格问题诊断相关的命令。
@@ -88,7 +87,7 @@ This Kubernetes cluster supports automatic sidecar injection. To enable automati
 -----------------------
 
 Error: 1 error occurred:
-	* Istio cannot be installed because the Istio namespace 'istio-system' is already in use
+    * Istio cannot be installed because the Istio namespace 'istio-system' is already in use
 ```
 
 命令的执行结果表明工具会从多个维度检查当前环境是否能够正常部署一套全新的 Istio 网格，例如上述信息中因为已经部署了一套 Istio 导致无法重复安装。
@@ -118,10 +117,10 @@ Aliases:
 
 Examples:
 # Retrieve sync status for all Envoys in a mesh
-	istioctl proxy-status
+    istioctl proxy-status
 
 # Retrieve sync diff for a single Envoy and Pilot
-	istioctl proxy-status istio-egressgateway-59585c5b9c-ndc59.istio-system
+    istioctl proxy-status istio-egressgateway-59585c5b9c-ndc59.istio-system
 
 
 Flags:
@@ -201,7 +200,7 @@ Routes Don't Match (RDS last loaded at Tue, 21 Apr 2020 18:18:42 CST)
  {
     "dynamicRouteConfigs": [
        # 此处省略大量差异配置文本
-	]
+    ]
  }
 ```
 
@@ -497,8 +496,7 @@ See https://istio.io/docs/reference/config/analysis for more information about c
 
 这也许是因为我们没有更新命名空间的权限，或者已经知晓这个问题，并且 default namespace 确实不需要被设置为自动注入，此时可以直接使用`istioctl analyze`添加`--suppress`参数来忽略上述输出中的错误消息。
 
-  
-$ istioctl analyze -k --all-namespaces --suppress 
+$ istioctl analyze -k --all-namespaces --suppress
 
 ```
 $ istioctl analyze -k --all-namespaces --suppress "IST0102=Namespace frod"
@@ -619,6 +617,26 @@ Pod Ports: 9080 (ratings), 15090 (istio-proxy)
 Service: ratings
    Port: http 9080/HTTP
 Pilot reports that pod enforces HTTP/mTLS and clients speak HTTP
+
+
+[root@master envoy]# istioctl x describe pod productpage-v1-7f9d9c48c8-thvxq.default
+Pod: productpage-v1-7f9d9c48c8-thvxq
+   Pod Ports: 9080 (productpage), 15090 (istio-proxy)
+--------------------
+Service: productpage
+   Port: http 9080/HTTP targets pod port 9080
+DestinationRule: productpage for "productpage"
+   Matching subsets: v1
+   No Traffic Policy
+Pod is PERMISSIVE, client protocol unspecified
+VirtualService: productpage
+   1 HTTP route(s)
+
+
+Exposed on Ingress Gateway http://192.168.56.102
+VirtualService: bookinfo
+   /productpage, /static*, /login, /logout, /api/v1/products*
+[root@master envoy]#
 ```
 
 通过输出的结果我们可以得到以下 Istio 相关的信息：
@@ -653,7 +671,6 @@ DestinationRule: ratings for "ratings"
       (Non-matching subsets v2,v2-mysql,v2-mysql-vm)
    Traffic Policy TLS Mode: ISTIO_MUTUAL
 Pilot reports that pod enforces HTTP/mTLS and clients speak mTLS
-
 ```
 
 相比上面小节，这次同样的命令返回了更多的信息：
@@ -836,9 +853,5 @@ $ kubectl apply -f samples/bookinfo/networking/destination-rule-all-mtls.yaml
 * [Pods and Services](https://istio.io/docs/ops/deployment/requirements/)
 * [Configuration Analysis Messages](https://istio.io/docs/reference/config/analysis/)
 
-  
-
-
-  
 
 
