@@ -186,29 +186,107 @@ Productpage 发起对 reviews 服务的调用：
 
 中有3个 endpoint。
 
-8.请求被转发到其中一个 endpoint`10.40.0.15`，即`reviews-v1`所在的[Pod](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#pod)。
-
-1. 然后该请求被 iptable 规则拦截，重定向到本地的 15006 端口。
-
-1. 在 15006 端口上监听的 VirtualInbound listener 收到了该请求。
-
+```
+[root@master envoy]# istioctl pc endpoint productpage-v1-7f9d9c48c8-thvxq --cluster 'outbound|9080||reviews.default.svc.cluster.local'
+ENDPOINT             STATUS      OUTLIER CHECK     CLUSTER
+10.244.0.63:9080     HEALTHY     OK                outbound|9080||reviews.default.svc.cluster.local
+10.244.1.24:9080     HEALTHY     OK                outbound|9080||reviews.default.svc.cluster.local
+10.244.2.24:9080     HEALTHY     OK                outbound|9080||reviews.default.svc.cluster.local
+[root@master envoy]#
 ```
 
-```
+8.请求被转发到其中一个 endpoint`10.244.0.63`，即`reviews-v1`所在的[Pod](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#pod)。
 
-1. 根据匹配条件，请求被 VirtualInbound listener 内部配置的 Http connection manager filter 处理，该 filter 设置的路由配置为将其发送给`inbound|9080|http|reviews.default.svc.cluster.local`这个 inbound[cluster](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#cluster)。
+9. 然后该请求被 iptable 规则拦截，重定向到本地的 15006 端口。
 
-```
+10.在 15006 端口上监听的 VirtualInbound listener 收到了该请求。
 
-```
-
-1. `inbound|9080|http|reviews.default.svc.cluster.local cluster`配置的 host 为`127.0.0.1:9080`。
+11. 根据匹配条件，请求被 VirtualInbound listener 内部配置的 Http connection manager filter 处理，该 filter 设置的路由配置为将其发送给`inbound|9080|http|reviews.default.svc.cluster.local`这个 inbound[cluster](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#cluster)。
 
 ```
-
+[root@master envoy]# istioctl pc listeners reviews-v1-d5b6b667f-tkfhw  --port 15006 -ojson
+[
+    {
+        "name": "virtualInbound",
+        "address": {
+            "socketAddress": {
+                "address": "0.0.0.0",
+                "portValue": 15006
+            }
+        },
+        "filterChains": [
+....
+            {
+                "filters": [
+                    {
+                        "name": "envoy.http_connection_manager",
+                        "typedConfig": {
+                            "@type": "type.googleapis.com/envoy.config.filter.network.http_connection_manager.v2.HttpConnectionManager",
+                            "statPrefix": "inbound_10.244.1.24_9080",
+                            "routeConfig": {
+                                "name": "inbound|9080|http|reviews.default.svc.cluster.local",
+                                "virtualHosts": [
+                                    {
+                                        "name": "inbound|http|9080",
+                                        "domains": [
+                                            "*"
+                                        ],
+                                        "routes": [
+                                            {
+                                                "name": "default",
+                                                "match": {
+                                                    "prefix": "/"
+                                                },
+                                                "route": {
+                                                    "cluster": "inbound|9080|http|reviews.default.svc.cluster.local",
+                                                    "timeout": "0s",
+                                                    "maxGrpcTimeout": "0s"
+                                                },
 ```
 
-1. 请求被转发到`127.0.0.1:9080`，即 reviews 服务进行业务处理。
+12 `inbound|9080|http|reviews.default.svc.cluster.local cluster`配置的 host 为`127.0.0.1:9080`。
+
+```
+[root@master envoy]# istioctl pc cluster reviews-v1-d5b6b667f-tkfhw --direction inbound --fqdn reviews.default.svc.cluster.local -ojson
+[
+    {
+        "name": "inbound|9080|http|reviews.default.svc.cluster.local",
+        "type": "STATIC",
+        "connectTimeout": "1s",
+        "loadAssignment": {
+            "clusterName": "inbound|9080|http|reviews.default.svc.cluster.local",
+            "endpoints": [
+                {
+                    "lbEndpoints": [
+                        {
+                            "endpoint": {
+                                "address": {
+                                    "socketAddress": {
+                                        "address": "127.0.0.1",
+                                        "portValue": 9080
+                                    }
+                                }
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        "circuitBreakers": {
+            "thresholds": [
+                {
+                    "maxConnections": 4294967295,
+                    "maxPendingRequests": 4294967295,
+                    "maxRequests": 4294967295,
+                    "maxRetries": 4294967295
+                }
+            ]
+        }
+    }
+]
+```
+
+13.请求被转发到`127.0.0.1:9080`，即 reviews 服务进行业务处理。
 
 
 
