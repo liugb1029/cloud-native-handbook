@@ -17,281 +17,86 @@ Productpage 发起对 reviews 服务的调用：
 3. 在 15001 端口上监听的 VirtualOutbound listener 收到了该请求。
 4. 请求被 VirtualOutbound listener 根据原目标 IP（通配）和端口（9080）转发到`0.0.0.0_9080`这个 outbound listener。
 
-   ```
-   [root@master envoy]# istioctl pc listener productpage-v1-7f9d9c48c8-thvxq --port 15001 -ojson
-   [
-       {
-           "name": "virtualOutbound",
-           "address": {
-               "socketAddress": {
-                   "address": "0.0.0.0",
-                   "portValue": 15001
-               }
-           },
-           "filterChains": [
-               {
-                   "filterChainMatch": {
-                       "prefixRanges": [
-                           {
-                               "addressPrefix": "10.244.1.25",
-                               "prefixLen": 32
-                           }
-                       ]
-                   },
-                   "filters": [
-                       {
-                           "name": "envoy.tcp_proxy",
-                           "typedConfig": {
-                               "@type": "type.googleapis.com/envoy.config.filter.network.tcp_proxy.v2.TcpProxy",
-                               "statPrefix": "BlackHoleCluster",
-                               "cluster": "BlackHoleCluster"
-                           }
-                       }
-                   ]
-               },
-               {
-                   "filters": [
-                       {
-                           "name": "envoy.tcp_proxy",
-                           "typedConfig": {
-                               "@type": "type.googleapis.com/envoy.config.filter.network.tcp_proxy.v2.TcpProxy",
-                               "statPrefix": "PassthroughCluster",
-                               "cluster": "PassthroughCluster",
-                               "accessLog": [
-                                   {
-                                       "name": "envoy.file_access_log",
-                                       "typedConfig": {
-                                           "@type": "type.googleapis.com/envoy.config.accesslog.v2.FileAccessLog",
-                                           "path": "/dev/stdout",
-                                           "format": "[%START_TIME%] \"%REQ(:METHOD)% %REQ(X-ENVOY-ORIGINAL-PATH?:PATH)% %PROTOCOL%\" %RESPONSE_CODE% %RESPONSE_FLAGS% \"%DYNAMIC_METADATA(istio.mixer:status)%\" \"%UPSTREAM_TRANSPORT_FAILURE_REASON%\" %BYTES_RECEIVED% %BYTES_SENT% %DURATION% %RESP(X-ENVOY-UPSTREAM-SERVICE-TIME)% \"%REQ(X-FORWARDED-FOR)%\" \"%REQ(USER-AGENT)%\" \"%REQ(X-REQUEST-ID)%\" \"%REQ(:AUTHORITY)%\" \"%UPSTREAM_HOST%\" %UPSTREAM_CLUSTER% %UPSTREAM_LOCAL_ADDRESS% %DOWNSTREAM_LOCAL_ADDRESS% %DOWNSTREAM_REMOTE_ADDRESS% %REQUESTED_SERVER_NAME% %ROUTE_NAME%\n"
-                                       }
-                                   }
-                               ]
-                           }
-                       }
-                   ]
-               }
-           ],
-           "useOriginalDst": true
-       }
-   ]
-   ```
-
-5. 根据
-
-1. `0.0.0.0_9080`
-   listener 的
-   `http_connection_manager`
-   filter 配置，该请求采用 9080 route 进行分发。
-
-{  
-   "name"  
-   :  
-   "0.0.0.0\_9080"  
-   ,  
-   "active\_state"  
-   :  
-   {  
-   "version\_info"  
-   :  
-   "2020-03-11T08:13:39Z/22"  
-   ,  
-   "listener"  
-   :  
-   {  
-   "@type"  
-   :  
-   "type.googleapis.com/envoy.api.v2.Listener"  
-   ,  
-   "name"  
-   :  
-   "0.0.0.0\_9080"  
-   ,  
-   "address"  
-   :  
-   {  
-   "socket\_address"  
-   :  
-   {  
-   "address"  
-   :  
-   "0.0.0.0"  
-   ,  
-   "port\_value"  
-   :  
-   9080  
-   }  
-   }  
-   ,  
-   "filter\_chains"  
-   :  
-   \[
+```
+[root@master envoy]# istioctl pc listener productpage-v1-7f9d9c48c8-thvxq --port 15001 -ojson
+[
+    {
+        "name": "virtualOutbound",
+        "address": {
+            "socketAddress": {
+                "address": "0.0.0.0",
+                "portValue": 15001
+            }
+        },
+        "filterChains": [
+            {
+                "filterChainMatch": {
+                    "prefixRanges": [
+                        {
+                            "addressPrefix": "10.244.1.25",
+                            "prefixLen": 32
+                        }
+                    ]
+                },
+                "filters": [
+                    {
+                        "name": "envoy.tcp_proxy",
+                        "typedConfig": {
+                            "@type": "type.googleapis.com/envoy.config.filter.network.tcp_proxy.v2.TcpProxy",
+                            "statPrefix": "BlackHoleCluster",
+                            "cluster": "BlackHoleCluster"
+                        }
+                    }
+                ]
+            },
+            {
+                "filters": [
+                    {
+                        "name": "envoy.tcp_proxy",
+                        "typedConfig": {
+                            "@type": "type.googleapis.com/envoy.config.filter.network.tcp_proxy.v2.TcpProxy",
+                            "statPrefix": "PassthroughCluster",
+                            "cluster": "PassthroughCluster",
+                            "accessLog": [
+                                {
+                                    "name": "envoy.file_access_log",
+                                    "typedConfig": {
+                                        "@type": "type.googleapis.com/envoy.config.accesslog.v2.FileAccessLog",
+                                        "path": "/dev/stdout",
+                                        "format": "[%START_TIME%] \"%REQ(:METHOD)% %REQ(X-ENVOY-ORIGINAL-PATH?:PATH)% %PROTOCOL%\" %RESPONSE_CODE% %RESPONSE_FLAGS% \"%DYNAMIC_METADATA(istio.mixer:status)%\" \"%UPSTREAM_TRANSPORT_FAILURE_REASON%\" %BYTES_RECEIVED% %BYTES_SENT% %DURATION% %RESP(X-ENVOY-UPSTREAM-SERVICE-TIME)% \"%REQ(X-FORWARDED-FOR)%\" \"%REQ(USER-AGENT)%\" \"%REQ(X-REQUEST-ID)%\" \"%REQ(:AUTHORITY)%\" \"%UPSTREAM_HOST%\" %UPSTREAM_CLUSTER% %UPSTREAM_LOCAL_ADDRESS% %DOWNSTREAM_LOCAL_ADDRESS% %DOWNSTREAM_REMOTE_ADDRESS% %REQUESTED_SERVER_NAME% %ROUTE_NAME%\n"
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                ]
+            }
+        ],
+        "useOriginalDst": true
+    }
+]
 
 ```
-   ......
-```
 
-{  
-   "filters"  
-   :  
-   \[  
-   {  
-   "name"  
-   :  
-   "envoy.http\_connection\_manager"  
-   ,  
-   "typed\_config"  
-   :  
-   {  
-   "@type"  
-   :  
-   "type.googleapis.com/envoy.config.filter.network.http\_connection\_manager.v2.HttpConnectionManager"  
-   ,  
-   "stat\_prefix"  
-   :  
-   "outbound\_0.0.0.0\_9080"  
-   ,  
-   "rds"  
-   :  
-   {  
-   "config\_source"  
-   :  
-   {  
-   "ads"  
-   :  
-   {  
-   }  
-   }  
-   ,  
-   "route\_config\_name"  
-   :  
-   "9080"  
-   }  
-   ,  
-   "http\_filters"  
-   :  
-   \[  
-   {  
-   "name"  
-   :  
-   "envoy.filters.http.wasm"  
-   ,
+5. 根据`0.0.0.0_9080`listener 的 `http_connection_manager`filter 配置，该请求采用 9080 route 进行分发。
 
 ```
-          ......
-```
-
-}  
-   ,  
-   {  
-   "name"  
-   :  
-   "istio.alpn"  
-   ,
 
 ```
-          ......
-```
 
-}  
-   ,  
-   {  
-   "name"  
-   :  
-   "envoy.cors"  
-   }  
-   ,  
-   {  
-   "name"  
-   :  
-   "envoy.fault"  
-   }  
-   ,  
-   {  
-   "name"  
-   :  
-   "envoy.filters.http.wasm"  
-   ,
+9080 这个 route 的配置中，host name 为
 
-```
-          ......
-```
+`reviews:9080`
 
-}  
-   ,  
-   {  
-   "name"  
-   :  
-   "envoy.router"  
-   }  
-   \]  
-   ,  
-   "tracing"  
-   :  
-   {  
-   "client\_sampling"  
-   :  
-   {  
-   "value"  
-   :  
-   100  
-   }  
-   ,  
-   "random\_sampling"  
-   :  
-   {  
-   "value"  
-   :  
-   100  
-   }  
-   ,  
-   "overall\_sampling"  
-   :  
-   {  
-   "value"  
-   :  
-   100  
-   }  
-   }  
-   ,
+的请求对应的
 
-```
-        ......
-```
+[cluster](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#cluster)
 
-}  
-   }  
-   \]  
-   }  
-   \]  
-   ,  
-   "deprecated\_v1"  
-   :  
-   {  
-   "bind\_to\_port"  
-   :  
-   false  
-   }  
-   ,  
-   "traffic\_direction"  
-   :  
-   "OUTBOUND"  
-   }  
-   ,  
-   "last\_updated"  
-   :  
-   "2020-03-11T08:14:04.927Z"  
-   }  
-   }  
-   ,
+为
 
-1. 9080 这个 route 的配置中，host name 为
-   `reviews:9080`
-   的请求对应的
-   [cluster](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#cluster)
-   为
-   `outbound|9080||reviews.default.svc.cluster.local`
-   。
+`outbound|9080||reviews.default.svc.cluster.local`
+
+。
 
 {  
    "version\_info"  
@@ -1032,10 +837,11 @@ Productpage 发起对 reviews 服务的调用：
    }  
    \`\`\`
 
-1. `inbound|9080|http|reviews.default.svc.cluster.local cluster`
-   配置的 host 为
-   `127.0.0.1:9080`
+5. `inbound|9080|http|reviews.default.svc.cluster.local cluster`  
+   配置的 host 为  
+   `127.0.0.1:9080`  
    。
+
    ```
    {
    "version_info"
@@ -1133,7 +939,8 @@ Productpage 发起对 reviews 服务的调用：
    "2020-03-11T08:13:39.118Z"
    }
    ```
-2. 请求被转发到
+
+6. 请求被转发到
    `127.0.0.1:9080`
    ，即 reviews 服务进行业务处理。
 
