@@ -77,23 +77,55 @@ Productpage 发起对 reviews 服务的调用：
 ]
 ```
 
-1. 根据`0.0.0.0_9080`listener 的 `http_connection_manager`filter 配置，该请求采用 9080 route 进行分发。
+5.根据`0.0.0.0_9080`listener 的 `http_connection_manager`filter 配置，该请求采用 9080 route 进行分发。
 
 ```
-
+[root@master envoy]# istioctl pc listener productpage-v1-7f9d9c48c8-thvxq --address 0.0.0.0 --port 9080 -ojson
+[
+    {
+        "name": "0.0.0.0_9080",
+        "address": {
+            "socketAddress": {
+                "address": "0.0.0.0",
+                "portValue": 9080
+            }
+        },
+        "filterChains": [
+            {
+                "filterChainMatch": {
+                    "prefixRanges": [
+                        {
+                            "addressPrefix": "10.244.1.25",
+                            "prefixLen": 32
+                        }
+                    ]
+                },
+                "filters": [
+                    {
+                        "name": "envoy.tcp_proxy",
+                        "typedConfig": {
+                            "@type": "type.googleapis.com/envoy.config.filter.network.tcp_proxy.v2.TcpProxy",
+                            "statPrefix": "BlackHoleCluster",
+                            "cluster": "BlackHoleCluster"
+                        }
+                    }
+                ]
+            },
+            {
+                "filters": [
+                    {
+                        "name": "envoy.http_connection_manager",
+                        "typedConfig": {
+                            "@type": "type.googleapis.com/envoy.config.filter.network.http_connection_manager.v2.HttpConnectionManager",
+                            "statPrefix": "outbound_0.0.0.0_9080",
+                            "rds": {
+                                "configSource": {
+                                    "ads": {}
+                                },
+                                "routeConfigName": "9080"
 ```
 
-9080 这个 route 的配置中，host name 为
-
-`reviews:9080`
-
-的请求对应的
-
-[cluster](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#cluster)
-
-为
-
-`outbound|9080||reviews.default.svc.cluster.local`
+6. 9080 这个 route 的配置中，host name 为`reviews:9080`的请求对应的 [cluster](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#cluster) 为`outbound|9080||reviews.default.svc.cluster.local`
 
 。
 
