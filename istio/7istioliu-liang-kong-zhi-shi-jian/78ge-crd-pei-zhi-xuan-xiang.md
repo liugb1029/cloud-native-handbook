@@ -10,9 +10,5 @@
 
 #### Ingress GateWay
 
-![](/image/Istio/Gateway配置选项.png)
-
-
-
-
+Gateway与对应的服务的VirtualService![](/image/Istio/Gateway配置选项.png)
 
