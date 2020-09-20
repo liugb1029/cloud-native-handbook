@@ -10,5 +10,9 @@
 
 #### Ingress GateWay
 
+![](/image/Istio/Gateway配置选项.png)
+
+
+
 
 
