@@ -8,3 +8,11 @@
 
 ![](/image/Istio/ServiceEntry.png)![](/image/Istio/ServiceEntry-example.png)
 
+#### Ingress GateWay
+
+
+
+
+
+
+
