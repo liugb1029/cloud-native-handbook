@@ -14,7 +14,7 @@ Gateway与对应的服务的VirtualService绑定![](/image/Istio/Gateway配置�
 
 详细配置：
 
-```
+```bash
 apiVersion: networking.istio.io/v1alpha3
 kind: Gateway
 metadata:
@@ -30,7 +30,38 @@ spec:
       name: http
       number: 80
       protocol: HTTP
-
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: Gateway
+metadata:
+  name: httpbin-gateway
+  namespace: default
+spec:
+  selector:
+    istio: ingressgateway
+  servers:
+  - hosts:
+    - '*'
+    port:
+      name: http
+      number: 80
+      protocol: HTTP 
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: Gateway
+metadata:
+  name: detail-gateway
+  namespace: default
+spec:
+  selector:
+    istio: ingressgateway
+  servers:
+  - hosts:
+    - abc.k8s.com
+    port:
+      name: http
+      number: 80
+      protocol: HTTP           
 ---
 apiVersion: networking.istio.io/v1alpha3
 kind: VirtualService
@@ -59,11 +90,52 @@ spec:
         host: productpage
         port:
           number: 9080
+
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: detail-gateway
+  namespace: default
+spec:
+  gateways:
+  - detail-gateway
+  hosts:
+  - abc.k8s.com
+  http:
+  - match:
+    - uri:
+        exact: /health
+    - uri:
+        prefix: /details
+    route:
+    - destination:
+        host: details
+        port:
+          number: 9080
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: httpbin
+  namespace: default
+spec:
+  gateways:
+  - httpbin-gateway
+  hosts:
+  - '*'
+  http:
+  - match:
+    - uri:
+        prefix: /status
+    - uri:
+        prefix: /delay
+    route:
+    - destination:
+        host: httpbin
+        port:
+          number: 8000
 ```
-
-
-
-
 
 
 
