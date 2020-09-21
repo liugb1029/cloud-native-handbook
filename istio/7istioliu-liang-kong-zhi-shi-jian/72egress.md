@@ -1,5 +1,7 @@
 
 
+### Egress
+
 一般访问外部服务的方法：
 
 * 配置global.outboundTrafficPolicy.mode=ALLOW\_ANY
