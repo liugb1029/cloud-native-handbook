@@ -6,6 +6,10 @@
 
 由于默认情况下，来自 Istio-enable Pod 的所有出站流量都会重定向到其 Sidecar 代理，群集外部 URL 的可访问性取决于代理的配置。默认情况下，Istio 将 Envoy 代理配置为允许传递未知服务的请求。尽管这为入门 Istio 带来了方便，但是，通常情况下，配置更严格的控制是更可取的。
 
+一般访问外部服务的方法：
+
+* 配置global.outboundTrafficPolicy.mode=ALLOW\_ANY
+* 
 这个任务向你展示了三种访问外部服务的方法：
 
 1. 允许 Envoy 代理将请求传递到未在网格内配置过的服务。
@@ -210,7 +214,7 @@ Use 'kubectl describe pod/sleep-8f795f47d-djmjn -n default' to see all of the co
 
    这一次，在 3 秒后出现了 504 \(Gateway Timeout\)。Istio 在 3 秒后切断了响应时间为 5 秒的`httpbin.org`服务。
 
-## 直接访问外部服务 
+## 直接访问外部服务
 
 如果要让特定范围的 ​​IP 完全绕过 Istio，则可以配置 Envoy sidecars 以防止它们[拦截](https://istio.io/latest/zh/docs/concepts/traffic-management/)外部请求。要设置绕过 Istio，请更改`global.proxy.includeIPRanges`或`global.proxy.excludeIPRanges`配置选项，并使用`kubectl apply`命令更新`istio-sidecar-injector`的[配置](https://istio.io/latest/zh/docs/reference/config/installation-options/)。`istio-sidecar-injector`配置的更新，影响的是新部署应用的 pod。
 
@@ -218,7 +222,7 @@ Use 'kubectl describe pod/sleep-8f795f47d-djmjn -n default' to see all of the co
 
 排除所有外部 IP 重定向到 Sidecar 代理的一种简单方法是将`global.proxy.includeIPRanges`配置选项设置为内部集群服务使用的 IP 范围。这些 IP 范围值取决于集群所在的平台。
 
-### 配置代理绕行 
+### 配置代理绕行
 
 删除本指南中先前部署的 service entry 和 virtual service。
 
@@ -258,7 +262,7 @@ istioctl manifest apply --set profile=demo --set values.global.proxy.includeIPRa
 }
 ```
 
-## 理解原理 
+## 理解原理
 
 在此任务中，您研究了从 Istio 网格调用外部服务的三种方法：
 
@@ -274,13 +278,13 @@ istioctl manifest apply --set profile=demo --set values.global.proxy.includeIPRa
 
 第三种方法绕过了 Istio Sidecar 代理，使你的服务可以直接访问任意的外部服务。 但是，以这种方式配置代理需要了解集群提供商相关知识和配置。 与第一种方法类似，你也将失去对外部服务访问的监控，并且无法将 Istio 功能应用于外部服务的流量。
 
-## 安全说明 
+## 安全说明
 
 > 请注意，此任务中的配置示例 **没有启用安全的出口流量控制**恶意程序可以绕过 Istio Sidecar 代理并在没有 Istio 控制的情况下访问任何外部服务。
 
 为了以更安全的方式实施出口流量控制，你必须[通过 egress gateway 引导出口流量](https://istio.io/latest/zh/docs/tasks/traffic-management/egress/egress-gateway/)， 并查看[其他安全注意事项](https://istio.io/latest/zh/docs/tasks/traffic-management/egress/egress-gateway/#additional-security-considerations)部分中描述的安全问题。
 
-### 将出站流量策略模式设置为所需的值 
+### 将出站流量策略模式设置为所需的值
 
 1. 检查现在的值:
 
