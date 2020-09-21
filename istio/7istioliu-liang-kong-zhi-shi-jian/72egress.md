@@ -9,12 +9,16 @@
 一般访问外部服务的方法：
 
 * 配置global.outboundTrafficPolicy.mode=ALLOW\_ANY
-* 
+* 使用服务入口\(ServiceEntry\)
+* 配置sidecar让流量绕过代理
+* 配置egree网关
+
 这个任务向你展示了三种访问外部服务的方法：
 
-1. 允许 Envoy 代理将请求传递到未在网格内配置过的服务。
-2. 配置[service entries](https://istio.io/latest/zh/docs/reference/config/networking/service-entry/)以提供对外部服务的受控访问。
-3. 对于特定范围的 IP，完全绕过 Envoy 代理。![](/image/Istio/ServiceEntry.png)
+* 允许 Envoy 代理将请求传递到未在网格内配置过的服务。
+
+* 配置[service entries](https://istio.io/latest/zh/docs/reference/config/networking/service-entry/)以提供对外部服务的受控访问。
+* 对于特定范围的 IP，完全绕过 Envoy 代理。![](/image/Istio/ServiceEntry.png)
 
 [https://istio.io/latest/zh/docs/tasks/traffic-management/egress/egress-control/](https://istio.io/latest/zh/docs/tasks/traffic-management/egress/egress-control/)
 
