@@ -113,6 +113,8 @@ spec:
 
 #### 6、流程分析
 
+![](/image/Istio/egress-gateway-配置分析.png)
+
 查看sleep 服务route name为80\(省略listener\)
 
 ```bash
@@ -258,7 +260,7 @@ ENDPOINT           STATUS      OUTLIER CHECK     CLUSTER
         },
 ```
 
-查看egress-gateway pod的endpoint： 
+查看egress-gateway pod的endpoint：
 
 ```
 [root@master egress]# istioctl pc endpoint istio-egressgateway-68988594d6-h5lh7.istio-system --cluster 'outbound|80||httpbin.org'
