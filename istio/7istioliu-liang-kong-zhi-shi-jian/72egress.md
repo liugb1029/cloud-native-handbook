@@ -15,13 +15,32 @@
 4. 定义路由，将流量引导到egressgateway
 5. 查看日志验证
 
-### 1、查看组件书否正常
+#### 1、查看组件书否正常
 
 ```bash
 [root@master egress]# kubectl get pod -n istio-system |grep egress
 istio-egressgateway-68988594d6-h5lh7         1/1     Running     1          4d7h
 [root@master egress]#
 ```
+
+#### 2、配置ServiceEntry
+
+```
+apiVersion: networking.istio.io/v1alpha3
+kind: DestinationRule
+metadata:
+  name: dr-for-egressgateway
+spec:
+  host: istio-egressgateway.istio-system.svc.cluster.local
+  subsets:
+  - name: httpbin
+```
+
+#### 3、定义Egress gateway
+
+4、定义路由，将流量引导到gateway
+
+5、查看日志验证
 
 ### 什么是服务入口（ServiceEntry）
 
