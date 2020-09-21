@@ -9,6 +9,13 @@
 
 #### 配置流程
 
+1. 查看egress gateway组件是否正常
+2. 为外部服务定义ServiceEntry
+3. 定义Egress gateway
+4. 定义路由，将流量引导到egressgateway
+
+
+
 
 
 ### 什么是服务入口（ServiceEntry）
