@@ -102,5 +102,48 @@ spec:
           number: 8000
 ```
 
+![](/image/Istio/gateway-route-httpbin.png)
+
+```
+apiVersion: networking.istio.io/v1alpha3
+kind: Gateway
+metadata:
+  name: detail-gateway
+  namespace: default
+spec:
+  selector:
+    istio: ingressgateway
+  servers:
+  - hosts:
+    - abc.k8s.com
+    port:
+      name: http
+      number: 80
+      protocol: HTTP           
+---
+
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: detail-gateway
+  namespace: default
+spec:
+  gateways:
+  - detail-gateway
+  hosts:
+  - abc.k8s.com
+  http:
+  - match:
+    - uri:
+        exact: /health
+    - uri:
+        prefix: /details
+    route:
+    - destination:
+        host: details
+        port:
+          number: 9080
+```
+
 
 
