@@ -144,26 +144,27 @@ spec:
 
 查看sleep的cluster:outbound\|80\|httpbin\|istio-egressgateway.istio-system.svc.cluster.local
 
-```
-[root@master egress]# istioctl pc cluster sleep-8f795f47d-hgzgn --fqdn istio-egressgateway.istio-system.svc.cluster.local --subset httpbin
 
+
+```
+# 如果不配置destinationrule，这里就没有最后三行
+[root@master egress]# istioctl pc cluster sleep-8f795f47d-hgzgn --fqdn istio-egressgateway.istio-system.svc.cluster.local
 SERVICE FQDN                                           PORT      SUBSET      DIRECTION     TYPE
+istio-egressgateway.istio-system.svc.cluster.local     80        -           outbound      EDS
+istio-egressgateway.istio-system.svc.cluster.local     443       -           outbound      EDS
+istio-egressgateway.istio-system.svc.cluster.local     15443     -           outbound      EDS
 istio-egressgateway.istio-system.svc.cluster.local     80        httpbin     outbound      EDS
 istio-egressgateway.istio-system.svc.cluster.local     443       httpbin     outbound      EDS
 istio-egressgateway.istio-system.svc.cluster.local     15443     httpbin     outbound      EDS
 ```
 
-查看sleep服务的endpoints 
+查看sleep服务的endpoints
 
 ```
 [root@master egress]# istioctl pc endpoint sleep-8f795f47d-hgzgn --cluster 'outbound|80|httpbin|istio-egressgateway.istio-system.svc.cluster.local'
 ENDPOINT           STATUS      OUTLIER CHECK     CLUSTER
 10.244.2.35:80     HEALTHY     OK                outbound|80|httpbin|istio-egressgateway.istio-system.svc.cluster.local
 ```
-
-
-
-
 
 ### 什么是服务入口（ServiceEntry）
 
