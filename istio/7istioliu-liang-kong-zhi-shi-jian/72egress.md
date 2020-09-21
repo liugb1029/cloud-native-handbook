@@ -144,8 +144,6 @@ spec:
 
 查看sleep的cluster:outbound\|80\|httpbin\|istio-egressgateway.istio-system.svc.cluster.local
 
-
-
 ```
 # 如果不配置destinationrule，这里就没有最后三行
 [root@master egress]# istioctl pc cluster sleep-8f795f47d-hgzgn --fqdn istio-egressgateway.istio-system.svc.cluster.local
