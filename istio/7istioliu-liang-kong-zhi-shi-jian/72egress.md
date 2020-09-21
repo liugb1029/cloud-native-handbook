@@ -17,7 +17,11 @@
 
 ### 1、查看组件书否正常
 
-
+```bash
+[root@master egress]# kubectl get pod -n istio-system |grep egress
+istio-egressgateway-68988594d6-h5lh7         1/1     Running     1          4d7h
+[root@master egress]#
+```
 
 ### 什么是服务入口（ServiceEntry）
 
