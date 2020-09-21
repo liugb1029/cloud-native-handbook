@@ -115,6 +115,33 @@ spec:
 
 查看sleep 服务route name为80\(省略listener\)
 
+```bash
+[root@master egress]# istioctl pc route sleep-8f795f47d-hgzgn --name 80 -ojson
+。。。
+                "name": "httpbin.org:80",
+                "domains": [
+                    "httpbin.org",
+                    "httpbin.org:80"
+                ],
+                "routes": [
+                    {
+                        "match": {
+                            "prefix": "/",
+                            "caseSensitive": true
+                        },
+                        "route": {
+                            "cluster": "outbound|80|httpbin|istio-egressgateway.istio-system.svc.cluster.local",
+                            "timeout": "0s",
+                            "retryPolicy": {
+                                "retryOn": "connect-failure,refused-stream,unavailable,cancelled,resource-exhausted,retriable-status-codes",
+                                "numRetries": 2,
+                                "retryHostPredicate": [
+                                    {
+                                        "name": "envoy.retry_host_predicates.previous_hosts"
+                                    }
+。。。     
+```
+
 ### 什么是服务入口（ServiceEntry）
 
 * 添加外部服务到网格内
