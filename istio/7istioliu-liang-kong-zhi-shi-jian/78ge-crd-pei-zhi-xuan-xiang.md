@@ -145,5 +145,5 @@ spec:
           number: 9080
 ```
 
-
+![](/image/Istio/gateway-route-details.png)
 
