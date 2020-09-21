@@ -1,4 +1,13 @@
-## 什么是服务入口（ServiceEntry）
+
+
+一般访问外部服务的方法：
+
+* 配置global.outboundTrafficPolicy.mode=ALLOW\_ANY
+* 使用服务入口\(ServiceEntry\)
+* 配置sidecar让流量绕过代理
+* 配置egree网关
+
+### 什么是服务入口（ServiceEntry）
 
 * 添加外部服务到网格内
 * 管理到外部服务的请求
@@ -16,7 +25,7 @@
 
 [https://istio.io/latest/zh/docs/tasks/traffic-management/egress/egress-control/](https://istio.io/latest/zh/docs/tasks/traffic-management/egress/egress-control/)
 
-### 1、部署sleep服务\(带curl\)
+#### 1、部署sleep服务\(带curl\)
 
 ```bash
 [root@master istio-1.4.10]# kubectl apply -f samples/sleep/sleep.yaml
@@ -32,7 +41,7 @@ sleep-8f795f47d-djmjn             2/2     Running   0          2m9s
 [root@master istio-1.4.10]# export SOURCE_POD=$(kubectl get pod -l app=sleep -o jsonpath={.items..metadata.name})
 ```
 
-### 2、测试访问外部
+#### 2、测试访问外部
 
 使用外部[http://httpbin.org来测试http请求](http://httpbin.org来测试http请求)
 
@@ -57,7 +66,7 @@ sleep-8f795f47d-djmjn             2/2     Running   0          2m9s
 / #
 ```
 
-### 3、关闭访问外部策略
+#### 3、关闭访问外部策略
 
 Istio 有一个[安装选项](https://istio.io/latest/zh/docs/reference/config/installation-options/)，`global.outboundTrafficPolicy.mode`，它配置 sidecar 对外部服务（那些没有在 Istio 的内部服务注册中定义的服务）的处理方式。如果这个选项设置为`ALLOW_ANY`，Istio 代理允许调用未知的服务。如果这个选项设置为`REGISTRY_ONLY`，那么 Istio 代理会阻止任何没有在网格中定义的 HTTP 服务或 service entry 的主机。`ALLOW_ANY`是默认值，不控制对外部服务的访问，方便你快速地评估 Istio。你可以稍后再[配置对外部服务的访问](https://istio.io/latest/zh/docs/tasks/traffic-management/egress/egress-control/#controlled-access-to-external-services)。
 
@@ -98,7 +107,7 @@ transfer-encoding: chunked
 / #
 ```
 
-### 4、配置ServiceEntry---访问一个外部的HTTP服务
+#### 4、配置ServiceEntry---访问一个外部的HTTP服务
 
 ```
 [root@master istio-1.4.10]# kubectl apply -f - <<EOF
@@ -118,7 +127,7 @@ spec:
 EOF
 ```
 
-### 5、配置ServiceEntry---访问一个外部的HTTPS服务
+#### 5、配置ServiceEntry---访问一个外部的HTTPS服务
 
 ```bash
 [root@master istio-1.4.10]# kubectl apply -f - <<EOF
@@ -138,7 +147,7 @@ spec:
 EOF
 ```
 
-### 6. 测试连通性
+#### 6. 测试连通性
 
 ```bash
 [root@master istio-1.4.10]# kubectl exec -it sleep-8f795f47d-djmjn -- sh
@@ -165,7 +174,7 @@ Use 'kubectl describe pod/sleep-8f795f47d-djmjn -n default' to see all of the co
 
 注意由 Istio sidecar 代理添加的 headers:`X-Envoy-Decorator-Operation`。
 
-## 管理到外部服务的流量
+### 管理到外部服务的流量
 
 与集群内的请求相似，也可以为使用`ServiceEntry`配置访问的外部服务设置[Istio 路由规则](https://istio.io/latest/zh/docs/concepts/traffic-management/#routing-rules)。在本示例中，你将设置对`httpbin.org`服务访问的超时规则。
 
@@ -212,7 +221,7 @@ Use 'kubectl describe pod/sleep-8f795f47d-djmjn -n default' to see all of the co
 
    这一次，在 3 秒后出现了 504 \(Gateway Timeout\)。Istio 在 3 秒后切断了响应时间为 5 秒的`httpbin.org`服务。
 
-## 直接访问外部服务
+### 直接访问外部服务
 
 如果要让特定范围的 ​​IP 完全绕过 Istio，则可以配置 Envoy sidecars 以防止它们[拦截](https://istio.io/latest/zh/docs/concepts/traffic-management/)外部请求。要设置绕过 Istio，请更改`global.proxy.includeIPRanges`或`global.proxy.excludeIPRanges`配置选项，并使用`kubectl apply`命令更新`istio-sidecar-injector`的[配置](https://istio.io/latest/zh/docs/reference/config/installation-options/)。`istio-sidecar-injector`配置的更新，影响的是新部署应用的 pod。
 
@@ -220,7 +229,7 @@ Use 'kubectl describe pod/sleep-8f795f47d-djmjn -n default' to see all of the co
 
 排除所有外部 IP 重定向到 Sidecar 代理的一种简单方法是将`global.proxy.includeIPRanges`配置选项设置为内部集群服务使用的 IP 范围。这些 IP 范围值取决于集群所在的平台。
 
-### 配置代理绕行
+#### 配置代理绕行
 
 删除本指南中先前部署的 service entry 和 virtual service。
 
@@ -232,7 +241,7 @@ istioctl manifest apply <the flags you used to install Istio> --set values.globa
 
 在[安装 Istio](https://istio.io/latest/zh/docs/setup/install/istioctl)命令的基础上增加`--set values.global.proxy.includeIPRanges="10.0.0.1/24"`
 
-### 访问外部服务
+#### 访问外部服务
 
 由于绕行配置仅影响新的部署，因此您需要按照[开始之前](https://istio.io/latest/zh/docs/tasks/traffic-management/egress/egress-control/#before-you-begin)部分中的说明重新部署`sleep`程序。
 
@@ -260,7 +269,7 @@ istioctl manifest apply --set profile=demo --set values.global.proxy.includeIPRa
 }
 ```
 
-## 理解原理
+### 理解原理
 
 在此任务中，您研究了从 Istio 网格调用外部服务的三种方法：
 
@@ -276,13 +285,13 @@ istioctl manifest apply --set profile=demo --set values.global.proxy.includeIPRa
 
 第三种方法绕过了 Istio Sidecar 代理，使你的服务可以直接访问任意的外部服务。 但是，以这种方式配置代理需要了解集群提供商相关知识和配置。 与第一种方法类似，你也将失去对外部服务访问的监控，并且无法将 Istio 功能应用于外部服务的流量。
 
-## 安全说明
+### 安全说明
 
 > 请注意，此任务中的配置示例 **没有启用安全的出口流量控制**恶意程序可以绕过 Istio Sidecar 代理并在没有 Istio 控制的情况下访问任何外部服务。
 
 为了以更安全的方式实施出口流量控制，你必须[通过 egress gateway 引导出口流量](https://istio.io/latest/zh/docs/tasks/traffic-management/egress/egress-gateway/)， 并查看[其他安全注意事项](https://istio.io/latest/zh/docs/tasks/traffic-management/egress/egress-gateway/#additional-security-considerations)部分中描述的安全问题。
 
-### 将出站流量策略模式设置为所需的值
+#### 将出站流量策略模式设置为所需的值
 
 1. 检查现在的值:
 
