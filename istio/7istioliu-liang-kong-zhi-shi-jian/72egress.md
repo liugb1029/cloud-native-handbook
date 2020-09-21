@@ -38,9 +38,9 @@ spec:
 
 #### 3、定义Egress gateway
 
-4、定义路由，将流量引导到gateway
+#### 4、定义路由，将流量引导到gateway
 
-5、查看日志验证
+#### 5、查看日志验证
 
 ### 什么是服务入口（ServiceEntry）
 
