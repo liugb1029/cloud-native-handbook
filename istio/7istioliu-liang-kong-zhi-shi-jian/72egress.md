@@ -25,7 +25,7 @@ istio-egressgateway-68988594d6-h5lh7         1/1     Running     1          4d7h
 
 #### 2、配置ServiceEntry
 
-```
+```bash
 apiVersion: networking.istio.io/v1alpha3
 kind: DestinationRule
 metadata:
@@ -38,7 +38,7 @@ spec:
 
 #### 3、定义Egress gateway
 
-```
+```bash
 apiVersion: networking.istio.io/v1alpha3
 kind: Gateway
 metadata:
@@ -57,7 +57,7 @@ spec:
 
 #### 4、定义路由，将流量引导到gateway
 
-```
+```bash
 apiVersion: networking.istio.io/v1alpha3
 kind: VirtualService
 metadata:
@@ -144,7 +144,7 @@ spec:
 
 查看sleep的cluster:outbound\|80\|httpbin\|istio-egressgateway.istio-system.svc.cluster.local
 
-```
+```bash
 # 如果不配置destinationrule，这里就没有最后三行
 [root@master egress]# istioctl pc cluster sleep-8f795f47d-hgzgn --fqdn istio-egressgateway.istio-system.svc.cluster.local
 SERVICE FQDN                                           PORT      SUBSET      DIRECTION     TYPE
@@ -158,7 +158,7 @@ istio-egressgateway.istio-system.svc.cluster.local     15443     httpbin     out
 
 查看sleep服务的endpoints
 
-```
+```bash
 [root@master egress]# istioctl pc endpoint sleep-8f795f47d-hgzgn --cluster 'outbound|80|httpbin|istio-egressgateway.istio-system.svc.cluster.local'
 ENDPOINT           STATUS      OUTLIER CHECK     CLUSTER
 10.244.2.35:80     HEALTHY     OK                outbound|80|httpbin|istio-egressgateway.istio-system.svc.cluster.local
@@ -195,7 +195,7 @@ ENDPOINT           STATUS      OUTLIER CHECK     CLUSTER
 
 查看egress-gateway pod的route name:  http.80
 
-```
+```bash
 [root@master egress]# istioctl pc route istio-egressgateway-68988594d6-h5lh7.istio-system --name 'http.80' -ojson
 [
     {
@@ -226,7 +226,51 @@ ENDPOINT           STATUS      OUTLIER CHECK     CLUSTER
                                 ],
 ```
 
-### 
+查看egress-gateway pod的cluster：outbound\|80\|\|httpbin.org
+
+```bash
+[root@master egress]# istioctl pc cluster istio-egressgateway-68988594d6-h5lh7.istio-system --fqdn 'outbound|80||httpbin.org' -ojson
+[
+    {
+        "name": "outbound|80||httpbin.org",
+        "type": "STRICT_DNS",
+        "connectTimeout": "1s",
+        "loadAssignment": {
+            "clusterName": "outbound|80||httpbin.org",
+            "endpoints": [
+                {
+                    "lbEndpoints": [
+                        {
+                            "endpoint": {
+                                "address": {
+                                    "socketAddress": {
+                                        "address": "httpbin.org",
+                                        "portValue": 80
+                                    }
+                                }
+                            },
+                            "loadBalancingWeight": 1
+                        }
+                    ],
+                    "loadBalancingWeight": 1
+                }
+            ]
+        },
+```
+
+查看egress-gateway pod的endpoint： 
+
+```
+[root@master egress]# istioctl pc endpoint istio-egressgateway-68988594d6-h5lh7.istio-system --cluster 'outbound|80||httpbin.org'
+ENDPOINT              STATUS      OUTLIER CHECK     CLUSTER
+3.211.1.78:80         HEALTHY     OK                outbound|80||httpbin.org
+3.221.81.55:80        HEALTHY     OK                outbound|80||httpbin.org
+34.194.129.11:80      HEALTHY     OK                outbound|80||httpbin.org
+35.170.21.246:80      HEALTHY     OK                outbound|80||httpbin.org
+35.172.162.144:80     HEALTHY     OK                outbound|80||httpbin.org
+52.6.34.179:80        HEALTHY     OK                outbound|80||httpbin.org
+[root@master egress]#
+```
 
 ### 什么是服务入口（ServiceEntry）
 
