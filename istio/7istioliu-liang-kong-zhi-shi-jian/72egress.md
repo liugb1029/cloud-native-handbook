@@ -38,7 +38,68 @@ spec:
 
 #### 3、定义Egress gateway
 
+```
+apiVersion: networking.istio.io/v1alpha3
+kind: Gateway
+metadata:
+  name: httpbin-egressgateway
+spec:
+  selector:
+    istio: egressgateway
+  servers:
+  - port:
+      number: 80
+      name: http
+      protocol: HTTP
+    hosts:
+    - "httpbin.org"
+```
+
 #### 4、定义路由，将流量引导到gateway
+
+```
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: vs-for-egressgateway
+spec:
+  hosts:
+  - httpbin.org
+  gateways:
+  - httpbin-egressgateway
+  - mesh
+  http:
+  - match:
+    - gateways:
+      - mesh
+      port: 80
+    route:
+    - destination:
+        host: istio-egressgateway.istio-system.svc.cluster.local
+        subset: httpbin
+        port:
+          number: 80
+      weight: 100
+  - match:
+    - gateways:
+      - httpbin-egressgateway
+      port: 80
+    route:
+    - destination:
+        host: httpbin.org
+        port:
+          number: 80
+      weight: 100
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: DestinationRule
+metadata:
+  name: dr-for-egressgateway
+spec:
+  host: istio-egressgateway.istio-system.svc.cluster.local
+  subsets:
+  - name: httpbin
+```
 
 #### 5、查看日志验证
 
