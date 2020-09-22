@@ -2,3 +2,13 @@
 
 
 
+
+
+
+
+
+
+![](/image/Istio/bookinfo-delay-retry.png)
+
+
+
