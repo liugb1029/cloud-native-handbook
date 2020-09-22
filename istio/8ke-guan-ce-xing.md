@@ -44,5 +44,9 @@
 
 ![](/image/Istio/Istio-telemetry-v1.png)
 
-![](/image/Istio/Istio-telemetry-v2.png)
+### ![](/image/Istio/Istio-telemetry-v2.png)Grafana
+
+功能
+
+
 
