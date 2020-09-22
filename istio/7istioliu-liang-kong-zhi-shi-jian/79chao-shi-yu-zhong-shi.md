@@ -131,7 +131,33 @@ EOF
 * 目的：避免服务的级联失败
 * 关键点：三个状态；失效计数器；超时时钟![](/image/Istio/bookinfo-circut.png)
 
- 以httpbin服务来实践
+  以httpbin服务来实践
+
+1、配置熔断策略
+
+```
+[root@master]# kubectl apply -f httpbin/httpbin.yaml
+[root@master]# kubectl apply -f - <<EOF
+apiVersion: networking.istio.io/v1alpha3
+kind: DestinationRule
+metadata:
+  name: httpbin
+spec:
+  host: httpbin
+  trafficPolicy:
+    connectionPool:
+      tcp:
+        maxConnections: 1
+      http:
+        http1MaxPendingRequests: 1
+        maxRequestsPerConnection: 1
+    outlierDetection:
+      consecutiveErrors: 1
+      interval: 1s
+      baseEjectionTime: 3m
+      maxEjectionPercent: 100
+EOF
+```
 
 
 
