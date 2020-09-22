@@ -22,5 +22,31 @@ EOF
 
 2、这时访问productpage页面应该是黑色星星。
 
-3、配置rating超时策略
+3、配置rating超时策略。
+
+```
+[root@master]# kubectl apply -f - <<EOF
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: ratings
+  namespace: default
+spec:
+  hosts:
+  - ratings
+  http:
+  - fault:
+      delay:
+        fixedDelay: 2s
+        percent: 100
+    route:
+    - destination:
+        host: ratings
+        subset: v1
+EOF
+```
+
+这时访问productpage页面需等待2s才会出现黑色星星。
+
+
 
