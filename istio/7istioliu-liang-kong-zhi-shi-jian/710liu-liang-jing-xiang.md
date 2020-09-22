@@ -271,32 +271,33 @@
 
    现在就可以看到`v1`和`v2`中都有了访问日志。v2 中的访问日志就是由镜像流量产生的，这些请求的实际目标是 v1。
 
-   ```bash
-   [root@master ~]# kubectl logs -f httpbin-v1-79d49d4dc6-4gxlq -c httpbin
-   [2020-09-22 03:40:31 +0000] [1] [INFO] Starting gunicorn 19.9.0
-   [2020-09-22 03:40:31 +0000] [1] [INFO] Listening at: 
-   http://0.0.0.0:80
-    (1)
-   [2020-09-22 03:40:31 +0000] [1] [INFO] Using worker: sync
-   [2020-09-22 03:40:31 +0000] [8] [INFO] Booting worker with pid: 8
-   127.0.0.1 - - [22/Sep/2020:03:44:53 +0000] "GET /headers HTTP/1.1" 200 303 "-" "curl/7.69.1"
-   127.0.0.1 - - [22/Sep/2020:03:49:12 +0000] "GET /headers HTTP/1.1" 200 303 "-" "curl/7.69.1"
-   127.0.0.1 - - [22/Sep/2020:03:50:19 +0000] "GET /headers HTTP/1.1" 200 303 "-" "curl/7.69.1"
-
-
-   [root@master ~]# kubectl logs -f httpbin-v1-79d49d4dc6-4gxlq -c httpbin
-   [2020-09-22 03:40:31 +0000] [1] [INFO] Starting gunicorn 19.9.0
-   [2020-09-22 03:40:31 +0000] [1] [INFO] Listening at: 
-   http://0.0.0.0:80
-    (1)
-   [2020-09-22 03:40:31 +0000] [1] [INFO] Using worker: sync
-   [2020-09-22 03:40:31 +0000] [8] [INFO] Booting worker with pid: 8
-   127.0.0.1 - - [22/Sep/2020:03:44:53 +0000] "GET /headers HTTP/1.1" 200 303 "-" "curl/7.69.1"
-   127.0.0.1 - - [22/Sep/2020:03:49:12 +0000] "GET /headers HTTP/1.1" 200 303 "-" "curl/7.69.1"
-   127.0.0.1 - - [22/Sep/2020:03:50:19 +0000] "GET /headers HTTP/1.1" 200 303 "-" "curl/7.69.1" 
    ```
+   Last login: Tue Sep 22 09:16:32 2020 from 192.168.56.2
+   [root@master ~]# kubectl logs -f httpbin-v1-79d49d4dc6-4gxlq -c httpbin
+   [2020-09-22 03:40:31 +0000] [1] [INFO] Starting gunicorn 19.9.0
+   [2020-09-22 03:40:31 +0000] [1] [INFO] Listening at: http://0.0.0.0:80 (1)
+   [2020-09-22 03:40:31 +0000] [1] [INFO] Using worker: sync
+   [2020-09-22 03:40:31 +0000] [8] [INFO] Booting worker with pid: 8
+   127.0.0.1 - - [22/Sep/2020:03:44:53 +0000] "GET /headers HTTP/1.1" 200 303 "-" "curl/7.69.1"
+   127.0.0.1 - - [22/Sep/2020:03:49:12 +0000] "GET /headers HTTP/1.1" 200 303 "-" "curl/7.69.1"
 
 
+
+   127.0.0.1 - - [22/Sep/2020:03:50:19 +0000] "GET /headers HTTP/1.1" 200 303 "-" "curl/7.69.1"
+   
+   [root@master ~]# kubectl logs -f httpbin-v2-878b798b5-6rzq9 -c httpbin
+   [2020-09-22 03:41:04 +0000] [1] [INFO] Starting gunicorn 19.9.0
+   [2020-09-22 03:41:04 +0000] [1] [INFO] Listening at: http://0.0.0.0:80 (1)
+   [2020-09-22 03:41:04 +0000] [1] [INFO] Using worker: sync
+   [2020-09-22 03:41:04 +0000] [9] [INFO] Booting worker with pid: 9
+   127.0.0.1 - - [22/Sep/2020:03:49:10 +0000] "GET /headers HTTP/1.1" 200 343 "-" "curl/7.69.1"
+   127.0.0.1 - - [22/Sep/2020:03:49:11 +0000] "GET /headers HTTP/1.1" 200 343 "-" "curl/7.69.1"
+   127.0.0.1 - - [22/Sep/2020:03:49:12 +0000] "GET /headers HTTP/1.1" 200 343 "-" "curl/7.69.1"
+
+
+   127.0.0.1 - - [22/Sep/2020:03:50:19 +0000] "GET /headers HTTP/1.1" 200 343 "-" "curl/7.69.1"
+   127.0.0.1 - - [22/Sep/2020:03:50:21 +0000] "GET /headers HTTP/1.1" 200 343 "-" "curl/7.69.1"
+   ```
 
 
 
