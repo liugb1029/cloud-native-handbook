@@ -298,5 +298,5 @@
 127.0.0.1 - - [22/Sep/2020:03:50:21 +0000] "GET /headers HTTP/1.1" 200 343 "-" "curl/7.69.1"
 ```
 
-
+![](/image/Istio/TrafficMirror配置分析.png)
 

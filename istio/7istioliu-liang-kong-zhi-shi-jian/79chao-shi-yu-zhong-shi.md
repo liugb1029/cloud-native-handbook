@@ -427,5 +427,5 @@ spec:
 
 * 如果您注销用户`jason`或在匿名窗口（或其他浏览器）中打开 Bookinfo 应用程序， 您将看到`/productpage`为除`jason`以外的其他用户调用了`reviews:v1`（完全不调用`ratings`）。 因此，您不会看到任何错误消息。
 
-
+![](/image/Istio/fault-injection配置分析.png)
 
