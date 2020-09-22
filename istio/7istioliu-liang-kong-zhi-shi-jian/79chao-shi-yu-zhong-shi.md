@@ -50,7 +50,23 @@ EOF
 
 4、配置reviews超时策略
 
+```
+[root@master]# kubectl apply -f - <<EOF
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: reviews
+spec:
+  hosts:
+  - reviews
+  http:
+  - route:
+    - destination:
+        host: reviews
+        subset: v2
+    timeout: 1s
+EOF
+```
 
-
-
+这时候访问页面直接报错![](/image/Istio/bookinfo-timeout-1s.png)
 
