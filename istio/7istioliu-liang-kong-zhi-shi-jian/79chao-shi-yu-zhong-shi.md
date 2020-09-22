@@ -22,5 +22,5 @@ EOF
 
 2、这时访问productpage页面应该是黑色星星。
 
-3、
+3、配置rating超时策略
 
