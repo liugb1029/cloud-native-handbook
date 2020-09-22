@@ -159,11 +159,43 @@ spec:
 EOF
 ```
 
-2、部署负载测试客户端fortio
+2、部署负载测试客户端fortio, 其可以控制连接数、并发数及发送 HTTP 请求的延迟。通过 Fortio 能够有效的触发前面 在
+
+`DestinationRule`中设置的熔断策略。
 
 ```
 [root@master samples]# kubectl apply -f httpbin/sample-client/fortio-deploy.yaml
+```
 
+3、登入客户端Pod并使用Fortio工具调用httpbin服务。-curl参数表明发送一次调用
+
+```
+[root@master samples]# FORTIO_POD=$(kubectl get pod | grep fortio | awk '{ print $1 }')
+[root@master samples]# kubectl exec -it $FORTIO_POD  -c fortio -- /usr/bin/fortio load -curl  http://httpbin:8000/get
+02:32:50 I fortio_main.go:167> Not using dynamic flag watching (use -config to set watch directory)
+HTTP/1.1 200 OK
+server: envoy
+date: Tue, 22 Sep 2020 02:32:50 GMT
+content-type: application/json
+content-length: 371
+access-control-allow-origin: *
+access-control-allow-credentials: true
+x-envoy-upstream-service-time: 12
+
+{
+  "args": {},
+  "headers": {
+    "Content-Length": "0",
+    "Host": "httpbin:8000",
+    "User-Agent": "fortio.org/fortio-1.6.8",
+    "X-B3-Parentspanid": "bd04ce2f5376ab90",
+    "X-B3-Sampled": "1",
+    "X-B3-Spanid": "96386c689d12d226",
+    "X-B3-Traceid": "bb214696a2ad71cbbd04ce2f5376ab90"
+  },
+  "origin": "127.0.0.1",
+  "url": "http://httpbin:8000/get"
+}
 ```
 
 
