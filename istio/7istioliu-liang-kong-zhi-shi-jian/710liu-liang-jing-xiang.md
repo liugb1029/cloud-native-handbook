@@ -97,7 +97,7 @@
 
   **sleep service:**
 
-  ```
+  ```bash
   $ cat <<EOF | istioctl kube-inject -f - | kubectl create -f -
   apiVersion: apps/v1
   kind: Deployment
@@ -125,25 +125,11 @@
 
 默认情况下，Kubernetes 在`httpbin`服务的两个版本之间进行负载均衡。在此步骤中会更改该行为，把所有流量都路由到`v1`。
 
-1. 创建一个默认路由规则，将所有流量路由到服务的`v1`：
+1. 创建一个默认路由规则，将所有流量路由到服务的`v1`：如果安装/配置 Istio 的时候开启了 TLS 认证，在应用  
+   `DestinationRule`之前必须将 TLS 流量策略`mode: ISTIO_MUTUAL`添加到`DestinationRule`。否则，请求将发生 503 错误，如[设置目标规则后出现 503 错误](https://istio.io/latest/zh/docs/ops/common-problems/network-issues/#service-unavailable-errors-after-setting-destination-rule)所述。
 
-   如果安装/配置 Istio 的时候开启了 TLS 认证，在应用  
-   `DestinationRule`  
-   之前必须将 TLS 流量策略  
-   `mode: ISTIO_MUTUAL`  
-   添加到  
-   `DestinationRule`  
-   。否则，请求将发生 503 错误，如  
-   [设置目标规则后出现 503 错误](https://istio.io/latest/zh/docs/ops/common-problems/network-issues/#service-unavailable-errors-after-setting-destination-rule)  
-   所述。
-
-   ```
-   $ 
-   kubectl
-    apply -f - 
-   <
-   <
-   EOF
+   ```bash
+   [root@master ~]# kubectl apply -f - <<EOF
    apiVersion: networking.istio.io/v1alpha3
    kind: VirtualService
    metadata:
@@ -178,148 +164,50 @@
 
 2. 向服务发送一下流量：
 
-   ```
-   $ 
-   export
-    SLEEP_POD
-   =
-   $(
-   kubectl
-    get pod -l app
-   =
-   sleep -o jsonpath
-   =
+   ```bash
+   [root@master ~]# export SLEEP_POD=$(kubectl get pod -l app=sleep -o jsonpath={.items..metadata.name})
+   [root@master ~]# kubectl exec -it $SLEEP_POD -c sleep -- sh -c 'curl  http://httpbin:8000/headers'
    {
-   .items
-   ..
-   metadata.name
-   }
-   )
-
-   $ 
-   kubectl
-   exec
-    -it 
-   $SLEEP_POD
-    -c 
-   sleep
-    -- sh -c 
-   'curl  http://httpbin:8000/headers'
-   |
-    python -m json.tool
-
-   {
-   "headers"
-   :
-   {
-   "Accept"
-   :
-   "*/*"
-   ,
-   "Content-Length"
-   :
-   "0"
-   ,
-   "Host"
-   :
-   "httpbin:8000"
-   ,
-   "User-Agent"
-   :
-   "curl/7.35.0"
-   ,
-   "X-B3-Sampled"
-   :
-   "1"
-   ,
-   "X-B3-Spanid"
-   :
-   "eca3d7ed8f2e6a0a"
-   ,
-   "X-B3-Traceid"
-   :
-   "eca3d7ed8f2e6a0a"
-   ,
-   "X-Ot-Span-Context"
-   :
-   "eca3d7ed8f2e6a0a;eca3d7ed8f2e6a0a;0000000000000000"
-   }
+     "headers": {
+       "Accept": "*/*",
+       "Content-Length": "0",
+       "Host": "httpbin:8000",
+       "User-Agent": "curl/7.69.1",
+       "X-B3-Parentspanid": "a032b7abde529568",
+       "X-B3-Sampled": "1",
+       "X-B3-Spanid": "12fcc5644aad052c",
+       "X-B3-Traceid": "a02c7f6b40599516a032b7abde529568"
+     }
    }
    ```
 
 3. 分别查看`httpbin`服务`v1`和`v2`两个 pods 的日志，您可以看到访问日志进入`v1`，而`v2`中没有日志，显示为`<none>`：
 
-   ```
-   $ 
-   export
-    V1_POD
-   =
-   $(
-   kubectl
-    get pod -l app
-   =
-   httpbin,version
-   =
-   v1 -o jsonpath
-   =
-   {
-   .items
-   ..
-   metadata.name
-   }
-   )
-
-   $ 
-   kubectl
-    logs -f 
-   $V1_POD
-    -c httpbin
-
-   127.0.0.1 - - [07/Mar/2018:19:02:43 +0000] "GET /headers HTTP/1.1" 200 321 "-" "curl/7.35.0"
-   ```
+   ```bash
+   [root@master ~]# kubectl logs -f httpbin-v1-79d49d4dc6-4gxlq -c httpbin
+   [2020-09-22 03:40:31 +0000] [1] [INFO] Starting gunicorn 19.9.0
+   [2020-09-22 03:40:31 +0000] [1] [INFO] Listening at: http://0.0.0.0:80 (1)
+   [2020-09-22 03:40:31 +0000] [1] [INFO] Using worker: sync
+   [2020-09-22 03:40:31 +0000] [8] [INFO] Booting worker with pid: 8
+   127.0.0.1 - - [22/Sep/2020:03:44:53 +0000] "GET /headers HTTP/1.1" 200 303 "-" "curl/7.69.1"
 
    ```
-   $ 
-   export
-    V2_POD
-   =
-   $(
-   kubectl
-    get pod -l app
-   =
-   httpbin,version
-   =
-   v2 -o jsonpath
-   =
-   {
-   .items
-   ..
-   metadata.name
-   }
-   )
 
-   $ 
-   kubectl
-    logs -f 
-   $V2_POD
-    -c httpbin
+   ```bash
+   [root@master ~]# kubectl logs -f httpbin-v2-878b798b5-6rzq9 -c httpbin
+   [2020-09-22 03:41:04 +0000] [1] [INFO] Starting gunicorn 19.9.0
+   [2020-09-22 03:41:04 +0000] [1] [INFO] Listening at: http://0.0.0.0:80 (1)
+   [2020-09-22 03:41:04 +0000] [1] [INFO] Using worker: sync
+   [2020-09-22 03:41:04 +0000] [9] [INFO] Booting worker with pid: 9
 
-   <
-   none
-   >
    ```
 
 ## 镜像流量到 v2 {#mirroring-traffic-to-v2}
 
 1. 改变流量规则将流量镜像到 v2：
 
-   ```
-   $ 
-   kubectl
-    apply -f - 
-   <
-   <
-   EOF
+   ```bash
+   [root@master ~]# kubectl apply -f - <<EOF
    apiVersion: networking.istio.io/v1alpha3
    kind: VirtualService
    metadata:
@@ -338,6 +226,25 @@
          subset: v2
        mirror_percent: 100
    EOF
+   [root@master ~]# kubectl get virtualservices.networking.istio.io httpbin -oyaml
+   apiVersion: networking.istio.io/v1alpha3
+   kind: VirtualService
+   metadata:
+     name: httpbin
+     namespace: default
+   spec:
+     hosts:
+     - httpbin
+     http:
+     - mirror:
+         host: httpbin
+         subset: v2
+       mirror_percent: 100
+       route:
+       - destination:
+           host: httpbin
+           subset: v1
+         weight: 100
    ```
 
    这个路由规则发送 100% 流量到`v1`。最后一段表示你将镜像流量到`httpbin:v2`服务。当流量被镜像时，请求将发送到镜像服务中，并在`headers`中的`Host/Authority`属性值上追加`-shadow`。例如`cluster-1`变为`cluster-1-shadow`。
@@ -348,252 +255,54 @@
 
 2. 发送流量：
 
-   ```
-   $ 
-   kubectl
-   exec
-    -it 
-   $SLEEP_POD
-    -c 
-   sleep
-    -- sh -c 
-   'curl  http://httpbin:8000/headers'
-   |
-    python -m json.tool
+   ```bash
+   [root@master ~]# kubectl exec -it $SLEEP_POD -c sleep -- sh -c 'curl  http://httpbin:8000/headers'
+   {
+     "headers": {
+       "Accept": "*/*",
+       "Content-Length": "0",
+       "Host": "httpbin:8000",
+       "User-Agent": "curl/7.69.1",
+       "X-B3-Parentspanid": "c217c8eaa24bd195",
+       "X-B3-Sampled": "1",
+       "X-B3-Spanid": "5717897858892847",
+       "X-B3-Traceid": "d63cd704dd29f3a6c217c8eaa24bd195"
+     }
+   }
    ```
 
    现在就可以看到`v1`和`v2`中都有了访问日志。v2 中的访问日志就是由镜像流量产生的，这些请求的实际目标是 v1。
 
    ```
-   $ 
-   kubectl
-    logs -f 
-   $V1_POD
-    -c httpbin
+   [root@master ~]# kubectl logs -f httpbin-v1-79d49d4dc6-4gxlq -c httpbin
+   [2020-09-22 03:40:31 +0000] [1] [INFO] Starting gunicorn 19.9.0
+   [2020-09-22 03:40:31 +0000] [1] [INFO] Listening at: http://0.0.0.0:80 (1)
+   [2020-09-22 03:40:31 +0000] [1] [INFO] Using worker: sync
+   [2020-09-22 03:40:31 +0000] [8] [INFO] Booting worker with pid: 8
+   127.0.0.1 - - [22/Sep/2020:03:44:53 +0000] "GET /headers HTTP/1.1" 200 303 "-" "curl/7.69.1"
+   127.0.0.1 - - [22/Sep/2020:03:49:12 +0000] "GET /headers HTTP/1.1" 200 303 "-" "curl/7.69.1"
 
-   127.0.0.1 - - [07/Mar/2018:19:02:43 +0000] "GET /headers HTTP/1.1" 200 321 "-" "curl/7.35.0"
-   127.0.0.1 - - [07/Mar/2018:19:26:44 +0000] "GET /headers HTTP/1.1" 200 321 "-" "curl/7.35.0"
+
+
+   127.0.0.1 - - [22/Sep/2020:03:50:19 +0000] "GET /headers HTTP/1.1" 200 303 "-" "curl/7.69.1"
    ```
 
    ```
-   $ 
-   kubectl
-    logs -f 
-   $V2_POD
-    -c httpbin
+   [root@master ~]# kubectl logs -f httpbin-v2-878b798b5-6rzq9 -c httpbin
+   [2020-09-22 03:41:04 +0000] [1] [INFO] Starting gunicorn 19.9.0
+   [2020-09-22 03:41:04 +0000] [1] [INFO] Listening at: http://0.0.0.0:80 (1)
+   [2020-09-22 03:41:04 +0000] [1] [INFO] Using worker: sync
+   [2020-09-22 03:41:04 +0000] [9] [INFO] Booting worker with pid: 9
+   127.0.0.1 - - [22/Sep/2020:03:49:10 +0000] "GET /headers HTTP/1.1" 200 343 "-" "curl/7.69.1"
+   127.0.0.1 - - [22/Sep/2020:03:49:11 +0000] "GET /headers HTTP/1.1" 200 343 "-" "curl/7.69.1"
+   127.0.0.1 - - [22/Sep/2020:03:49:12 +0000] "GET /headers HTTP/1.1" 200 343 "-" "curl/7.69.1"
 
-   127.0.0.1 - - [07/Mar/2018:19:26:44 +0000] "GET /headers HTTP/1.1" 200 361 "-" "curl/7.35.0"
+
+   127.0.0.1 - - [22/Sep/2020:03:50:19 +0000] "GET /headers HTTP/1.1" 200 343 "-" "curl/7.69.1"
+   127.0.0.1 - - [22/Sep/2020:03:50:21 +0000] "GET /headers HTTP/1.1" 200 343 "-" "curl/7.69.1"
    ```
 
 3. 如果要检查流量内部，请在另一个控制台上运行以下命令：
 
-   \`\`\`  
-   $  
-   export  
-    SLEEP\_POD  
-   =  
-   $\(  
-   kubectl  
-    get pod -l app  
-   =  
-   sleep -o jsonpath  
-   =  
-   {  
-   .items  
-   ..  
-   metadata.name  
-   }  
-   \)
 
-   $  
-   export  
-    V1\_POD\_IP  
-   =  
-   $\(  
-   kubectl  
-    get pod -l app  
-   =  
-   httpbin,version  
-   =  
-   v1 -o jsonpath  
-   =  
-   {  
-   .items  
-   ..  
-   status.podIP  
-   }  
-   \)
-
-   $  
-   export  
-    V2\_POD\_IP  
-   =  
-   $\(  
-   kubectl  
-    get pod -l app  
-   =  
-   httpbin,version  
-   =  
-   v2 -o jsonpath  
-   =  
-   {  
-   .items  
-   ..  
-   status.podIP  
-   }  
-   \)
-
-   $  
-   kubectl  
-   exec  
-    -it  
-   $SLEEP\_POD  
-    -c istio-proxy --  
-   sudo  
-    tcpdump -A -s 0 host  
-   $V1\_POD\_IP  
-    or host  
-   $V2\_POD\_IP  
-   tcpdump: verbose output suppressed, use -v or -vv for full protocol decode  
-   listening on eth0, link-type EN10MB \(Ethernet\), capture size 262144 bytes  
-   05:47:50.159513 IP sleep-7b9f8bfcd-2djx5.38836  
-   &gt;  
-    10-233-75-11.httpbin.default.svc.cluster.local.80: Flags \[P.\], seq 4039989036:4039989832, ack 3139734980, win 254, options \[nop,nop,TS val 77427918 ecr 76730809\], length 796: HTTP: GET /headers HTTP/1.1  
-   E..P2.X.X.X.  
-   .K.  
-   .K....P..W,.$.......+.....  
-   ..t.....GET /headers HTTP/1.1  
-   host: httpbin:8000  
-   user-agent: curl/7.35.0  
-   accept: _/_  
-   x-forwarded-proto: http  
-   x-request-id: 571c0fd6-98d4-4c93-af79-6a2fe2945847  
-   x-envoy-decorator-operation: httpbin.default.svc.cluster.local:8000/\*  
-   x-b3-traceid: 82f3e0a76dcebca2  
-   x-b3-spanid: 82f3e0a76dcebca2  
-   x-b3-sampled: 0  
-   x-istio-attributes: Cj8KGGRlc3RpbmF0aW9uLnNlcnZpY2UuaG9zdBIjEiFodHRwYmluLmRlZmF1bHQuc3ZjLmNsdXN0ZXIubG9jYWwKPQoXZGVzdGluYXRpb24uc2VydmljZS51aWQSIhIgaXN0aW86Ly9kZWZhdWx0L3NlcnZpY2VzL2h0dHBiaW4KKgodZGVzdGluYXRpb24uc2VydmljZS5uYW1lc3BhY2USCRIHZGVmYXVsdAolChhkZXN0aW5hdGlvbi5zZXJ2aWNlLm5hbWUSCRIHaHR0cGJpbgo6Cgpzb3VyY2UudWlkEiwSKmt1YmVybmV0ZXM6Ly9zbGVlcC03YjlmOGJmY2QtMmRqeDUuZGVmYXVsdAo6ChNkZXN0aW5hdGlvbi5zZXJ2aWNlEiMSIWh0dHBiaW4uZGVmYXVsdC5zdmMuY2x1c3Rlci5sb2NhbA==  
-   content-length: 0
-
-05:47:50.159609 IP sleep-7b9f8bfcd-2djx5.49560  
-   &gt;  
-    10-233-71-7.httpbin.default.svc.cluster.local.80: Flags \[P.\], seq 296287713:296288571, ack 4029574162, win 254, options \[nop,nop,TS val 77427918 ecr 76732809\], length 858: HTTP: GET /headers HTTP/1.1  
-   E.....X.X...  
-   .K.  
-   .G....P......l......e.....  
-   ..t.....GET /headers HTTP/1.1  
-   host: httpbin-shadow:8000  
-   user-agent: curl/7.35.0  
-   accept: _/_  
-   x-forwarded-proto: http  
-   x-request-id: 571c0fd6-98d4-4c93-af79-6a2fe2945847  
-   x-envoy-decorator-operation: httpbin.default.svc.cluster.local:8000/\*  
-   x-b3-traceid: 82f3e0a76dcebca2  
-   x-b3-spanid: 82f3e0a76dcebca2  
-   x-b3-sampled: 0  
-   x-istio-attributes: Cj8KGGRlc3RpbmF0aW9uLnNlcnZpY2UuaG9zdBIjEiFodHRwYmluLmRlZmF1bHQuc3ZjLmNsdXN0ZXIubG9jYWwKPQoXZGVzdGluYXRpb24uc2VydmljZS51aWQSIhIgaXN0aW86Ly9kZWZhdWx0L3NlcnZpY2VzL2h0dHBiaW4KKgodZGVzdGluYXRpb24uc2VydmljZS5uYW1lc3BhY2USCRIHZGVmYXVsdAolChhkZXN0aW5hdGlvbi5zZXJ2aWNlLm5hbWUSCRIHaHR0cGJpbgo6Cgpzb3VyY2UudWlkEiwSKmt1YmVybmV0ZXM6Ly9zbGVlcC03YjlmOGJmY2QtMmRqeDUuZGVmYXVsdAo6ChNkZXN0aW5hdGlvbi5zZXJ2aWNlEiMSIWh0dHBiaW4uZGVmYXVsdC5zdmMuY2x1c3Rlci5sb2NhbA==  
-   x-envoy-internal: true  
-   x-forwarded-for: 10.233.75.12  
-   content-length: 0
-
-05:47:50.166734 IP 10-233-75-11.httpbin.default.svc.cluster.local.80  
-   &gt;  
-    sleep-7b9f8bfcd-2djx5.38836: Flags \[P.\], seq 1:472, ack 796, win 276, options \[nop,nop,TS val 77427925 ecr 77427918\], length 471: HTTP: HTTP/1.1 200 OK  
-   E....3X.?...  
-   .K.  
-   .K..P...$....ZH...........  
-   ..t...t.HTTP/1.1 200 OK  
-   server: envoy  
-   date: Fri, 15 Feb 2019 05:47:50 GMT  
-   content-type: application/json  
-   content-length: 241  
-   access-control-allow-origin: \*  
-   access-control-allow-credentials: true  
-   x-envoy-upstream-service-time: 3
-
-{  
-     "headers": {  
-       "Accept": "_/_",  
-       "Content-Length": "0",  
-       "Host": "httpbin:8000",  
-       "User-Agent": "curl/7.35.0",  
-       "X-B3-Sampled": "0",  
-       "X-B3-Spanid": "82f3e0a76dcebca2",  
-       "X-B3-Traceid": "82f3e0a76dcebca2"  
-     }  
-   }
-
-05:47:50.166789 IP sleep-7b9f8bfcd-2djx5.38836  
-   &gt;  
-    10-233-75-11.httpbin.default.svc.cluster.local.80: Flags \[.\], ack 472, win 262, options \[nop,nop,TS val 77427925 ecr 77427925\], length 0  
-   E..42.X.X..  
-   .K.  
-   .K....P..ZH.$.............  
-   ..t...t.  
-   05:47:50.167234 IP 10-233-71-7.httpbin.default.svc.cluster.local.80  
-   &gt;  
-    sleep-7b9f8bfcd-2djx5.49560: Flags \[P.\], seq 1:512, ack 858, win 280, options \[nop,nop,TS val 77429926 ecr 77427918\], length 511: HTTP: HTTP/1.1 200 OK  
-   E..3..X.  
-   &gt;  
-   ...  
-   .G.  
-   .K..P....l....;...........  
-   ..\|...t.HTTP/1.1 200 OK  
-   server: envoy  
-   date: Fri, 15 Feb 2019 05:47:49 GMT  
-   content-type: application/json  
-   content-length: 281  
-   access-control-allow-origin: \*  
-   access-control-allow-credentials: true  
-   x-envoy-upstream-service-time: 3
-
-{  
-     "headers": {  
-       "Accept": "_/_",  
-       "Content-Length": "0",  
-       "Host": "httpbin-shadow:8000",  
-       "User-Agent": "curl/7.35.0",  
-       "X-B3-Sampled": "0",  
-       "X-B3-Spanid": "82f3e0a76dcebca2",  
-       "X-B3-Traceid": "82f3e0a76dcebca2",  
-       "X-Envoy-Internal": "true"  
-     }  
-   }
-
-05:47:50.167253 IP sleep-7b9f8bfcd-2djx5.49560  
-   &gt;  
-    10-233-71-7.httpbin.default.svc.cluster.local.80: Flags \[.\], ack 512, win 262, options \[nop,nop,TS val 77427926 ecr 77429926\], length 0  
-   E..4..X.X...  
-   .K.  
-   .G....P...;..n............  
-   ..t...\|.
-
-```
-   您可以看到流量​​ 的请求和响应内容。
-
-## 清理 {#cleaning-up}
-
-1. 删除规则：
-```
-
-$  
-   kubectl  
-    delete virtualservice httpbin  
-   $  
-   kubectl  
-    delete destinationrule httpbin
-
-```
-2. 关闭[httpbin](https://github.com/istio/istio/tree/release-1.7/samples/httpbin)服务和客户端：
-```
-
-$  
-   kubectl  
-    delete deploy httpbin-v1 httpbin-v2  
-   sleep
-
-$  
-   kubectl  
-    delete svc httpbin  
-   \`\`\`
 
