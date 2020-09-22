@@ -1,6 +1,6 @@
 下面我们以`Bookinfo`为例对 Istio 中的流量管理实现机制，以及控制平面和数据平面的交互进行进一步分析。
 
-### Bookinfo 程序结构 
+### Bookinfo 程序结构
 
 下图显示了 Bookinfo 示例程序中各个组件的 IP 地址，端口和调用关系，以用于后续的分析。
 
@@ -186,7 +186,7 @@ kubectl exec -it productpage-v1-7f9d9c48c8-xxq6f -c istio-proxy curl http://127.
 
 下面我们对该配置文件中和流量路由相关的配置一一进行详细分析。
 
-#### Bootstrap 
+#### Bootstrap
 
 从名字可以看出这是[Envoy](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#envoy)的初始化配置，打开该节点，可以看到其中的内容和[envoy](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#envoy)-rev0.json 是一致的，这里不再赘述。 需要注意的是在 bootstrap 部分配置的一些内容也会被用于其他部分，例如 clusters 部分就包含了 bootstrap 中定义的一些静态[cluster](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#cluster)资源。
 
@@ -528,7 +528,7 @@ filterchain 中的第一个 filter chain 中是一个 upstream [cluster](https:/
 ]
 ```
 
-##### Outbound Listener 
+##### Outbound Listener
 
 [Envoy](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#envoy)为网格中的外部服务按端口创建多个 Outbound listener，以用于处理出向请求。bookinfo 示例程序中使用了9080作为微服务的业务端口，因此我们这里主要分析9080这个业务端口的 listener。和其他所有 Outbound listener 一样，该 listener 配置了"bind\_to\_port”: false 属性，因此该 listener 没有被绑定到 tcp 端口上，其接收到的所有请求都转发自15001端口的 Virtual listener。
 

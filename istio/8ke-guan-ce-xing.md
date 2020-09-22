@@ -32,5 +32,7 @@
 
 * Istio作为宿主![](/image/Istio/Kiali-Feature.png)
 
+![](/image/Istio/Kiali-architecture.png)
+
 
 
