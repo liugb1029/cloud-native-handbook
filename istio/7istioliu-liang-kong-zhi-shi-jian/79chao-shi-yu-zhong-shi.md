@@ -70,3 +70,11 @@ EOF
 
 这时候访问页面直接报错![](/image/Istio/bookinfo-timeout-1s.png)
 
+
+
+
+
+
+
+
+
