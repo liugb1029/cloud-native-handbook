@@ -1,7 +1,5 @@
 # 流量镜像 {#title}
 
-
-
 此任务演示了 Istio 的流量镜像功能。
 
 流量镜像，也称为影子流量，是一个以尽可能低的风险为生产带来变化的强大的功能。镜像会将实时流量的副本发送到镜像服务。镜像流量发生在主服务的关键请求路径之外。
@@ -17,17 +15,7 @@
   **httpbin-v1:**
 
   ```
-  $ 
-  cat
-  <
-  <
-  EOF 
-  |
-  istioctl
-   kube-inject -f - 
-  |
-  kubectl
-   create -f -
+  [root@master ~]# kubectl apply -f - <<EOF
   apiVersion: apps/v1
   kind: Deployment
   metadata:
@@ -48,21 +36,7 @@
         - image: docker.io/kennethreitz/httpbin
           imagePullPolicy: IfNotPresent
           name: httpbin
-          command: 
-  [
-  "gunicorn"
-  , 
-  "--access-logfile"
-  , 
-  "-"
-  , 
-  "-b"
-  , 
-  "0.0.0.0:80"
-  , 
-  "httpbin:app"
-  ]
-
+          command: ["gunicorn", "--access-logfile", "-", "-b", "0.0.0.0:80", "httpbin:app"]
           ports:
           - containerPort: 80
   EOF
@@ -71,17 +45,7 @@
   **httpbin-v2:**
 
   ```
-  $ 
-  cat
-  <
-  <
-  EOF 
-  |
-  istioctl
-   kube-inject -f - 
-  |
-  kubectl
-   create -f -
+  [root@master ~]# kubectl apply -f - <<EOF
   apiVersion: apps/v1
   kind: Deployment
   metadata:
@@ -102,21 +66,7 @@
         - image: docker.io/kennethreitz/httpbin
           imagePullPolicy: IfNotPresent
           name: httpbin
-          command: 
-  [
-  "gunicorn"
-  , 
-  "--access-logfile"
-  , 
-  "-"
-  , 
-  "-b"
-  , 
-  "0.0.0.0:80"
-  , 
-  "httpbin:app"
-  ]
-
+          command: ["gunicorn", "--access-logfile", "-", "-b", "0.0.0.0:80", "httpbin:app"]
           ports:
           - containerPort: 80
   EOF
@@ -124,13 +74,8 @@
 
   **httpbin Kubernetes service:**
 
-  ```
-  $ 
-  kubectl
-   create -f - 
-  <
-  <
-  EOF
+  ```bash
+  [root@master ~]# kubectl apply -f - <<EOF
   apiVersion: v1
   kind: Service
   metadata:
@@ -144,6 +89,7 @@
       targetPort: 80
     selector:
       app: httpbin
+
   EOF
   ```
 
@@ -152,49 +98,25 @@
   **sleep service:**
 
   ```
-  $ 
-  cat
-  <
-  <
-  EOF 
-  |
-  istioctl
-   kube-inject -f - 
-  |
-  kubectl
-   create -f -
+  $ cat <<EOF | istioctl kube-inject -f - | kubectl create -f -
   apiVersion: apps/v1
   kind: Deployment
   metadata:
-    name: 
-  sleep
-
+    name: sleep
   spec:
     replicas: 1
     selector:
       matchLabels:
-        app: 
-  sleep
-
+        app: sleep
     template:
       metadata:
         labels:
-          app: 
-  sleep
-
+          app: sleep
       spec:
         containers:
-        - name: 
-  sleep
-
+        - name: sleep
           image: tutum/curl
-          command: 
-  [
-  "/bin/sleep"
-  ,
-  "infinity"
-  ]
-
+          command: ["/bin/sleep","infinity"]
           imagePullPolicy: IfNotPresent
   EOF
   ```
@@ -466,7 +388,7 @@
 3. 如果要检查流量内部，请在另一个控制台上运行以下命令：
 
    \`\`\`  
-   $   
+   $  
    export  
     SLEEP\_POD  
    =  
@@ -483,7 +405,7 @@
    }  
    \)
 
-   $   
+   $  
    export  
     V1\_POD\_IP  
    =  
@@ -502,7 +424,7 @@
    }  
    \)
 
-   $   
+   $  
    export  
     V2\_POD\_IP  
    =  
@@ -521,20 +443,20 @@
    }  
    \)
 
-   $   
+   $  
    kubectl  
    exec  
-    -it   
+    -it  
    $SLEEP\_POD  
-    -c istio-proxy --   
+    -c istio-proxy --  
    sudo  
-    tcpdump -A -s 0 host   
+    tcpdump -A -s 0 host  
    $V1\_POD\_IP  
-    or host   
+    or host  
    $V2\_POD\_IP  
    tcpdump: verbose output suppressed, use -v or -vv for full protocol decode  
    listening on eth0, link-type EN10MB \(Ethernet\), capture size 262144 bytes  
-   05:47:50.159513 IP sleep-7b9f8bfcd-2djx5.38836   
+   05:47:50.159513 IP sleep-7b9f8bfcd-2djx5.38836  
    &gt;  
     10-233-75-11.httpbin.default.svc.cluster.local.80: Flags \[P.\], seq 4039989036:4039989832, ack 3139734980, win 254, options \[nop,nop,TS val 77427918 ecr 76730809\], length 796: HTTP: GET /headers HTTP/1.1  
    E..P2.X.X.X.  
@@ -553,7 +475,7 @@
    x-istio-attributes: Cj8KGGRlc3RpbmF0aW9uLnNlcnZpY2UuaG9zdBIjEiFodHRwYmluLmRlZmF1bHQuc3ZjLmNsdXN0ZXIubG9jYWwKPQoXZGVzdGluYXRpb24uc2VydmljZS51aWQSIhIgaXN0aW86Ly9kZWZhdWx0L3NlcnZpY2VzL2h0dHBiaW4KKgodZGVzdGluYXRpb24uc2VydmljZS5uYW1lc3BhY2USCRIHZGVmYXVsdAolChhkZXN0aW5hdGlvbi5zZXJ2aWNlLm5hbWUSCRIHaHR0cGJpbgo6Cgpzb3VyY2UudWlkEiwSKmt1YmVybmV0ZXM6Ly9zbGVlcC03YjlmOGJmY2QtMmRqeDUuZGVmYXVsdAo6ChNkZXN0aW5hdGlvbi5zZXJ2aWNlEiMSIWh0dHBiaW4uZGVmYXVsdC5zdmMuY2x1c3Rlci5sb2NhbA==  
    content-length: 0
 
-05:47:50.159609 IP sleep-7b9f8bfcd-2djx5.49560   
+05:47:50.159609 IP sleep-7b9f8bfcd-2djx5.49560  
    &gt;  
     10-233-71-7.httpbin.default.svc.cluster.local.80: Flags \[P.\], seq 296287713:296288571, ack 4029574162, win 254, options \[nop,nop,TS val 77427918 ecr 76732809\], length 858: HTTP: GET /headers HTTP/1.1  
    E.....X.X...  
@@ -574,7 +496,7 @@
    x-forwarded-for: 10.233.75.12  
    content-length: 0
 
-05:47:50.166734 IP 10-233-75-11.httpbin.default.svc.cluster.local.80   
+05:47:50.166734 IP 10-233-75-11.httpbin.default.svc.cluster.local.80  
    &gt;  
     sleep-7b9f8bfcd-2djx5.38836: Flags \[P.\], seq 1:472, ack 796, win 276, options \[nop,nop,TS val 77427925 ecr 77427918\], length 471: HTTP: HTTP/1.1 200 OK  
    E....3X.?...  
@@ -601,14 +523,14 @@
      }  
    }
 
-05:47:50.166789 IP sleep-7b9f8bfcd-2djx5.38836   
+05:47:50.166789 IP sleep-7b9f8bfcd-2djx5.38836  
    &gt;  
     10-233-75-11.httpbin.default.svc.cluster.local.80: Flags \[.\], ack 472, win 262, options \[nop,nop,TS val 77427925 ecr 77427925\], length 0  
    E..42.X.X..  
    .K.  
    .K....P..ZH.$.............  
    ..t...t.  
-   05:47:50.167234 IP 10-233-71-7.httpbin.default.svc.cluster.local.80   
+   05:47:50.167234 IP 10-233-71-7.httpbin.default.svc.cluster.local.80  
    &gt;  
     sleep-7b9f8bfcd-2djx5.49560: Flags \[P.\], seq 1:512, ack 858, win 280, options \[nop,nop,TS val 77429926 ecr 77427918\], length 511: HTTP: HTTP/1.1 200 OK  
    E..3..X.  
@@ -638,7 +560,7 @@
      }  
    }
 
-05:47:50.167253 IP sleep-7b9f8bfcd-2djx5.49560   
+05:47:50.167253 IP sleep-7b9f8bfcd-2djx5.49560  
    &gt;  
     10-233-71-7.httpbin.default.svc.cluster.local.80: Flags \[.\], ack 512, win 262, options \[nop,nop,TS val 77427926 ecr 77429926\], length 0  
    E..4..X.X...  
@@ -654,10 +576,10 @@
 1. 删除规则：
 ```
 
-$   
+$  
    kubectl  
     delete virtualservice httpbin  
-   $   
+   $  
    kubectl  
     delete destinationrule httpbin
 
@@ -665,12 +587,12 @@ $
 2. 关闭[httpbin](https://github.com/istio/istio/tree/release-1.7/samples/httpbin)服务和客户端：
 ```
 
-$   
+$  
    kubectl  
-    delete deploy httpbin-v1 httpbin-v2   
+    delete deploy httpbin-v1 httpbin-v2  
    sleep
 
-$   
+$  
    kubectl  
     delete svc httpbin  
    \`\`\`
