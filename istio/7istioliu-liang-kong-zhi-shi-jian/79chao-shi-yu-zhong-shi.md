@@ -159,5 +159,12 @@ spec:
 EOF
 ```
 
+2、部署负载测试客户端fortio
+
+```
+[root@master samples]# kubectl apply -f httpbin/sample-client/fortio-deploy.yaml
+
+```
+
 
 
