@@ -42,5 +42,7 @@
 
 #### Istio遥测
 
+![](/image/Istio/Istio-telemetry-v1.png)
 
+![](/image/Istio/Istio-telemetry-v2.png)
 
