@@ -374,5 +374,16 @@ spec:
 
 3、测试延迟配置
 
+通过浏览器打开[Bookinfo](https://istio.io/latest/zh/docs/examples/bookinfo)应用。使用用户`jason`登陆到`/productpage`页面。
+
+你期望 Bookinfo 主页在大约 7 秒钟加载完成并且没有错误。 但是，出现了一个问题：Reviews 部分显示了错误消息：
+
+```
+Error fetching product reviews!
+Sorry, product reviews are currently unavailable for this book.
+```
+
+![](/image/Istio/bookinfo-faultinject-delay.png)
+
 
 
