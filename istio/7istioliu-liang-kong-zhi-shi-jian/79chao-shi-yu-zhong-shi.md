@@ -78,3 +78,22 @@ EOF
 
 1、恢复reviews的配置\(去掉超时策略\)
 
+```
+[root@master]# kubectl apply -f - <<EOF
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: reviews
+spec:
+  hosts:
+  - reviews
+  http:
+  - route:
+    - destination:
+        host: reviews
+        subset: v2
+EOF
+```
+
+
+
