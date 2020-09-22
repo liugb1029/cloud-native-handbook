@@ -22,7 +22,7 @@ EOF
 
 2、这时访问productpage页面应该是黑色星星。
 
-3、配置rating超时策略。
+3、配置rating延迟策略。
 
 ```
 [root@master]# kubectl apply -f - <<EOF
@@ -46,7 +46,7 @@ spec:
 EOF
 ```
 
-这时访问productpage页面需等待2s才会出现黑色星星。![](/image/Istio/bookinfo-delay-2s.png)
+这时访问productpage页面需等待2s才会出现黑色星星。![](/image/Istio/bookinfo-delay-2s.png)注意如果rating延迟策略配置为5s，那就会报错，不会消失黑色星星。
 
 
 
