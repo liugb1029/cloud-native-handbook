@@ -385,5 +385,9 @@ Sorry, product reviews are currently unavailable for this book.
 
 ![](/image/Istio/bookinfo-faultinject-delay.png)
 
+4、注入HTTP abort故障
+
+
+
 
 
