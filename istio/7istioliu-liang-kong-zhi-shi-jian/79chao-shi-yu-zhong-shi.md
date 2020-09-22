@@ -131,5 +131,7 @@ EOF
 * 目的：避免服务的级联失败
 * 关键点：三个状态；失效计数器；超时时钟![](/image/Istio/bookinfo-circut.png)
 
+ 以httpbin服务来实践
+
 
 
