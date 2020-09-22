@@ -39,4 +39,5 @@
     * [7.8各CRD配置选项](istio/7istioliu-liang-kong-zhi-shi-jian/78ge-crd-pei-zhi-xuan-xiang.md)
     * [7.9超时与重试、熔断、故障注入](istio/7istioliu-liang-kong-zhi-shi-jian/79chao-shi-yu-zhong-shi.md)
     * [7.10流量镜像](istio/7istioliu-liang-kong-zhi-shi-jian/710liu-liang-jing-xiang.md)
+  * [8.可观测性](istio/8ke-guan-ce-xing.md)
 
