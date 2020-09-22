@@ -286,3 +286,14 @@ cluster.outbound|8000||httpbin.default.svc.cluster.local.upstream_rq_pending_tot
 
 ![](/image/Istio/circut配置分析.png)
 
+#### 故障注入
+
+1、准备工作
+
+```
+# productpage → reviews:v2 → ratings (针对 jason 用户)
+# productpage → reviews:v1 (其他用户)
+```
+
+
+
