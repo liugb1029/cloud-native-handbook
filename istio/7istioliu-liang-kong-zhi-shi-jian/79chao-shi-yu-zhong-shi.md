@@ -95,5 +95,31 @@ spec:
 EOF
 ```
 
-2、
+2、配置ratings重试策略
+
+```
+[root@master]# kubectl apply -f - <<EOF
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: ratings
+spec:
+  hosts:
+  - ratings
+  http:
+  - fault:
+      delay:
+        percent: 100
+        fixedDelay: 5s
+    route:
+    - destination:
+        host: ratings
+        subset: v1
+    retries:
+      attempts: 2
+      perTryTimeout: 1s
+EOF
+```
+
+
 
