@@ -198,5 +198,102 @@ x-envoy-upstream-service-time: 12
 }
 ```
 
+4、触发熔断器测试
+
+```
+# 发送并发数为2的连接(-c 2),请求20次(-n 20)
+[root@master samples]# kubectl exec -it $FORTIO_POD  -c fortio -- /usr/bin/fortio load -c 2 -qps 0 -n 20 -loglevel Warning  http://httpbin:8000/get
+02:36:35 I logger.go:115> Log level is now 3 Warning (was 2 Info)
+Fortio 1.6.8 running at 0 queries per second, 2->2 procs, for 20 calls: http://httpbin:8000/get
+Starting at max qps with 2 thread(s) [gomax 2] for exactly 20 calls (10 per thread + 0)
+02:36:35 W http_client.go:698> Parsed non ok code 503 (HTTP/1.1 503)
+Ended after 51.796ms : 20 calls. qps=386.13
+Aggregated Function Time : count 20 avg 0.0050606452 +/- 0.001042 min 0.0015169 max 0.006568188 sum 0.101212904
+# range, mid point, percentile, count
+>= 0.0015169 <= 0.002 , 0.00175845 , 5.00, 1
+> 0.004 <= 0.005 , 0.0045 , 60.00, 11
+> 0.005 <= 0.006 , 0.0055 , 85.00, 5
+> 0.006 <= 0.00656819 , 0.00628409 , 100.00, 3
+# target 50% 0.00481818
+# target 75% 0.0056
+# target 90% 0.0061894
+# target 99% 0.00653031
+# target 99.9% 0.0065644
+Sockets used: 3 (for perfect keepalive, would be 2)
+Jitter: false
+Code 200 : 19 (95.0 %)
+Code 503 : 1 (5.0 %)
+Response Header Sizes : count 20 avg 218.5 +/- 50.13 min 0 max 230 sum 4370
+Response Body/Total Sizes : count 20 avg 583 +/- 78.46 min 241 max 601 sum 11660
+All done 20 calls (plus 0 warmup) 5.061 ms avg, 386.1 qps
+
+
+# 将并发连接数提高到 3 个：
+[root@master samples]# kubectl exec -it $FORTIO_POD  -c fortio -- /usr/bin/fortio load -c 3 -qps 0 -n 30 -loglevel Warning  http://httpbin:8000/get
+02:38:15 I logger.go:115> Log level is now 3 Warning (was 2 Info)
+Fortio 1.6.8 running at 0 queries per second, 2->2 procs, for 30 calls: http://httpbin:8000/get
+Starting at max qps with 3 thread(s) [gomax 2] for exactly 30 calls (10 per thread + 0)
+02:38:15 W http_client.go:698> Parsed non ok code 503 (HTTP/1.1 503)
+02:38:15 W http_client.go:698> Parsed non ok code 503 (HTTP/1.1 503)
+02:38:15 W http_client.go:698> Parsed non ok code 503 (HTTP/1.1 503)
+02:38:15 W http_client.go:698> Parsed non ok code 503 (HTTP/1.1 503)
+02:38:15 W http_client.go:698> Parsed non ok code 503 (HTTP/1.1 503)
+02:38:15 W http_client.go:698> Parsed non ok code 503 (HTTP/1.1 503)
+02:38:15 W http_client.go:698> Parsed non ok code 503 (HTTP/1.1 503)
+02:38:15 W http_client.go:698> Parsed non ok code 503 (HTTP/1.1 503)
+02:38:15 W http_client.go:698> Parsed non ok code 503 (HTTP/1.1 503)
+02:38:15 W http_client.go:698> Parsed non ok code 503 (HTTP/1.1 503)
+02:38:15 W http_client.go:698> Parsed non ok code 503 (HTTP/1.1 503)
+02:38:15 W http_client.go:698> Parsed non ok code 503 (HTTP/1.1 503)
+02:38:15 W http_client.go:698> Parsed non ok code 503 (HTTP/1.1 503)
+02:38:15 W http_client.go:698> Parsed non ok code 503 (HTTP/1.1 503)
+02:38:15 W http_client.go:698> Parsed non ok code 503 (HTTP/1.1 503)
+02:38:15 W http_client.go:698> Parsed non ok code 503 (HTTP/1.1 503)
+02:38:15 W http_client.go:698> Parsed non ok code 503 (HTTP/1.1 503)
+02:38:15 W http_client.go:698> Parsed non ok code 503 (HTTP/1.1 503)
+02:38:15 W http_client.go:698> Parsed non ok code 503 (HTTP/1.1 503)
+02:38:15 W http_client.go:698> Parsed non ok code 503 (HTTP/1.1 503)
+02:38:15 W http_client.go:698> Parsed non ok code 503 (HTTP/1.1 503)
+02:38:15 W http_client.go:698> Parsed non ok code 503 (HTTP/1.1 503)
+02:38:15 W http_client.go:698> Parsed non ok code 503 (HTTP/1.1 503)
+02:38:15 W http_client.go:698> Parsed non ok code 503 (HTTP/1.1 503)
+02:38:15 W http_client.go:698> Parsed non ok code 503 (HTTP/1.1 503)
+02:38:15 W http_client.go:698> Parsed non ok code 503 (HTTP/1.1 503)
+02:38:15 W http_client.go:698> Parsed non ok code 503 (HTTP/1.1 503)
+Ended after 23.994875ms : 30 calls. qps=1250.3
+Aggregated Function Time : count 30 avg 0.0021134482 +/- 0.002713 min 0.00028048 max 0.010501507 sum 0.063403446
+# range, mid point, percentile, count
+>= 0.00028048 <= 0.001 , 0.00064024 , 56.67, 17
+> 0.001 <= 0.002 , 0.0015 , 80.00, 7
+> 0.004 <= 0.005 , 0.0045 , 86.67, 2
+> 0.005 <= 0.006 , 0.0055 , 90.00, 1
+> 0.008 <= 0.009 , 0.0085 , 96.67, 2
+> 0.01 <= 0.0105015 , 0.0102508 , 100.00, 1
+# target 50% 0.00091006
+# target 75% 0.00178571
+# target 90% 0.006
+# target 99% 0.0103511
+# target 99.9% 0.0104865
+Sockets used: 27 (for perfect keepalive, would be 3)
+Jitter: false
+Code 200 : 3 (10.0 %)
+Code 503 : 27 (90.0 %)
+Response Header Sizes : count 30 avg 23 +/- 69 min 0 max 230 sum 690
+Response Body/Total Sizes : count 30 avg 210.66667 +/- 134.2 min 153 max 601 sum 6320
+All done 30 calls (plus 0 warmup) 2.113 ms avg, 1250.3 qps
+```
+
+5、查询istio-proxy状态以了解更多熔断详情
+
+```
+[root@master samples]# kubectl exec -it fortio-deploy-6dc9b4d7d9-hmgnj -c istio-proxy -- pilot-agent request GET stats|grep httpbin.default|grep pending
+cluster.outbound|8000||httpbin.default.svc.cluster.local.circuit_breakers.default.rq_pending_open: 0
+cluster.outbound|8000||httpbin.default.svc.cluster.local.circuit_breakers.high.rq_pending_open: 0
+cluster.outbound|8000||httpbin.default.svc.cluster.local.upstream_rq_pending_active: 0
+cluster.outbound|8000||httpbin.default.svc.cluster.local.upstream_rq_pending_failure_eject: 0
+cluster.outbound|8000||httpbin.default.svc.cluster.local.upstream_rq_pending_overflow: 4
+cluster.outbound|8000||httpbin.default.svc.cluster.local.upstream_rq_pending_total: 24
+```
+
 
 
