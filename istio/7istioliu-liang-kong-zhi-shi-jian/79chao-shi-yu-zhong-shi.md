@@ -230,57 +230,46 @@ All done 20 calls (plus 0 warmup) 5.061 ms avg, 386.1 qps
 
 # 将并发连接数提高到 3 个：
 [root@master samples]# kubectl exec -it $FORTIO_POD  -c fortio -- /usr/bin/fortio load -c 3 -qps 0 -n 30 -loglevel Warning  http://httpbin:8000/get
-02:38:15 I logger.go:115> Log level is now 3 Warning (was 2 Info)
+02:42:53 I logger.go:115> Log level is now 3 Warning (was 2 Info)
 Fortio 1.6.8 running at 0 queries per second, 2->2 procs, for 30 calls: http://httpbin:8000/get
 Starting at max qps with 3 thread(s) [gomax 2] for exactly 30 calls (10 per thread + 0)
-02:38:15 W http_client.go:698> Parsed non ok code 503 (HTTP/1.1 503)
-02:38:15 W http_client.go:698> Parsed non ok code 503 (HTTP/1.1 503)
-02:38:15 W http_client.go:698> Parsed non ok code 503 (HTTP/1.1 503)
-02:38:15 W http_client.go:698> Parsed non ok code 503 (HTTP/1.1 503)
-02:38:15 W http_client.go:698> Parsed non ok code 503 (HTTP/1.1 503)
-02:38:15 W http_client.go:698> Parsed non ok code 503 (HTTP/1.1 503)
-02:38:15 W http_client.go:698> Parsed non ok code 503 (HTTP/1.1 503)
-02:38:15 W http_client.go:698> Parsed non ok code 503 (HTTP/1.1 503)
-02:38:15 W http_client.go:698> Parsed non ok code 503 (HTTP/1.1 503)
-02:38:15 W http_client.go:698> Parsed non ok code 503 (HTTP/1.1 503)
-02:38:15 W http_client.go:698> Parsed non ok code 503 (HTTP/1.1 503)
-02:38:15 W http_client.go:698> Parsed non ok code 503 (HTTP/1.1 503)
-02:38:15 W http_client.go:698> Parsed non ok code 503 (HTTP/1.1 503)
-02:38:15 W http_client.go:698> Parsed non ok code 503 (HTTP/1.1 503)
-02:38:15 W http_client.go:698> Parsed non ok code 503 (HTTP/1.1 503)
-02:38:15 W http_client.go:698> Parsed non ok code 503 (HTTP/1.1 503)
-02:38:15 W http_client.go:698> Parsed non ok code 503 (HTTP/1.1 503)
-02:38:15 W http_client.go:698> Parsed non ok code 503 (HTTP/1.1 503)
-02:38:15 W http_client.go:698> Parsed non ok code 503 (HTTP/1.1 503)
-02:38:15 W http_client.go:698> Parsed non ok code 503 (HTTP/1.1 503)
-02:38:15 W http_client.go:698> Parsed non ok code 503 (HTTP/1.1 503)
-02:38:15 W http_client.go:698> Parsed non ok code 503 (HTTP/1.1 503)
-02:38:15 W http_client.go:698> Parsed non ok code 503 (HTTP/1.1 503)
-02:38:15 W http_client.go:698> Parsed non ok code 503 (HTTP/1.1 503)
-02:38:15 W http_client.go:698> Parsed non ok code 503 (HTTP/1.1 503)
-02:38:15 W http_client.go:698> Parsed non ok code 503 (HTTP/1.1 503)
-02:38:15 W http_client.go:698> Parsed non ok code 503 (HTTP/1.1 503)
-Ended after 23.994875ms : 30 calls. qps=1250.3
-Aggregated Function Time : count 30 avg 0.0021134482 +/- 0.002713 min 0.00028048 max 0.010501507 sum 0.063403446
+02:42:53 W http_client.go:698> Parsed non ok code 503 (HTTP/1.1 503)
+02:42:53 W http_client.go:698> Parsed non ok code 503 (HTTP/1.1 503)
+02:42:53 W http_client.go:698> Parsed non ok code 503 (HTTP/1.1 503)
+02:42:53 W http_client.go:698> Parsed non ok code 503 (HTTP/1.1 503)
+02:42:53 W http_client.go:698> Parsed non ok code 503 (HTTP/1.1 503)
+02:42:53 W http_client.go:698> Parsed non ok code 503 (HTTP/1.1 503)
+02:42:53 W http_client.go:698> Parsed non ok code 503 (HTTP/1.1 503)
+02:42:53 W http_client.go:698> Parsed non ok code 503 (HTTP/1.1 503)
+02:42:53 W http_client.go:698> Parsed non ok code 503 (HTTP/1.1 503)
+02:42:53 W http_client.go:698> Parsed non ok code 503 (HTTP/1.1 503)
+02:42:53 W http_client.go:698> Parsed non ok code 503 (HTTP/1.1 503)
+Ended after 74.086428ms : 30 calls. qps=404.93
+Aggregated Function Time : count 30 avg 0.0050834761 +/- 0.004166 min 0.000303125 max 0.014342636 sum 0.152504284
 # range, mid point, percentile, count
->= 0.00028048 <= 0.001 , 0.00064024 , 56.67, 17
-> 0.001 <= 0.002 , 0.0015 , 80.00, 7
-> 0.004 <= 0.005 , 0.0045 , 86.67, 2
-> 0.005 <= 0.006 , 0.0055 , 90.00, 1
-> 0.008 <= 0.009 , 0.0085 , 96.67, 2
-> 0.01 <= 0.0105015 , 0.0102508 , 100.00, 1
-# target 50% 0.00091006
-# target 75% 0.00178571
-# target 90% 0.006
-# target 99% 0.0103511
-# target 99.9% 0.0104865
-Sockets used: 27 (for perfect keepalive, would be 3)
+>= 0.000303125 <= 0.001 , 0.000651563 , 33.33, 10
+> 0.001 <= 0.002 , 0.0015 , 36.67, 1
+> 0.004 <= 0.005 , 0.0045 , 50.00, 4
+> 0.005 <= 0.006 , 0.0055 , 66.67, 5
+> 0.006 <= 0.007 , 0.0065 , 70.00, 1
+> 0.007 <= 0.008 , 0.0075 , 76.67, 2
+> 0.008 <= 0.009 , 0.0085 , 83.33, 2
+> 0.01 <= 0.011 , 0.0105 , 90.00, 2
+> 0.012 <= 0.014 , 0.013 , 96.67, 2
+> 0.014 <= 0.0143426 , 0.0141713 , 100.00, 1
+# target 50% 0.005
+# target 75% 0.00775
+# target 90% 0.011
+# target 99% 0.0142398
+# target 99.9% 0.0143324
+Sockets used: 13 (for perfect keepalive, would be 3)
 Jitter: false
-Code 200 : 3 (10.0 %)
-Code 503 : 27 (90.0 %)
-Response Header Sizes : count 30 avg 23 +/- 69 min 0 max 230 sum 690
-Response Body/Total Sizes : count 30 avg 210.66667 +/- 134.2 min 153 max 601 sum 6320
-All done 30 calls (plus 0 warmup) 2.113 ms avg, 1250.3 qps
+Code 200 : 19 (63.3 %)
+Code 503 : 11 (36.7 %)
+Response Header Sizes : count 30 avg 145.76667 +/- 110.9 min 0 max 231 sum 4373
+Response Body/Total Sizes : count 30 avg 469.1 +/- 173.6 min 241 max 602 sum 14073
+All done 30 calls (plus 0 warmup) 5.083 ms avg, 404.9 qps
+
 ```
 
 5、查询istio-proxy状态以了解更多熔断详情
@@ -291,8 +280,8 @@ cluster.outbound|8000||httpbin.default.svc.cluster.local.circuit_breakers.defaul
 cluster.outbound|8000||httpbin.default.svc.cluster.local.circuit_breakers.high.rq_pending_open: 0
 cluster.outbound|8000||httpbin.default.svc.cluster.local.upstream_rq_pending_active: 0
 cluster.outbound|8000||httpbin.default.svc.cluster.local.upstream_rq_pending_failure_eject: 0
-cluster.outbound|8000||httpbin.default.svc.cluster.local.upstream_rq_pending_overflow: 4
-cluster.outbound|8000||httpbin.default.svc.cluster.local.upstream_rq_pending_total: 24
+cluster.outbound|8000||httpbin.default.svc.cluster.local.upstream_rq_pending_overflow: 15
+cluster.outbound|8000||httpbin.default.svc.cluster.local.upstream_rq_pending_total: 45
 ```
 
 
