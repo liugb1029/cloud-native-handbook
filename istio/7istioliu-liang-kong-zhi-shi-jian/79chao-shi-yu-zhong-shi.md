@@ -387,7 +387,45 @@ Sorry, product reviews are currently unavailable for this book.
 
 4、注入HTTP abort故障
 
+```
+# 为用户 jason 创建一个发送 HTTP abort 的故障注入规则：
+[root@master istio-1.4.10]# kubectl apply -f samples/bookinfo/networking/virtual-service-ratings-test-abort.yaml
+[root@master istio-1.4.10]# kubectl get virtualservice ratings -o yaml
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: ratings
+  ...
+spec:
+  hosts:
+  - ratings
+  http:
+  - fault:
+      abort:
+        httpStatus: 500
+        percentage:
+          value: 100
+    match:
+    - headers:
+        end-user:
+          exact: jason
+    route:
+    - destination:
+        host: ratings
+        subset: v1
+  - route:
+    - destination:
+        host: ratings
+        subset: v1
+```
 
+5、测试中止配置
+
+用浏览器打开[Bookinfo](https://istio.io/latest/zh/docs/examples/bookinfo)应用。使用用户`jason`登陆到`/productpage`页面。
+
+* 如果规则成功传播到所有的 pod，您应该能立即看到页面加载并看到`Ratings service is currently unavailable`消息。
+
+* 如果您注销用户`jason`或在匿名窗口（或其他浏览器）中打开 Bookinfo 应用程序， 您将看到`/productpage`为除`jason`以外的其他用户调用了`reviews:v1`（完全不调用`ratings`）。 因此，您不会看到任何错误消息。
 
 
 
