@@ -37,5 +37,5 @@
     * [7.6istioctl命令行工具](istio/7istioliu-liang-kong-zhi-shi-jian/76istioctlming-ling-xing-gong-ju.md)
     * [7.7Bookinfo 端到端调用分析](istio/7istioliu-liang-kong-zhi-shi-jian/77bookinfo-duan-dao-duan-diao-yong-fen-xi.md)
     * [7.8各CRD配置选项](istio/7istioliu-liang-kong-zhi-shi-jian/78ge-crd-pei-zhi-xuan-xiang.md)
-    * [7.9超时与重试、熔断](istio/7istioliu-liang-kong-zhi-shi-jian/79chao-shi-yu-zhong-shi.md)
+    * [7.9超时与重试、熔断、故障注入](istio/7istioliu-liang-kong-zhi-shi-jian/79chao-shi-yu-zhong-shi.md)
 
