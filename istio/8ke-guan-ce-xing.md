@@ -30,7 +30,7 @@
      具有服务网格配置功能
   ```
 
-* Istio作为宿主
+* Istio作为宿主![](/image/Istio/Kiali-Feature.png)
 
 
 
