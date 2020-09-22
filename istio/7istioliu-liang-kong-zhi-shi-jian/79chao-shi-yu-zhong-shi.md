@@ -72,7 +72,9 @@ spec:
 EOF
 ```
 
-#### 这时候访问页面直接报错![](/image/Istio/bookinfo-timeout-1s.png)重试
+这时候访问页面直接报错![](/image/Istio/bookinfo-timeout-1s.png)
 
+#### 重试
 
+1、恢复reviews的配置\(去掉超时策略\)
 
