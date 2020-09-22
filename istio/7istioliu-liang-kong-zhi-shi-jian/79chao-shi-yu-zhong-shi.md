@@ -20,5 +20,5 @@ spec:
 EOF
 ```
 
-
+2、这时访问productpage页面应该是黑色星星。
 
