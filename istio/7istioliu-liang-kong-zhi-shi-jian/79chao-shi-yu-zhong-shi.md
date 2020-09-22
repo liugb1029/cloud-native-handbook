@@ -290,9 +290,86 @@ cluster.outbound|8000||httpbin.default.svc.cluster.local.upstream_rq_pending_tot
 
 1、准备工作
 
-```
+```bash
 # productpage → reviews:v2 → ratings (针对 jason 用户)
 # productpage → reviews:v1 (其他用户)
+
+[root@master istio-1.4.10]# kubectl apply -f samples/bookinfo/networking/virtual-service-all-v1.yaml
+[root@master istio-1.4.10]# kubectl apply -f samples/bookinfo/networking/virtual-service-reviews-test-v2.yaml
+[root@master istio-1.4.10]# kubectl get virtualservices.networking.istio.io reviews -oyaml
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: reviews
+  namespace: default
+spec:
+  hosts:
+  - reviews
+  http:
+  - match:
+    - headers:
+        end-user:
+          exact: jason
+    route:
+    - destination:
+        host: reviews
+        subset: v2
+  - route:
+    - destination:
+        host: reviews
+        subset: v1
+[root@master istio-1.4.10]# kubectl get virtualservices.networking.istio.io ratings -oyaml
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: ratings
+  namespace: default
+spec:
+  hosts:
+  - ratings
+  http:
+  - route:
+    - destination:
+        host: ratings
+        subset: v1
+```
+
+2、注入HTTP延迟故障
+
+为了测试微服务应用程序 Bookinfo 的弹性，我们将为用户`jason`在`reviews:v2`和`ratings`服务之间注入一个 7 秒的延迟。 这个测试将会发现一个故意引入 Bookinfo 应用程序中的 bug。
+
+注意`reviews:v2`服务对`ratings`服务的调用具有 10 秒的硬编码连接超时。 因此，尽管引入了 7 秒的延迟，我们仍然期望端到端的流程是没有任何错误的。
+
+```bash
+# 创建故障注入规则以延迟来自测试用户 jason 的流量：
+[root@master istio-1.4.10]# kubectl apply -f samples/bookinfo/networking/virtual-service-ratings-test-delay.yaml
+[root@master istio-1.4.10]# kubectl get virtualservices.networking.istio.io ratings -oyaml
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: ratings
+  namespace: default
+spec:
+  hosts:
+  - ratings
+  http:
+  - fault:
+      delay:
+        fixedDelay: 7s
+        percentage:
+          value: 100
+    match:
+    - headers:
+        end-user:
+          exact: jason
+    route:
+    - destination:
+        host: ratings
+        subset: v1
+  - route:
+    - destination:
+        host: ratings
+        subset: v1
 ```
 
 
