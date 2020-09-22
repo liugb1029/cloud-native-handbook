@@ -36,9 +36,9 @@
 
 ### Prometheus
 
-#### 简介
+#### 简介![](/image/Istio/Prometheus-introduce.png)架构
 
-
+#### ![](/image/Istio/Prometheus-architecture.png)
 
 
 
