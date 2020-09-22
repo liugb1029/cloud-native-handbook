@@ -48,23 +48,27 @@
 
 #### 功能
 
-
-
-
+![](/image/Istio/Grafana-introduce.png)
 
 #### Istio Dashboard
 
 * Mesh Dashboard：查看应用（服务）数据
 
-          网格数据总览
+  ```
+      网格数据总览
 
-          服务视图
+      服务视图
 
-          工作负载视图
+      工作负载视图
+  ```
 
 * Performance Dashboard：查看 Istio 自身（各组件）数据
 
-           Istio 系统总览
+  ```
+       Istio 系统总览
 
-           各组件负载情况
+       各组件负载情况
+  ```
+
+![](/image/Istio/Grafana-istio-mesh-board.png)
 
