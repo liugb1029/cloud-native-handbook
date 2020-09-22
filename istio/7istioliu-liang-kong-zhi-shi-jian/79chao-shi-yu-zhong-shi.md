@@ -149,12 +149,13 @@ spec:
       tcp:
         maxConnections: 1
       http:
-        http1MaxPendingRequests: 1
+        http1MaxPendingRequests: 1  # 最大被阻挡的请求数
         maxRequestsPerConnection: 1
+    # 失败探测
     outlierDetection:
-      consecutiveErrors: 1
-      interval: 1s
-      baseEjectionTime: 3m
+      consecutiveErrors: 1  # 失败的计数器
+      interval: 1s   # 熔断间隔时间
+      baseEjectionTime: 3m # 最小驱逐时间，默认30s
       maxEjectionPercent: 100
 EOF
 ```
@@ -269,7 +270,6 @@ Code 503 : 11 (36.7 %)
 Response Header Sizes : count 30 avg 145.76667 +/- 110.9 min 0 max 231 sum 4373
 Response Body/Total Sizes : count 30 avg 469.1 +/- 173.6 min 241 max 602 sum 14073
 All done 30 calls (plus 0 warmup) 5.083 ms avg, 404.9 qps
-
 ```
 
 5、查询istio-proxy状态以了解更多熔断详情
@@ -284,5 +284,5 @@ cluster.outbound|8000||httpbin.default.svc.cluster.local.upstream_rq_pending_ove
 cluster.outbound|8000||httpbin.default.svc.cluster.local.upstream_rq_pending_total: 45
 ```
 
-
+![](/image/Istio/circut配置分析.png)
 
