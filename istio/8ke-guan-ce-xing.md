@@ -138,5 +138,15 @@ Events:  <none>
 
 productpage访问details------productpage pod istio-proxy查看日志
 
-![](/image/Istio/productpage访问details流量日志.png)
+```
+{"bytes_sent":"178","upstream_cluster":"outbound|9080|v1|details.default.svc.cluster.local","downstream_remote_address":"10.244.2.77:35116","authority":"details:9080","path":"/details/0","protocol":"HTTP/1.1","upstream_service_time":"1","upstream_local_address":"10.244.2.77:40778","duration":"2","upstream_transport_failure_reason":"-","route_name":"-","downstream_local_address":"10.96.64.99:9080","user_agent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.121 Safari/537.36","response_code":"200","response_flags":"-","start_time":"2020-09-30T03:45:05.045Z","method":"GET","request_id":"47296862-4015-90da-8029-512668ee7746","upstream_host":"10.244.2.75:9080","x_forwarded_for":"-","requested_server_name":"-","bytes_received":"0","istio_policy_status":"-"}
+```
+
+![](/image/Istio/productpage访问details流量日志.png)productpage访问reviews------productpage pod istio-proxy查看日志
+
+```
+{"bytes_sent":"375","upstream_cluster":"outbound|9080|v3|reviews.default.svc.cluster.local","downstream_remote_address":"10.244.2.77:49784","authority":"reviews:9080","path":"/reviews/0","protocol":"HTTP/1.1","upstream_service_time":"20","upstream_local_address":"10.244.2.77:55374","duration":"20","upstream_transport_failure_reason":"-","route_name":"-","downstream_local_address":"10.96.11.46:9080","user_agent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.121 Safari/537.36","response_code":"200","response_flags":"-","start_time":"2020-09-30T03:45:05.049Z","method":"GET","request_id":"47296862-4015-90da-8029-512668ee7746","upstream_host":"10.244.2.74:9080","x_forwarded_for":"-","requested_server_name":"-","bytes_received":"0","istio_policy_status":"-"} 
+```
+
+![](/image/Istio/productpage访问reviews流量日志.png)
 
