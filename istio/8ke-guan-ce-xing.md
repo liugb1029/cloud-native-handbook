@@ -169,8 +169,6 @@ productpage访问details------productpage pod istio-proxy查看日志
 | global.proxy.accessLogFormat | 配置显示在日志中的字段，空为默认格式 |
 | global.proxy.logLevel | 日志级别，空为warning,可选trace\|debug\|info\|warning\|error\|critical\|off |
 
-
-
 ### 分布式追踪
 
 
