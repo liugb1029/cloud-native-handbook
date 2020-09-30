@@ -189,3 +189,20 @@ Jaeger Zipkin Datadog  skywalking
 
 [https://www.jaegertracing.io/](https://www.jaegertracing.io/)
 
+#####  术语
+
+**Span：**
+
+* 逻辑单元
+
+* 有操作名、执行时间
+
+* 嵌套、有序、因果关系
+
+**Trace：**
+
+* 数据/执行路径
+* Span 的组合
+
+
+
