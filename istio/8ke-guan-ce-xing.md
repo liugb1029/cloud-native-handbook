@@ -74,19 +74,9 @@
 
 ### 日志
 
+查看Envoy日志
 
+日志格式配置文件
 
-查看日志
-
-
-
-日志格式配置文件   
-
-https://istio.io/latest/docs/reference/config/istio.mesh.v1alpha1/\#MeshConfig-AccessLogEncoding
-
-
-
-
-
-
+[https://istio.io/latest/docs/reference/config/istio.mesh.v1alpha1/\#MeshConfig-AccessLogEncoding](https://istio.io/latest/docs/reference/config/istio.mesh.v1alpha1/#MeshConfig-AccessLogEncoding)
 
