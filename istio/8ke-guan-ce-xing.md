@@ -76,7 +76,13 @@
 
 #### 查看Envoy日志
 
-
+```
+[root@master ~]# kubectl logs -f productpage-v1-6987489c74-6fgz8 istio-proxy
+....
+{"requested_server_name":"-","bytes_received":"0","istio_policy_status":"-","bytes_sent":"178","upstream_cluster":"outbound|9080|v1|details.default.svc.cluster.local","downstream_remote_address":"10.244.2.77:56892","authority":"details:9080","path":"/details/0","protocol":"HTTP/1.1","upstream_service_time":"1","upstream_local_address":"10.244.2.77:40778","duration":"1","upstream_transport_failure_reason":"-","route_name":"-","downstream_local_address":"10.96.64.99:9080","user_agent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.121 Safari/537.36","response_code":"200","response_flags":"-","start_time":"2020-09-30T03:22:42.267Z","method":"GET","request_id":"9bab4f77-f271-9d8b-9cf7-127055663144","upstream_host":"10.244.2.75:9080","x_forwarded_for":"-"}
+{"requested_server_name":"-","bytes_received":"0","istio_policy_status":"-","bytes_sent":"379","upstream_cluster":"outbound|9080|v2|reviews.default.svc.cluster.local","downstream_remote_address":"10.244.2.77:43326","authority":"reviews:9080","path":"/reviews/0","protocol":"HTTP/1.1","upstream_service_time":"13","upstream_local_address":"10.244.2.77:41504","duration":"14","upstream_transport_failure_reason":"-","route_name":"-","downstream_local_address":"10.96.11.46:9080","user_agent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.121 Safari/537.36","response_code":"200","response_flags":"-","start_time":"2020-09-30T03:22:42.272Z","method":"GET","request_id":"9bab4f77-f271-9d8b-9cf7-127055663144","upstream_host":"10.244.0.81:9080","x_forwarded_for":"-"}
+{"user_agent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.121 Safari/537.36","response_code":"200","response_flags":"-","start_time":"2020-09-30T03:22:42.263Z","method":"GET","request_id":"9bab4f77-f271-9d8b-9cf7-127055663144","upstream_host":"127.0.0.1:9080","x_forwarded_for":"10.244.0.0","requested_server_name":"outbound_.9080_._.productpage.default.svc.cluster.local","bytes_received":"0","istio_policy_status":"-","bytes_sent":"5183","upstream_cluster":"inbound|9080|http|productpage.default.svc.cluster.local","downstream_remote_address":"10.244.0.0:0","authority":"192.168.56.100:30175","path":"/productpage","protocol":"HTTP/1.1","upstream_service_time":"25","upstream_local_address":"127.0.0.1:37784","duration":"26","upstream_transport_failure_reason":"-","route_name":"default","downstream_local_address":"10.244.2.77:9080"}
+```
 
 日志格式配置文件
 
