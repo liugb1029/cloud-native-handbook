@@ -178,6 +178,8 @@ productpage访问details------productpage pod istio-proxy查看日志
 * 起源于Google的Dapper
 * OpenTracing:   API规范、框架、库的组合
 
+#### ![](/image/Istio/Distributed-Systems-Tracing-concept.jpeg)
+
 #### 常见分布式追踪工具
 
 Jaeger Zipkin Datadog  skywalking
@@ -189,7 +191,7 @@ Jaeger Zipkin Datadog  skywalking
 
 [https://www.jaegertracing.io/](https://www.jaegertracing.io/)
 
-#####  术语
+##### 术语
 
 **Span：**
 
@@ -199,10 +201,22 @@ Jaeger Zipkin Datadog  skywalking
 
 * 嵌套、有序、因果关系
 
-**Trace：**
+**Trace：**
 
 * 数据/执行路径
 * Span 的组合
+
+![](/image/Istio/Span-and-Trace.png)
+
+
+
+
+
+
+
+
+
+
 
 
 
