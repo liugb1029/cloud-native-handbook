@@ -164,14 +164,12 @@ productpage访问details------productpage pod istio-proxy查看日志
 
 | 配置项 | 说明 |
 | :--- | :--- |
-|  |  |
+| global.proxy.accessLogFile | 日志输出文件，空为关闭输出 |
 |  |  |
 |  |  |
 |  |  |
 
- 
-
- 日志输出文件，空为关闭输出
+日志输出文件，空为关闭输出
 
 global.proxy.accessLogEncoding 日志编码格式：JSON、TEXT
 
