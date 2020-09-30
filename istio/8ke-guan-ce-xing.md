@@ -175,7 +175,7 @@ productpage访问details------productpage pod istio-proxy查看日志
 
 * 分析和监控应用的监控方法
 * 查找故障点、分析性能问题
-* 起源于Google的Dapper
+* ##### 起源于Google的Dapper
 * OpenTracing:   API规范、框架、库的组合
 
 #### ![](/image/Istio/Distributed-Systems-Tracing-concept.jpeg)
@@ -208,13 +208,7 @@ Jaeger Zipkin Datadog  skywalking
 
 ![](/image/Istio/Span-and-Trace.png)
 
-
-
-
-
-
-
-
+##### Jaeger结构
 
 
 
