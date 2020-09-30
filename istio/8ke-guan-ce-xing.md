@@ -136,5 +136,7 @@ Events:  <none>
 {"response_flags":"-","start_time":"2020-09-30T03:45:05.040Z","method":"GET","request_id":"47296862-4015-90da-8029-512668ee7746","upstream_host":"127.0.0.1:9080","x_forwarded_for":"10.244.0.0","requested_server_name":"outbound_.9080_._.productpage.default.svc.cluster.local","bytes_received":"0","istio_policy_status":"-","bytes_sent":"5179","upstream_cluster":"inbound|9080|http|productpage.default.svc.cluster.local","downstream_remote_address":"10.244.0.0:0","authority":"192.168.56.100:30175","path":"/productpage","protocol":"HTTP/1.1","upstream_service_time":"30","upstream_local_address":"127.0.0.1:44240","duration":"31","upstream_transport_failure_reason":"-","route_name":"default","downstream_local_address":"10.244.2.77:9080","user_agent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.121 Safari/537.36","response_code":"200"}
 ```
 
-productpage访问
+productpage访问details------productpage pod istio-proxy查看日志
+
+![](/image/Istio/productpage访问details流量日志.png)
 
