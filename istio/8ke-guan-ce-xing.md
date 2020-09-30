@@ -208,7 +208,15 @@ Jaeger Zipkin Datadog  skywalking
 
 ![](/image/Istio/Span-and-Trace.png)
 
-##### Jaeger结构
+##### Jaeger架构
+
+* Collectors are writing directly to storage
+
+![](/image/Istio/Jaeger-architecture-v1.png)
+
+* Collectors are writing to Kafka as a preliminary buffer
+
+![](/image/Istio/Jaeger-architecture-v2.png)
 
 
 
