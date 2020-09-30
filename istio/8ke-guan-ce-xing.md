@@ -84,7 +84,47 @@
 {"user_agent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.121 Safari/537.36","response_code":"200","response_flags":"-","start_time":"2020-09-30T03:22:42.263Z","method":"GET","request_id":"9bab4f77-f271-9d8b-9cf7-127055663144","upstream_host":"127.0.0.1:9080","x_forwarded_for":"10.244.0.0","requested_server_name":"outbound_.9080_._.productpage.default.svc.cluster.local","bytes_received":"0","istio_policy_status":"-","bytes_sent":"5183","upstream_cluster":"inbound|9080|http|productpage.default.svc.cluster.local","downstream_remote_address":"10.244.0.0:0","authority":"192.168.56.100:30175","path":"/productpage","protocol":"HTTP/1.1","upstream_service_time":"25","upstream_local_address":"127.0.0.1:37784","duration":"26","upstream_transport_failure_reason":"-","route_name":"default","downstream_local_address":"10.244.2.77:9080"}
 ```
 
-日志格式配置文件
+Envoy的日志相关配置是通过configmap istio。
+
+```
+[root@master ~]# kubectl -n istio-system describe cm istio
+Name:         istio
+Namespace:    istio-system
+Labels:       install.operator.istio.io/owning-resource=installed-state
+              install.operator.istio.io/owning-resource-namespace=istio-system
+              istio.io/rev=default
+              operator.istio.io/component=Pilot
+              operator.istio.io/managed=Reconcile
+              operator.istio.io/version=1.7.2
+              release=istio
+Annotations:
+Data
+====
+mesh:
+----
+accessLogFile: /dev/stdout
+accessLogEncoding: "JSON"
+defaultConfig:
+  discoveryAddress: istiod.istio-system.svc:15012
+  proxyMetadata:
+    DNS_AGENT: ""
+  tracing:
+    zipkin:
+      address: zipkin.istio-system:9411
+disableMixerHttpReports: true
+enablePrometheusMerge: true
+rootNamespace: istio-system
+trustDomain: cluster.local
+meshNetworks:
+----
+networks: {}
+Events:  <none>
+[root@master ~]#
+```
+
+日志格式配置文件，支持TEXT和JSON两种格式
 
 [https://istio.io/latest/docs/reference/config/istio.mesh.v1alpha1/\#MeshConfig-AccessLogEncoding](https://istio.io/latest/docs/reference/config/istio.mesh.v1alpha1/#MeshConfig-AccessLogEncoding)
+
+
 
