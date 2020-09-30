@@ -162,3 +162,21 @@ productpage访问details------productpage pod istio-proxy查看日志
 
 
 
+#### Envoy日志配置项
+
+
+
+配置项 说明
+
+global.proxy.accessLogFile 日志输出文件，空为关闭输出
+
+global.proxy.accessLogEncoding 日志编码格式：JSON、TEXT
+
+global.proxy.accessLogFormat 配置显示在日志中的字段，空为默认格式
+
+global.proxy.logLevel 日志级别，空为 warning，可选
+
+trace\\|debug\\|info\\|warning\\|error\\|critical\\|off
+
+
+
