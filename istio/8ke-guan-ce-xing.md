@@ -178,9 +178,11 @@ productpage访问details------productpage pod istio-proxy查看日志
 * 起源于Google的Dapper
 * OpenTracing:   API规范、框架、库的组合
 
-####  常见分布式追踪工具    
+#### 常见分布式追踪工具
 
 Jaeger Zipkin Datadog  skywalking
 
 
+
+Jaeger
 
