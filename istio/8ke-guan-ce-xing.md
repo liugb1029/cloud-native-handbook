@@ -171,7 +171,16 @@ productpage访问details------productpage pod istio-proxy查看日志
 
 ### 分布式追踪
 
+#### 分布式追踪概念
+
+* 分析和监控应用的监控方法
+* 查找故障点、分析性能问题
+* 起源于Google的Dapper
+* OpenTracing:   API规范、框架、库的组合
+
+####  常见分布式追踪工具    
+
 Jaeger Zipkin Datadog  skywalking
 
-Opentracing
+
 
