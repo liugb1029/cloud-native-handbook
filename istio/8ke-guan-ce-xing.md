@@ -152,3 +152,9 @@ productpage访问details------productpage pod istio-proxy查看日志
 
 ![](/image/Istio/productpage访问reviews流量日志.png)
 
+调试关键字段---REPONSE\_FLAGS
+
+
+
+
+
