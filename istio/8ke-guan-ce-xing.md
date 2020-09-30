@@ -152,9 +152,13 @@ productpage访问details------productpage pod istio-proxy查看日志
 
 ![](/image/Istio/productpage访问reviews流量日志.png)
 
-调试关键字段---REPONSE\_FLAGS
+#### 调试关键字段---REPONSE\_FLAGS
 
-
+* UH：upstream cluster 中没有健康的 host，503
+* UF：upstream 连接失败，503
+* UO：upstream overflow（熔断）
+* NR：没有路由配置，404
+* URX：请求被拒绝因为限流或最大连接次数
 
 
 
