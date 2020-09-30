@@ -124,9 +124,7 @@ Events:  <none>
 
 日志格式配置文件，支持TEXT和JSON两种格式
 
-[https://istio.io/latest/docs/reference/config/istio.mesh.v1alpha1/\#MeshConfig-AccessLogEncoding](https://istio.io/latest/docs/reference/config/istio.mesh.v1alpha1/#MeshConfig-AccessLogEncoding)
-
-
+[https://istio.io/latest/docs/reference/config/istio.mesh.v1alpha1/\#MeshConfig-AccessLogEncoding](https://istio.io/latest/docs/reference/config/istio.mesh.v1alpha1/#MeshConfig-AccessLogEncoding)![](/image/Istio/Envoy日志-JSON格式.png)
 
 #### Envoy流量五元组
 
