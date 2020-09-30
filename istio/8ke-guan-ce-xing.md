@@ -184,5 +184,8 @@ Jaeger Zipkin Datadog  skywalking
 
 #### Jaeger
 
-介绍
+* 开源、端到端的分布式追踪系统。
+* 针对复杂的分布式系统，对业务链路进行监控和问题排查。
+
+
 
