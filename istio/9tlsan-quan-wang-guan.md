@@ -637,7 +637,6 @@ spec:
     from:
     - source:
         notRequestPrincipals: ["*"]
-
 ```
 
 #### 全部允许和默认全部拒绝授权策略 {#allow-all-and-default-deny-all-authorization-policies}
@@ -654,7 +653,6 @@ spec:
   action: ALLOW
   rules:
   - {}
-
 ```
 
 以下示例显示了一个策略，该策略不允许任何对`admin`命名空间工作负载的访问。
@@ -667,6 +665,118 @@ metadata:
   namespace: admin
 spec:
   {}
+```
+
+#### 自定义条件 {#custom-conditions}
+
+您还可以使用`when`部分指定其他条件。 例如，下面的`AuthorizationPolicy`定义包括以下条件：`request.headers [version]`是`v1`或`v2`。 在这种情况下，key 是`request.headers [version]`，它是 Istio 属性`request.headers`（是个字典）中的一项。
+
+```
+apiVersion: security.istio.io/v1beta1
+kind: AuthorizationPolicy
+metadata:
+ name: httpbin
+ namespace: foo
+spec:
+ selector:
+   matchLabels:
+     app: httpbin
+     version: v1
+ action: ALLOW
+ rules:
+ - from:
+   - source:
+       principals: ["cluster.local/ns/default/sa/sleep"]
+   to:
+   - operation:
+       methods: ["GET"]
+   when:
+   - key: request.headers[version]
+     values: ["v1", "v2"]
+```
+
+[条件页面](https://istio.io/latest/zh/docs/reference/config/security/conditions/)中列出了支持的条件`key`值。
+
+#### 认证与未认证身份 {#authenticated-and-unauthenticated-identity}
+
+如果要使工作负载可公开访问，则需要将`source`部分留空。这允许来自所有（经过认证和未经认证）的用户和工作负载的源，例如：
+
+```
+apiVersion: security.istio.io/v1beta1
+kind: AuthorizationPolicy
+metadata:
+ name: httpbin
+ namespace: foo
+spec:
+ selector:
+   matchLabels:
+     app: httpbin
+     version: v1
+ action: ALLOW
+ rules:
+ - to:
+   - operation:
+       methods: ["GET", "POST"]
+
+```
+
+要仅允许经过认证的用户，请将`principal`设置为`"*"`，例如：
+
+```
+apiVersion: security.istio.io/v1beta1
+kind: AuthorizationPolicy
+metadata:
+ name: httpbin
+ namespace: foo
+spec:
+ selector:
+   matchLabels:
+     app: httpbin
+     version: v1
+ action: ALLOW
+ rules:
+ - from:
+   - source:
+       principals: ["*"]
+   to:
+   - operation:
+       methods: ["GET", "POST"]
+
+```
+
+### 在普通 TCP 协议上使用 Istio 授权 {#using-Istio-authorization-on-plain-TCP-protocols}
+
+Istio 授权支持工作负载使用任意普通 TCP 协议，如 MongoDB。 在这种情况下，您可以按照与 HTTP 工作负载相同的方式配置授权策略。 不同之处在于某些字段和条件仅适用于 HTTP 工作负载。 这些字段包括：
+
+* 授权策略对象`source`部分中的`request_principals`字段
+* 授权策略对象`operation`部分中的`hosts`、`methods`和`paths`字段
+
+[条件页面](https://istio.io/latest/zh/docs/reference/config/security/conditions/)中列出了支持的条件。
+
+如果您在授权策略中对 TCP 工作负载使用了任何只适用于 HTTP 的字段，Istio 将会忽略它们。
+
+假设您在端口`27017`上有一个 MongoDB 服务，下例配置了一个授权策略，只允许 Istio 网格中的`bookinfo-ratings-v2`
+
+服务访问该 MongoDB 工作负载。
+
+```
+apiVersion: "security.istio.io/v1beta1"
+kind: AuthorizationPolicy
+metadata:
+  name: mongodb-policy
+  namespace: default
+spec:
+ selector:
+   matchLabels:
+     app: mongodb
+ action: ALLOW
+ rules:
+ - from:
+   - source:
+       principals: ["cluster.local/ns/default/sa/bookinfo-ratings-v2"]
+   to:
+   - operation:
+       ports: ["27017"]
 ```
 
 
