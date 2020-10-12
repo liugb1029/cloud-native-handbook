@@ -777,6 +777,8 @@ spec:
        ports: ["27017"]
 ```
 
+**具体可参考官网  **[**https://istio.io/latest/docs/reference/config/security/conditions/**](https://istio.io/latest/docs/reference/config/security/conditions/)
+
 ### 案例---配置JWT身份认证与授权
 
 1、创建namespace testjwt 以及服务sleep和httpbin
