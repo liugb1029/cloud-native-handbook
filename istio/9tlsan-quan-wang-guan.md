@@ -413,5 +413,24 @@ Use 'kubectl describe pod/sleep-7584bc4cbd-57sdm -n testauth' to see all of the 
 }
 ```
 
-5、基于workload的双向mTLS.
+5、基于workload的双向mTLS。
+
+```
+[root@master istio-1.7.2]# kubectl apply -f - <<EOF
+apiVersion: "security.istio.io/v1beta1"
+kind: "PeerAuthentication"
+metadata:
+  name: "example-workload-policy"
+  namespace: "default"
+spec:
+  selector:
+     matchLabels:
+       app: httpbin
+  portLevelMtls:
+    8000:
+      mode: DISABLE
+EOF
+```
+
+
 
