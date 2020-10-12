@@ -378,5 +378,21 @@ EOF
 }
 ```
 
+3、开启namespace default 的双向mTLS---严格模式
+
+```
+# 严格模式
+[root@master istio-1.7.2]# kubectl apply -f - <<EOF
+apiVersion: "security.istio.io/v1beta1"
+kind: "PeerAuthentication"
+metadata:
+  name: "default"
+  namespace: "default"
+spec:
+  mtls:
+    mode: STRICT
+EOF
+```
+
 
 
