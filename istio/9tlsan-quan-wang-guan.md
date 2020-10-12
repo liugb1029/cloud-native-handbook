@@ -6,6 +6,21 @@ Istio 安全功能提供强大的身份，强大的策略，透明的 TLS 加密
 * 深度防御：与现有安全系统集成以提供多层防御
 * 零信任网络：在不受信任的网络上构建安全解决方案
 
+Istio 中的安全性涉及多个组件：
+
+* 用于密钥和证书管理的证书颁发机构（CA）
+* 配置 API 服务器分发给代理：
+
+  * [认证策略](https://istio.io/latest/zh/docs/concepts/security/#authentication-policies)
+  * [授权策略](https://istio.io/latest/zh/docs/concepts/security/#authorization-policies)
+  * [安全命名信息](https://istio.io/latest/zh/docs/concepts/security/#secure-naming)
+
+* Sidecar 和边缘代理作为[Policy Enforcement Points](https://www.jerichosystems.com/technology/glossaryterms/policy_enforcement_point.html)\(PEPs\) 以保护客户端和服务器之间的通信安全.
+
+* 一组 Envoy 代理扩展，用于管理遥测和审计
+
+控制面处理来自 API server 的配置，并且在数据面中配置 PEPs。PEPs 用 Envoy 实现。下图显示了架构。![](/image/Istio/arch-sec.png)
+
 #### 安全发现服务（SDS）
 
 * 身份和证书管理
