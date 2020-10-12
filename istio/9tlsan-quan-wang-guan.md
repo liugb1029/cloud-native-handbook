@@ -40,5 +40,19 @@ Istio PKI 使用 X.509 证书为每个工作负载都提供强大的身份标识
 
 > 这里用`istio-agent`来表述，是因为下图及对图的相关解读中反复用到了 “Istio agent” 这个术语，这样的描述更容易理解。 另外，在实现层面，`istio-agent`是指 sidecar 容器中的`pilot-agent`进程，它有很多功能，这里不表，只特别提一下：它通过 Unix socket 的方式在本地提供 SDS 服务供 Envoy 使用，这个信息对了解 Envoy 与 SDS 之间的交互有意义。
 
+Istio 供应身份是通过 secret discovery service（SDS）来实现的，具体流程如下：
+
+1. CA 提供 gRPC 服务以接受
+   [证书签名请求](https://en.wikipedia.org/wiki/Certificate_signing_request)
+   （CSRs）。
+2. Envoy 通过 Envoy 秘密发现服务（SDS）API 发送证书和密钥请求。
+3. 在收到 SDS 请求后，
+   `istio-agent`
+   创建私钥和 CSR，然后将 CSR 及其凭据发送到 Istio CA 进行签名。
+4. CA 验证 CSR 中携带的凭据并签署 CSR 以生成证书。
+5. `Istio-agent`
+   通过 Envoy SDS API 将私钥和从 Istio CA 收到的证书发送给 Envoy。
+6. 上述 CSR 过程会周期性地重复，以处理证书和密钥轮换。
+
 
 
