@@ -457,9 +457,59 @@ curl: (56) Recv failure: Connection reset by peer
 command terminated with exit code 56
 ```
 
-![](/image/Istio/PeerAuthtication-配置分析.png)
+### ![](/image/Istio/PeerAuthtication-配置分析.png)授权架构
 
+每个 Envoy 代理都运行一个授权引擎，该引擎在运行时授权请求。当请求到达代理时，授权引擎根据当前授权策略评估请求上下文，并返回授权结果`ALLOW`或`DENY`。 运维人员使用`.yaml`文件指定 Istio 授权策略。
 
+![](/image/Istio/istio-授权架构.png)
+
+### 隐式启用 {#implicit-enablement}
+
+您无需显式启用 Istio 的授权功能。只需将授权策略应用于工作负载即可实施访问控制。对于未应用授权策略的工作负载，Istio 不会执行访问控制，放行所有请求。
+
+授权策略支持`ALLOW`和`DENY`动作。 拒绝策略优先于允许策略。如果将任何允许策略应用于工作负载，则默认情况下将拒绝对该工作负载的访问，除非策略中的规则明确允许。当您将多个授权策略应用于相同的工作负载时，Istio 会累加地应用它们。
+
+### 授权策略 {#authorization-policies}
+
+要配置授权策略，请创建一个[`AuthorizationPolicy`自定义资源](https://istio.io/latest/zh/docs/reference/config/security/authorization-policy/)。 一个授权策略包括选择器（selector），动作（action） 和一个规则（rules）列表：
+
+* `selector`字段指定策略的目标
+* `action`字段指定允许还是拒绝请求
+* `rules`指定何时触发动作
+  * `rules`下的`from`字段指定请求的来源
+  * `rules`下的`to`字段指定请求的操作
+  * `rules`下的`when`字段指定应用规则所需的条件
+
+以下示例显示了一个授权策略，该策略允许两个源（服务帐号`cluster.local/ns/default/sa/sleep`和命名空间`dev`），在使用有效的 JWT 令牌发送请求时，可以访问命名空间 foo 中的带有标签`app: httpbin`和`version: v1`的工作负载。
+
+```
+apiVersion: security.istio.io/v1beta1
+kind: AuthorizationPolicy
+metadata:
+ name: httpbin
+ namespace: foo
+spec:
+ selector:
+   matchLabels:
+     app: httpbin
+     version: v1
+ action: ALLOW
+ rules:
+ - from:
+   - source:
+       principals: ["cluster.local/ns/default/sa/sleep"]
+   - source:
+       namespaces: ["dev"]
+   to:
+   - operation:
+       methods: ["GET"]
+   when:
+   - key: request.auth.claims[iss]
+     values: ["https://accounts.google.com"]
+
+```
+
+下例显示了一个授权策略，如果请求来源不是命名空间`foo`，请求将被拒绝。
 
 
 
