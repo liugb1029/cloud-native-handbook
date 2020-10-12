@@ -455,7 +455,6 @@ upstream connect error or disconnect/reset before headers. reset reason: connect
 [root@master istio-1.7.2]# kubectl exec -it -n testauth sleep-8f795f47d-k6h69 -c sleep -- curl http://productpage.default:9080
 curl: (56) Recv failure: Connection reset by peer
 command terminated with exit code 56
-
 ```
 
 
