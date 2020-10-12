@@ -392,6 +392,10 @@ spec:
   mtls:
     mode: STRICT
 EOF
+# 开启严格模式后http不能直接访问了
+[root@master istio-1.7.2]# kubectl exec -it -n testauth sleep-8f795f47d-n76hp -- curl http://httpbin.default:8000/ip
+curl: (56) Recv failure: Connection reset by peer
+command terminated with exit code 56
 ```
 
 
