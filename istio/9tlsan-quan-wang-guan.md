@@ -166,5 +166,48 @@ Istio 提供两种类型的认证：
 
 在所有情况下，Istio 都通过自定义 Kubernetes API 将认证策略存储在`Istio config store`。Istiod使每个代理保持最新状态，并在适当时提供密钥。此外，Istio 的认证机制支持宽容模式（permissive mode），以帮助您了解策略更改在实施之前如何影响您的安全状况。
 
+### 双向 TLS 认证 {#mutual-TLS-authentication}
+
+Istio 通过客户端和服务器端 PEPs 建立服务到服务的通信通道，PEPs 被实现为[Envoy 代理](https://envoyproxy.github.io/envoy/)。当一个工作负载使用双向 TLS 认证向另一个工作负载发送请求时，该请求的处理方式如下：
+
+1. Istio 将出站流量从客户端重新路由到客户端的本地 sidecar Envoy。
+2. 客户端 Envoy 与服务器端 Envoy 开始双向 TLS 握手。在握手期间，客户端 Envoy 还做了
+   [安全命名](https://istio.io/latest/zh/docs/concepts/security/#secure-naming)
+   检查，以验证服务器证书中显示的服务帐户是否被授权运行目标服务。
+3. 客户端 Envoy 和服务器端 Envoy 建立了一个双向的 TLS 连接，Istio 将流量从客户端 Envoy 转发到服务器端 Envoy。
+4. 授权后，服务器端 Envoy 通过本地 TCP 连接将流量转发到服务器服务。
+
+#### 宽容模式 {#permissive-mode}
+
+Istio 双向 TLS 具有一个宽容模式（permissive mode），允许服务同时接受纯文本流量和双向 TLS 流量。这个功能极大的提升了双向 TLS 的入门体验。
+
+在运维人员希望将服务移植到启用了双向 TLS 的 Istio 上时，许多非 Istio 客户端和非 Istio 服务端通信时会产生问题。通常情况下，运维人员无法同时为所有客户端安装 Istio sidecar，甚至没有这样做的权限。即使在服务端上安装了 Istio sidecar，运维人员也无法在不中断现有连接的情况下启用双向 TLS。
+
+启用宽容模式后，服务可以同时接受纯文本和双向 TLS 流量。这个模式为入门提供了极大的灵活性。服务中安装的 Istio sidecar 立即接受双向 TLS 流量而不会打断现有的纯文本流量。因此，运维人员可以逐步安装和配置客户端 Istio sidecar 发送双向 TLS 流量。一旦客户端配置完成，运维人员便可以将服务端配置为仅 TLS 模式。更多信息请访问[双向 TLS 迁移向导](https://istio.io/latest/zh/docs/tasks/security/authentication/mtls-migration)。
+
+
+
+#### 安全命名 {#secure-naming}
+
+服务器身份（Server identities）被编码在证书里，但服务名称（service names）通过服务发现或 DNS 被检索。安全命名信息将服务器身份映射到服务名称。身份`A`到服务名称`B`的映射表示“授权`A`运行服务`B`“。控制平面监视`apiserver`，生成安全命名映射，并将其安全地分发到 PEPs。 以下示例说明了为什么安全命名对身份验证至关重要。
+
+假设运行服务`datastore`的合法服务器仅使用`infra-team`身份。恶意用户拥有`test-team`身份的证书和密钥。恶意用户打算模拟服务以检查从客户端发送的数据。恶意用户使用证书和`test-team`身份的密钥部署伪造服务器。假设恶意用户成功攻击了发现服务或 DNS，以将`datastore`服务名称映射到伪造服务器。
+
+当客户端调用`datastore`服务时，它从服务器的证书中提取`test-team`身份，并用安全命名信息检查`test-team`是否被允许运行`datastore`。客户端检测到`test-team`不允许运行`datastore`服务，认证失败。
+
+
+
+### 认证架构 {#authentication-architecture}
+
+您可以使用 peer 和 request 认证策略为在 Istio 网格中接收请求的工作负载指定认证要求。网格运维人员使用`.yaml`文件来指定策略。部署后，策略将保存在 Istio 配置存储中。Istio 控制器监视配置存储。
+
+一有任何的策略变更，新策略都会转换为适当的配置，告知 PEP 如何执行所需的认证机制。控制平面可以获取公共密钥，并将其附加到配置中以进行 JWT 验证。或者，Istiod 提供了 Istio 系统管理的密钥和证书的路径，并将它们安装到应用程序 pod 用于双向 TLS。您可以在[PKI 部分](https://istio.io/latest/zh/docs/concepts/security/#PKI)中找到更多信息。
+
+Istio 异步发送配置到目标端点。代理收到配置后，新的认证要求会立即生效。
+
+发送请求的客户端服务负责遵循必要的认证机制。对于 peer authentication，应用程序负责获取 JWT 凭证并将其附加到请求。对于双向 TLS，Istio 会自动将两个 PEPs 之间的所有流量升级为双向 TLS。如果认证策略禁用了双向 TLS 模式，则 Istio 将继续在 PEPs 之间使用纯文本。要覆盖此行为，请使用[destination rules](https://istio.io/latest/zh/docs/concepts/traffic-management/#destination-rules)显式禁用双向 TLS 模式。您可以在[双向 TLS 认证](https://istio.io/latest/zh/docs/concepts/security/#mutual-TLS-authentication)中找到有关双向 TLS 如何工作的更多信息。
+
+![](/image/Istio/istio-authn.png)
+
 
 
