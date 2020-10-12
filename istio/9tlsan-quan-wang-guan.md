@@ -432,6 +432,30 @@ spec:
       mode: DISABLE
 EOF
 
+# 网格内的服务不能访问httpbin 
+[root@master istio-1.7.2]# kubectl exec -it sleep-8f795f47d-wpzpz -c sleep -- curl http://httpbin.default:8000/ip
+upstream connect error or disconnect/reset before headers. reset reason: connection failure[root@master istio-1.7.2]#
+
+[root@master istio-1.7.2]# kubectl exec -it -n testauth sleep-8f795f47d-k6h69 -c sleep -- curl http://httpbin.default:8000/ip
+{
+  "origin": "127.0.0.1"
+}
+# 网格内的服务访问default内其他服务 遵循严格模式
+[root@master istio-1.7.2]# kubectl exec -it sleep-8f795f47d-wpzpz -c sleep -- curl http://productpage.default:9080|grep -o '<title>.*</title>'
+<title>Simple Bookstore App</title>
+
+
+# 网格外的服务访问httpbin
+[root@master istio-1.7.2]# kubectl exec -it -n testauth sleep-8f795f47d-k6h69 -c sleep -- curl http://httpbin.default:8000/ip
+{
+  "origin": "127.0.0.1"
+}
+
+# 网格外的服务不能访问default内其他服务  遵循严格模式
+[root@master istio-1.7.2]# kubectl exec -it -n testauth sleep-8f795f47d-k6h69 -c sleep -- curl http://productpage.default:9080
+curl: (56) Recv failure: Connection reset by peer
+command terminated with exit code 56
+
 ```
 
 
