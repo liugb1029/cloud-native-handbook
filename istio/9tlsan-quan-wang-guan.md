@@ -810,13 +810,34 @@ EOF
 
 ```
 #测试不合法的jwt访问
-kubectl exec $(kubectl get pod -l app=sleep -n testjwt -o jsonpath={.items..metadata.name}) -c sleep -n testjwt -- curl -s -o /dev/null -w "%{http_code}\n"
+[root@master istio-1.7.2]# kubectl exec $(kubectl get pod -l app=sleep -n testjwt -o jsonpath={.items..metadata.name}) -c sleep -n testjwt -- curl -s -o /dev/null -w "%{http_code}\n"
  "http://httpbin.testjwt:8000/headers" -H "Authorization: Bearer invalidToken"
  401
 
 #测试没有授权策略时，都可以访问
-kubectl exec $(kubectl get pod -l app=sleep -n testjwt -o jsonpath={.items..metadata.name}) -c sleep -n testjwt -- curl "http://httpbin.testjwt:8000/headers" -s -o /dev/null -w "%{http_code}\n"
+[root@master istio-1.7.2]# kubectl exec $(kubectl get pod -l app=sleep -n testjwt -o jsonpath={.items..metadata.name}) -c sleep -n testjwt -- curl "http://httpbin.testjwt:8000/headers" -s -o /dev/null -w "%{http_code}\n"
 200
+```
+
+4、配置授权策略
+
+```
+[root@master istio-1.7.2]# kubectl apply -f - <<EOF
+apiVersion: security.istio.io/v1beta1
+kind: AuthorizationPolicy
+metadata:
+  name: require-jwt
+  namespace: testjwt
+spec:
+  selector:
+    matchLabels:
+      app: httpbin
+  action: ALLOW
+  rules:
+  - from:
+    - source:
+       requestPrincipals: ["testing@secure.istio.io/testing@secure.istio.io"]
+EOF
 ```
 
 
