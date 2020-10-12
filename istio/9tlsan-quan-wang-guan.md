@@ -717,7 +717,6 @@ spec:
  - to:
    - operation:
        methods: ["GET", "POST"]
-
 ```
 
 要仅允许经过认证的用户，请将`principal`设置为`"*"`，例如：
@@ -741,7 +740,6 @@ spec:
    to:
    - operation:
        methods: ["GET", "POST"]
-
 ```
 
 ### 在普通 TCP 协议上使用 Istio 授权 {#using-Istio-authorization-on-plain-TCP-protocols}
@@ -778,6 +776,8 @@ spec:
    - operation:
        ports: ["27017"]
 ```
+
+### 案例---配置JWT身份认证与授权
 
 
 
