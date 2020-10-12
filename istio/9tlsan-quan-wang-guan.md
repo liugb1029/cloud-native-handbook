@@ -526,7 +526,6 @@ spec:
  - from:
    - source:
        notNamespaces: ["foo"]
-
 ```
 
 拒绝策略优先于允许策略。如果请求同时匹配上允许策略和拒绝策略，请求将被拒绝。Istio 首先评估拒绝策略，以确保允许策略不能绕过拒绝策略
@@ -554,7 +553,6 @@ spec:
   - to:
     - operation:
          methods: ["GET", "HEAD"]
-
 ```
 
 #### 值匹配 {#value-matching}
@@ -591,7 +589,6 @@ spec:
   - to:
     - operation:
         paths: ["/test/*", "*/info"]
-
 ```
 
 #### 排除匹配 {#exclusion-matching}
@@ -618,10 +615,59 @@ spec:
     from:
     - source:
         requestPrincipals: ["*"]
-
 ```
 
 下面的示例拒绝到`/admin`路径且不带请求主体的请求：
+
+```
+apiVersion: security.istio.io/v1beta1
+kind: AuthorizationPolicy
+metadata:
+  name: enable-jwt-for-admin
+  namespace: default
+spec:
+  selector:
+    matchLabels:
+      app: products
+  action: DENY
+  rules:
+  - to:
+    - operation:
+        paths: ["/admin"]
+    from:
+    - source:
+        notRequestPrincipals: ["*"]
+
+```
+
+#### 全部允许和默认全部拒绝授权策略 {#allow-all-and-default-deny-all-authorization-policies}
+
+以下示例显示了一个简单的`allow-all`授权策略，该策略允许完全访问`default`命名空间中的所有工作负载。
+
+```
+apiVersion: security.istio.io/v1beta1
+kind: AuthorizationPolicy
+metadata:
+  name: allow-all
+  namespace: default
+spec:
+  action: ALLOW
+  rules:
+  - {}
+
+```
+
+以下示例显示了一个策略，该策略不允许任何对`admin`命名空间工作负载的访问。
+
+```
+apiVersion: security.istio.io/v1beta1
+kind: AuthorizationPolicy
+metadata:
+  name: deny-all
+  namespace: admin
+spec:
+  {}
+```
 
 
 
