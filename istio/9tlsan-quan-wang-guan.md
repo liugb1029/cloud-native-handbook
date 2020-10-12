@@ -506,10 +506,122 @@ spec:
    when:
    - key: request.auth.claims[iss]
      values: ["https://accounts.google.com"]
-
 ```
 
 下例显示了一个授权策略，如果请求来源不是命名空间`foo`，请求将被拒绝。
+
+```
+apiVersion: security.istio.io/v1beta1
+kind: AuthorizationPolicy
+metadata:
+ name: httpbin-deny
+ namespace: foo
+spec:
+ selector:
+   matchLabels:
+     app: httpbin
+     version: v1
+ action: DENY
+ rules:
+ - from:
+   - source:
+       notNamespaces: ["foo"]
+
+```
+
+拒绝策略优先于允许策略。如果请求同时匹配上允许策略和拒绝策略，请求将被拒绝。Istio 首先评估拒绝策略，以确保允许策略不能绕过拒绝策略
+
+#### 策略目标 {#policy-target}
+
+您可以通过`metadata/namespace`字段和可选的`selector`字段来指定策略的范围或目标。`metadata/namespace`告诉该策略适用于哪个命名空间。如果将其值设置为根名称空间，则该策略将应用于网格中的所有名称空间。根命名空间的值是可配置的，默认值为`istio-system`。如果设置为任何其他名称空间，则该策略仅适用于指定的名称空间。
+
+您可以使用`selector`字段来进一步限制策略以应用于特定工作负载。`selector`使用标签选择目标工作负载。`slector`包含`{key: value}`对的列表，其中`key`是标签的名称。如果未设置，则授权策略将应用于与授权策略相同的命名空间中的所有工作负载。
+
+以下示例策略`allow-read`允许对`default`命名空间中带有标签`app: products`的工作负载的`"GET"`和`"HEAD"`访问。
+
+```
+apiVersion: security.istio.io/v1beta1
+kind: AuthorizationPolicy
+metadata:
+  name: allow-read
+  namespace: default
+spec:
+  selector:
+    matchLabels:
+      app: products
+  action: ALLOW
+  rules:
+  - to:
+    - operation:
+         methods: ["GET", "HEAD"]
+
+```
+
+#### 值匹配 {#value-matching}
+
+授权策略中的大多数字段都支持以下所有匹配模式：
+
+* 完全匹配：即完整的字符串匹配。
+* 前缀匹配：`"*"`结尾的字符串。例如，`"test.abc.*"`匹配`"test.abc.com"、"test.abc.com.cn"`、`"test.abc.org"`
+  等等。
+* 后缀匹配：`"*"`开头的字符串。例如，`"*.abc.com"`匹配`"eng.abc.com"`、`"test.eng.abc.com"`等等。
+* 存在匹配：`*`用于指定非空的任意内容。您可以使用格式`fieldname: ["*"]`
+  指定必须存在的字段。这意味着该字段可以匹配任意内容，但是不能为空。请注意这与不指定字段不同，后者意味着包括空的任意内容。
+
+有一些例外。 例如，以下字段仅支持完全匹配：
+
+* `when`部分下的`key`字段
+* `source`部分下 的`ipBlocks`
+* `to`部分下的`ports`字段
+
+以下示例策略允许访问前缀为`/test/*`或后缀为`*/info`的路径。
+
+```
+apiVersion: security.istio.io/v1beta1
+kind: AuthorizationPolicy
+metadata:
+  name: tester
+  namespace: default
+spec:
+  selector:
+    matchLabels:
+      app: products
+  action: ALLOW
+  rules:
+  - to:
+    - operation:
+        paths: ["/test/*", "*/info"]
+
+```
+
+#### 排除匹配 {#exclusion-matching}
+
+为了匹配诸如`when`字段中的`notValues`，`source`字段中的`notIpBlocks`，`to`字段中的`notPorts`之类的否定条件，Istio 支持排除匹配。
+
+以下示例：如果请求路径不是`/healthz`，则要求从请求的 JWT 认证中导出的主体是有效的。 因此，该策略从 JWT 身份验证中排除对`/healthz`路径的请求：
+
+```
+apiVersion: security.istio.io/v1beta1
+kind: AuthorizationPolicy
+metadata:
+  name: disable-jwt-for-healthz
+  namespace: default
+spec:
+  selector:
+    matchLabels:
+      app: products
+  action: ALLOW
+  rules:
+  - to:
+    - operation:
+        notPaths: ["/healthz"]
+    from:
+    - source:
+        requestPrincipals: ["*"]
+
+```
+
+下面的示例拒绝到`/admin`路径且不带请求主体的请求：
 
 
 
