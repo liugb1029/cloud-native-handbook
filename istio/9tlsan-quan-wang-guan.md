@@ -223,7 +223,6 @@ spec:
       app: reviews
   mtls:
     mode: STRICT
-
 ```
 
 #### 策略存储 {#policy-storage}
@@ -240,7 +239,6 @@ Peer 和 request 认证策略使用`selector`字段来指定该策略适用的�
 selector:
   matchLabels:
     app: product-page
-
 ```
 
 如果您没有为`selector`字段提供值，则 Istio 会将策略与策略存储范围内的所有工作负载进行匹配。因此，`selector`字段可帮助您指定策略的范围：
@@ -288,7 +286,6 @@ metadata:
 spec:
   mtls:
     mode: STRICT
-
 ```
 
 对于特定于工作负载的 peer 认证策略，可以为不同的端口指定不同的双向 TLS 模式。您只能将工作负载声明过的端口用于端口范围的双向 TLS 配置。以下示例为`app:example-app`工作负载禁用了端口80上的双向TLS，并对所有其他端口使用名称空间范围的 peer 认证策略的双向 TLS 设置：
@@ -306,7 +303,6 @@ spec:
   portLevelMtls:
     80:
       mode: DISABLE
-
 ```
 
 上面的 peer 认证策略仅在有如下 Service 定义时工作，将流向`example-service`服务的请求绑定到`example-app`工作负载的
@@ -327,7 +323,6 @@ spec:
     targetPort: 80
   selector:
     app: example-app
-
 ```
 
 #### Request authentication {#request-authentication}
@@ -350,13 +345,7 @@ Istio 会根据 request 认证策略中的规则检查提供的令牌（如果�
 
 您可以随时更改认证策略，Istio 几乎实时将新策略推送到工作负载。但是，Istio 无法保证所有工作负载都同时收到新政策。以下建议有助于避免在更新认证策略时造成干扰：
 
-* 将 peer 认证策略的模式从
-  `DISABLE`
-  更改为
-  `STRICT`
-  时，请使用
-  `PERMISSIVE`
-  模式来过渡，反之亦然。当所有工作负载成功切换到所需模式时，您可以将策略应用于最终模式。您可以使用 Istio 遥测技术来验证工作负载已成功切换。
+* 将 peer 认证策略的模式从`DISABLE`更改为`STRICT`时，请使用`PERMISSIVE`模式来过渡，反之亦然。当所有工作负载成功切换到所需模式时，您可以将策略应用于最终模式。您可以使用 Istio 遥测技术来验证工作负载已成功切换。
 * 将 request 认证策略从一个 JWT 迁移到另一个 JWT 时，将新 JWT 的规则添加到该策略中，而不删除旧规则。这样，工作负载接受两种类型的 JWT，当所有流量都切换到新的 JWT 时，您可以删除旧规则。但是，每个 JWT 必须使用不同的位置。
 
 
