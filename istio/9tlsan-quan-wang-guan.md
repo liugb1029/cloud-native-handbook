@@ -1,4 +1,4 @@
-#### Istio安全
+### Istio安全
 
 Istio 安全功能提供强大的身份，强大的策略，透明的 TLS 加密，认证，授权和审计（AAA）工具来保护你的服务和数据。Istio 安全的目标是：
 
@@ -21,7 +21,7 @@ Istio 中的安全性涉及多个组件：
 
 控制面处理来自 API server 的配置，并且在数据面中配置 PEPs。PEPs 用 Envoy 实现。下图显示了架构。![](/image/Istio/arch-sec.png)
 
-#### 安全发现服务（SDS）
+### 安全发现服务（SDS）
 
 * 身份和证书管理
 * 实现安全配置自动化
@@ -49,7 +49,7 @@ Istio 供应身份是通过 secret discovery service（SDS）来实现的，具�
 5. `Istio-agent`通过 Envoy SDS API 将私钥和从 Istio CA 收到的证书发送给 Envoy。
 6. 上述 CSR 过程会周期性地重复，以处理证书和密钥轮换。
 
-#### 配置TLS安全网关
+### 配置TLS安全网关
 
 ```
 1.为服务创建根证书和私钥：
@@ -146,7 +146,7 @@ curl -HHost:httpbin.example.com \
 curl -v -HHost:httpbin.example.com --cacert example.com.crt https://httpbin.example.com:31264/status/418
 ```
 
-#### 认证
+### 认证
 
 Istio 提供两种类型的认证：
 
@@ -165,4 +165,6 @@ Istio 提供两种类型的认证：
   * [Google Auth](https://developers.google.com/identity/protocols/OpenIDConnect)
 
 在所有情况下，Istio 都通过自定义 Kubernetes API 将认证策略存储在`Istio config store`。Istiod使每个代理保持最新状态，并在适当时提供密钥。此外，Istio 的认证机制支持宽容模式（permissive mode），以帮助您了解策略更改在实施之前如何影响您的安全状况。
+
+
 
