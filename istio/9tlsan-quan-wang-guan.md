@@ -400,3 +400,18 @@ command terminated with exit code 56
 
 4、将sleep服务加入到istio mesh中。
 
+```
+[root@master istio-1.7.2]# kubectl apply -f <(istioctl kube-inject -f samples/sleep/sleep.yaml) -n testauth
+serviceaccount/sleep unchanged
+service/sleep unchanged
+deployment.apps/sleep configured
+[root@master istio-1.7.2]# kubectl exec -it -n testauth sleep-7584bc4cbd-57sdm -- curl http://httpbin.default:8000/ip
+Defaulting container name to sleep.
+Use 'kubectl describe pod/sleep-7584bc4cbd-57sdm -n testauth' to see all of the containers in this pod.
+{
+  "origin": "127.0.0.1"
+}
+```
+
+
+
