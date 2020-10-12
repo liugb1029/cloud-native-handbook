@@ -398,5 +398,5 @@ curl: (56) Recv failure: Connection reset by peer
 command terminated with exit code 56
 ```
 
-4、将sleep服务
+4、将sleep服务加入到istio mesh中。
 
