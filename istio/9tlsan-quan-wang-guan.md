@@ -779,5 +779,45 @@ spec:
 
 ### 案例---配置JWT身份认证与授权
 
+1、创建namespace testjwt 以及服务sleep和httpbin
+
+```bash
+[root@master istio-1.7.2]# kubectl create namespace testjwt
+[root@master istio-1.7.2]# kubectl apply -f <(istioctl kube-inject -f samples/sleep/sleep.yaml) -n testjwt
+[root@master istio-1.7.2]# kubectl apply -f <(istioctl kube-inject -f samples/httpbin/httpbin.yaml) -n testjwt
+```
+
+2、创建请求策略
+
+```
+[root@master istio-1.7.2]# kubectl apply -f - <<EOF
+apiVersion: "security.istio.io/v1beta1"
+kind: "RequestAuthentication"
+metadata:
+  name: "jwt-example"
+  namespace: testjwt
+spec:
+  selector:
+    matchLabels:
+      app: httpbin
+  jwtRules:
+  - issuer: "testing@secure.istio.io"
+    jwksUri: "https://raw.githubusercontent.com/malphi/geektime-servicemesh/master/c3-19/jwks.json"
+EOF
+```
+
+3、测试
+
+```
+#测试不合法的jwt访问
+kubectl exec $(kubectl get pod -l app=sleep -n testjwt -o jsonpath={.items..metadata.name}) -c sleep -n testjwt -- curl -s -o /dev/null -w "%{http_code}\n"
+ "http://httpbin.testjwt:8000/headers" -H "Authorization: Bearer invalidToken"
+ 401
+
+#测试没有授权策略时，都可以访问
+kubectl exec $(kubectl get pod -l app=sleep -n testjwt -o jsonpath={.items..metadata.name}) -c sleep -n testjwt -- curl "http://httpbin.testjwt:8000/headers" -s -o /dev/null -w "%{http_code}\n"
+200
+```
+
 
 
