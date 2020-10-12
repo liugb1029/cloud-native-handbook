@@ -185,8 +185,6 @@ Istio 双向 TLS 具有一个宽容模式（permissive mode），允许服务同
 
 启用宽容模式后，服务可以同时接受纯文本和双向 TLS 流量。这个模式为入门提供了极大的灵活性。服务中安装的 Istio sidecar 立即接受双向 TLS 流量而不会打断现有的纯文本流量。因此，运维人员可以逐步安装和配置客户端 Istio sidecar 发送双向 TLS 流量。一旦客户端配置完成，运维人员便可以将服务端配置为仅 TLS 模式。更多信息请访问[双向 TLS 迁移向导](https://istio.io/latest/zh/docs/tasks/security/authentication/mtls-migration)。
 
-
-
 #### 安全命名 {#secure-naming}
 
 服务器身份（Server identities）被编码在证书里，但服务名称（service names）通过服务发现或 DNS 被检索。安全命名信息将服务器身份映射到服务名称。身份`A`到服务名称`B`的映射表示“授权`A`运行服务`B`“。控制平面监视`apiserver`，生成安全命名映射，并将其安全地分发到 PEPs。 以下示例说明了为什么安全命名对身份验证至关重要。
@@ -194,8 +192,6 @@ Istio 双向 TLS 具有一个宽容模式（permissive mode），允许服务同
 假设运行服务`datastore`的合法服务器仅使用`infra-team`身份。恶意用户拥有`test-team`身份的证书和密钥。恶意用户打算模拟服务以检查从客户端发送的数据。恶意用户使用证书和`test-team`身份的密钥部署伪造服务器。假设恶意用户成功攻击了发现服务或 DNS，以将`datastore`服务名称映射到伪造服务器。
 
 当客户端调用`datastore`服务时，它从服务器的证书中提取`test-team`身份，并用安全命名信息检查`test-team`是否被允许运行`datastore`。客户端检测到`test-team`不允许运行`datastore`服务，认证失败。
-
-
 
 ### 认证架构 {#authentication-architecture}
 
@@ -207,7 +203,161 @@ Istio 异步发送配置到目标端点。代理收到配置后，新的认证�
 
 发送请求的客户端服务负责遵循必要的认证机制。对于 peer authentication，应用程序负责获取 JWT 凭证并将其附加到请求。对于双向 TLS，Istio 会自动将两个 PEPs 之间的所有流量升级为双向 TLS。如果认证策略禁用了双向 TLS 模式，则 Istio 将继续在 PEPs 之间使用纯文本。要覆盖此行为，请使用[destination rules](https://istio.io/latest/zh/docs/concepts/traffic-management/#destination-rules)显式禁用双向 TLS 模式。您可以在[双向 TLS 认证](https://istio.io/latest/zh/docs/concepts/security/#mutual-TLS-authentication)中找到有关双向 TLS 如何工作的更多信息。
 
-![](/image/Istio/istio-authn.png)
+![](/image/Istio/istio-authn.png)Istio 将两种类型的身份验证以及凭证中的其他声明（如果适用）输出到下一层：[授权](https://istio.io/latest/zh/docs/concepts/security/#authorization)。
+
+### 认证策略 {#authentication-policies}
+
+本节中提供了更多 Istio 认证策略方面的细节。正如[认证架构](https://istio.io/latest/zh/docs/concepts/security/#authentication-architecture)中所说的，认证策略是对服务收到的请求生效的。要在双向 TLS 中指定客户端认证策略，需要在`DetinationRule`中设置`TLSSettings`。[TLS 设置参考文档](https://istio.io/latest/zh/docs/reference/config/networking/destination-rule/#TLSSettings)中有更多这方面的信息。
+
+和其他的 Istio 配置一样，可以用`.yaml`文件的形式来编写认证策略。部署策略使用`kubectl`。 下面例子中的认证策略要求：与带有`app:reviews`标签的工作负载的传输层认证，必须使用双向 TLS：
+
+```
+apiVersion: "security.istio.io/v1beta1"
+kind: "PeerAuthentication"
+metadata:
+  name: "example-peer-policy"
+  namespace: "foo"
+spec:
+  selector:
+    matchLabels:
+      app: reviews
+  mtls:
+    mode: STRICT
+
+```
+
+#### 策略存储 {#policy-storage}
+
+Istio 将网格范围的策略存储在根命名空间。这些策略使用一个空的 selector 适用于网格中的所有工作负载。具有名称空间范围的策略存储在相应的名称空间中。它们仅适用于其命名空间内的工作负载。如果你配置了`selector`字段，则认证策略仅适用于与您配置的条件匹配的工作负载。
+
+Peer 和 request 认证策略用 kind 字段区分，分别是`PeerAuthentication`和`RequestAuthentication`。
+
+#### Selector 字段 {#selector-field}
+
+Peer 和 request 认证策略使用`selector`字段来指定该策略适用的工作负载的标签。以下示例显示适用于带有`app：product-page`标签的工作负载的策略的 selector 字段：
+
+```
+selector:
+  matchLabels:
+    app: product-page
+
+```
+
+如果您没有为`selector`字段提供值，则 Istio 会将策略与策略存储范围内的所有工作负载进行匹配。因此，`selector`字段可帮助您指定策略的范围：
+
+* 网格范围策略：为根名称空间指定的策略，不带或带有空的
+  `selector`
+  字段。
+* 命名空间范围的策略：为非root命名空间指定的策略，不带有或带有空的
+  `selector`
+  字段。
+* 特定于工作负载的策略：在常规名称空间中定义的策略，带有非空
+  `selector`
+  字段。
+
+Peer 和 request 认证策略对`selector`字段遵循相同的层次结构原则，但是 Istio 以略有不同的方式组合和应用它们。
+
+只能有一个网格范围的 Peer 认证策略，每个命名空间也只能有一个命名空间范围的 Peer 认证策略。当您为同一网格或命名空间配置多个网格范围或命名空间范围的 Peer 认证策略时，Istio 会忽略较新的策略。当多个特定于工作负载的 Peer 认证策略匹配时，Istio 将选择最旧的策略。
+
+Istio 按照以下顺序为每个工作负载应用最窄的匹配策略：
+
+1. 特定于工作负载的
+2. 命名空间范围
+3. 网格范围
+
+Istio 可以将所有匹配的 request 认证策略组合起来，就像它们来自单个 request 认证策略一样。因此，您可以在网格或名称空间中配置多个网格范围或命名空间范围的策略。但是，避免使用多个网格范围或命名空间范围的 request 认证策略仍然是一个好的实践。
+
+#### Peer authentication {#peer-authentication}
+
+Peer 认证策略指定 Istio 对目标工作负载实施的双向 TLS 模式。支持以下模式：
+
+* PERMISSIVE：工作负载接受双向 TLS 和纯文本流量。此模式在迁移因为没有 sidecar 而无法使用双向 TLS 的工作负载的过程中非常有用。一旦工作负载完成 sidecar 注入的迁移，应将模式切换为 STRICT。
+* STRICT： 工作负载仅接收双向 TLS 流量。
+* DISABLE：禁用双向 TLS。 从安全角度来看，除非您提供自己的安全解决方案，否则请勿使用此模式。
+
+如果未设置模式，将继承父作用域的模式。未设置模式的网格范围的 peer 认证策略默认使用`PERMISSIVE`模式。
+
+下面的 peer 认证策略要求命名空间`foo`中的所有工作负载都使用双向 TLS：
+
+```
+apiVersion: "security.istio.io/v1beta1"
+kind: "PeerAuthentication"
+metadata:
+  name: "example-policy"
+  namespace: "foo"
+spec:
+  mtls:
+    mode: STRICT
+
+```
+
+对于特定于工作负载的 peer 认证策略，可以为不同的端口指定不同的双向 TLS 模式。您只能将工作负载声明过的端口用于端口范围的双向 TLS 配置。以下示例为`app:example-app`工作负载禁用了端口80上的双向TLS，并对所有其他端口使用名称空间范围的 peer 认证策略的双向 TLS 设置：
+
+```
+apiVersion: "security.istio.io/v1beta1"
+kind: "PeerAuthentication"
+metadata:
+  name: "example-workload-policy"
+  namespace: "foo"
+spec:
+  selector:
+     matchLabels:
+       app: example-app
+  portLevelMtls:
+    80:
+      mode: DISABLE
+
+```
+
+上面的 peer 认证策略仅在有如下 Service 定义时工作，将流向`example-service`服务的请求绑定到`example-app`工作负载的
+
+`80`端口。
+
+```
+apiVersion: v1
+kind: Service
+metadata:
+  name: example-service
+  namespace: foo
+spec:
+  ports:
+  - name: http
+    port: 8000
+    protocol: TCP
+    targetPort: 80
+  selector:
+    app: example-app
+
+```
+
+#### Request authentication {#request-authentication}
+
+Request 认证策略指定验证 JSON Web Token（JWT）所需的值。 这些值包括：
+
+* token 在请求中的位置
+* 请求的 issuer
+* 公共 JSON Web Key Set（JWKS）
+
+Istio 会根据 request 认证策略中的规则检查提供的令牌（如果已提供），并拒绝令牌无效的请求。当请求不带有令牌时，默认情况下将接受它们。要拒绝没有令牌的请求，请提供授权规则，该规则指定对特定操作（例如，路径或操作）的限制。
+
+如果 Request 认证策略使用唯一的位置，则它们可以指定多个JWT。当多个策略与工作负载匹配时，Istio 会将所有规则组合起来，就好像它们被指定为单个策略一样。此行为对于开发接受来自不同 JWT 提供者的工作负载时很有用。但是，不支持具有多个有效 JWT 的请求，因为此类请求的输出主体未定义。
+
+#### Principals {#principals}
+
+使用 peer 认证策略和双向 TLS 时，Istio 将身份从 peer 认证提取到`source.principal`中。同样，当您使用 request 认证策略时，Istio 会将 JWT 中的身份赋值给`request.auth.principal`。使用这些 principals 设置授权策略和作为遥测的输出。
+
+### 更新认证策略 {#updating-authentication-policies}
+
+您可以随时更改认证策略，Istio 几乎实时将新策略推送到工作负载。但是，Istio 无法保证所有工作负载都同时收到新政策。以下建议有助于避免在更新认证策略时造成干扰：
+
+* 将 peer 认证策略的模式从
+  `DISABLE`
+  更改为
+  `STRICT`
+  时，请使用
+  `PERMISSIVE`
+  模式来过渡，反之亦然。当所有工作负载成功切换到所需模式时，您可以将策略应用于最终模式。您可以使用 Istio 遥测技术来验证工作负载已成功切换。
+* 将 request 认证策略从一个 JWT 迁移到另一个 JWT 时，将新 JWT 的规则添加到该策略中，而不删除旧规则。这样，工作负载接受两种类型的 JWT，当所有流量都切换到新的 JWT 时，您可以删除旧规则。但是，每个 JWT 必须使用不同的位置。
 
 
 
