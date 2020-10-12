@@ -49,5 +49,28 @@ Istio 供应身份是通过 secret discovery service（SDS）来实现的，具�
 5. `Istio-agent`通过 Envoy SDS API 将私钥和从 Istio CA 收到的证书发送给 Envoy。
 6. 上述 CSR 过程会周期性地重复，以处理证书和密钥轮换。
 
+#### 配置TLS安全网关
+
+```
+1.为服务创建根证书和私钥：
+openssl req -x509 -sha256 -nodes -days 365 -newkey rsa:2048 -subj '/O=example Inc./CN=example.com' -keyout example.com.key -out example.com.crt
+
+2.为httpbin.example.com创建证书和私钥：
+openssl req -out httpbin.example.com.csr -newkey rsa:2048 -nodes -keyout httpbin.example.com.key -subj "/CN=httpbin.example.com/O=httpbin organization"
+openssl x509 -req -days 365 -CA example.com.crt -CAkey example.com.key -set_serial 0 -in httpbin.example.com.csr -out httpbin.example.com.crt
+
+3. 创建secret
+kubectl create -n istio-system secret tls httpbin-credential --key=httpbin.example.com.key --cert=httpbin.example.com.crt
+
+4.定义网关,vs，见yaml
+
+5. 请求验证
+curl -HHost:httpbin.example.com \
+--resolve httpbin.example.com:443:127.0.0.1 \
+--cacert example.com.crt "https://httpbin.example.com:443/status/418"
+
+curl -v -HHost:httpbin.example.com --cacert example.com.crt https://httpbin.example.com:31264/status/418
+```
+
 
 
