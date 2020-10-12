@@ -359,5 +359,20 @@ Istio 会根据 request 认证策略中的规则检查提供的令牌（如果�
 
 2、开启namespace default 的双向mTLS
 
+```
+# 给default添加命名空间策略
+# 兼容模式
+kubectl apply -f - <<EOF
+apiVersion: "security.istio.io/v1beta1"
+kind: "PeerAuthentication"
+metadata:
+  name: "default"
+  namespace: "default"
+spec:
+  mtls:
+    mode: PERMISSIVE
+EOF
+```
+
 
 
