@@ -362,7 +362,7 @@ Istio 会根据 request 认证策略中的规则检查提供的令牌（如果�
 ```
 # 给default添加命名空间策略
 # 兼容模式
-kubectl apply -f - <<EOF
+[root@master istio-1.7.2]# kubectl apply -f - <<EOF
 apiVersion: "security.istio.io/v1beta1"
 kind: "PeerAuthentication"
 metadata:
@@ -372,6 +372,10 @@ spec:
   mtls:
     mode: PERMISSIVE
 EOF
+[root@master istio-1.7.2]# kubectl exec -it -n testauth sleep-8f795f47d-n76hp -- curl http://httpbin.default:8000/ip
+{
+  "origin": "127.0.0.1"
+}
 ```
 
 
