@@ -850,5 +850,33 @@ EOF
 200
 ```
 
+6、配置基于请求头key-values精确匹配的授权策略
+
+```
+[root@master istio-1.7.2]# kubectl apply -f - <<EOF
+apiVersion: security.istio.io/v1beta1
+kind: AuthorizationPolicy
+metadata:
+  name: require-jwt
+  namespace: testjwt
+spec:
+  selector:
+    matchLabels:
+      app: httpbin
+  action: ALLOW
+  rules:
+  - from:
+    - source:
+       requestPrincipals: ["testing@secure.istio.io/testing@secure.istio.io"]
+    when:
+    - key: request.headers[foo]
+      values: ['lgb']
+EOF
+
+# 由于TOKEN中foo为bar，所以请求失败哦
+[root@master istio-1.7.2]# kubectl exec $(kubectl get pod -l app=sleep -n testjwt -o jsonpath={.items..metadata.name}) -c sleep -n testjwt -- curl "http://httpbin.testjwt:8000/headers" -s -H "Authorization: Bearer $TOKEN"
+RBAC: access denied
+```
+
 
 
