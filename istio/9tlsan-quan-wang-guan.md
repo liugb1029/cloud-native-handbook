@@ -146,5 +146,23 @@ curl -HHost:httpbin.example.com \
 curl -v -HHost:httpbin.example.com --cacert example.com.crt https://httpbin.example.com:31264/status/418
 ```
 
+#### 认证
 
+Istio 提供两种类型的认证：
+
+* Peer authentication：用于服务到服务的认证，以验证进行连接的客户端。Istio 提供[双向 TLS](https://en.wikipedia.org/wiki/Mutual_authentication)作为传输认证的全栈解决方案，无需更改服务代码就可以启用它。这个解决方案：
+
+  * 为每个服务提供强大的身份，表示其角色，以实现跨群集和云的互操作性。
+  * 保护服务到服务的通信。
+  * 提供密钥管理系统，以自动进行密钥和证书的生成，分发和轮换。
+
+* Request authentication：用于最终用户认证，以验证附加到请求的凭据。 Istio 使用 JSON Web Token（JWT）验证启用请求级认证，并使用自定义认证实现或任何 OpenID Connect 的认证实现（例如下面列举的）来简化的开发人员体验。
+
+  * [ORY Hydra](https://www.ory.sh/)
+  * [Keycloak](https://www.keycloak.org/)
+  * [Auth0](https://auth0.com/)
+  * [Firebase Auth](https://firebase.google.com/docs/auth/)
+  * [Google Auth](https://developers.google.com/identity/protocols/OpenIDConnect)
+
+在所有情况下，Istio 都通过自定义 Kubernetes API 将认证策略存储在`Istio config store`。Istiod使每个代理保持最新状态，并在适当时提供密钥。此外，Istio 的认证机制支持宽容模式（permissive mode），以帮助您了解策略更改在实施之前如何影响您的安全状况。
 
