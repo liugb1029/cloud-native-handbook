@@ -177,6 +177,8 @@ Istio 通过客户端和服务器端 PEPs 建立服务到服务的通信通道�
 3. 客户端 Envoy 和服务器端 Envoy 建立了一个双向的 TLS 连接，Istio 将流量从客户端 Envoy 转发到服务器端 Envoy。
 4. 授权后，服务器端 Envoy 通过本地 TCP 连接将流量转发到服务器服务。
 
+#### ![](/image/Istio/istio-mTLS握手.png) {#permissive-mode}
+
 #### 宽容模式 {#permissive-mode}
 
 Istio 双向 TLS 具有一个宽容模式（permissive mode），允许服务同时接受纯文本流量和双向 TLS 流量。这个功能极大的提升了双向 TLS 的入门体验。
