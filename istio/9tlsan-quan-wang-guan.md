@@ -416,6 +416,7 @@ Use 'kubectl describe pod/sleep-7584bc4cbd-57sdm -n testauth' to see all of the 
 5、基于workload的双向mTLS。
 
 ```
+# 优先级高于基于namespaced的策略
 [root@master istio-1.7.2]# kubectl apply -f - <<EOF
 apiVersion: "security.istio.io/v1beta1"
 kind: "PeerAuthentication"
@@ -430,6 +431,7 @@ spec:
     8000:
       mode: DISABLE
 EOF
+
 ```
 
 
