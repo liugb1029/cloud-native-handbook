@@ -346,5 +346,16 @@ Istio 会根据 request 认证策略中的规则检查提供的令牌（如果�
 
 ### 案例---开启mTLS
 
+1、部署sleep服务
+
+```
+[root@master istio-1.7.2]# kubectl create namespace testauth
+[root@master istio-1.7.2]# kubectl apply -f samples/sleep/sleep.yaml -n testauth
+[root@master istio-1.7.2]# kubectl exec -it -n testauth sleep-8f795f47d-n76hp -- curl http://httpbin.default:8000/ip
+{
+  "origin": "127.0.0.1"
+}
+```
+
 
 
