@@ -880,9 +880,76 @@ EOF
 RBAC: access denied
 ```
 
+7、Envoy后台配置情况截图
+
+```
+{
+"name": "envoy.filters.http.rbac",
+"typedConfig": {
+    "@type": "type.googleapis.com/envoy.extensions.filters.http.rbac.v3.RBAC",
+    "rules": {
+        "policies": {
+            "ns[testjwt]-policy[require-jwt]-rule[0]": {
+                "permissions": [
+                    {
+                        "andRules": {
+                            "rules": [
+                                {
+                                    "any": true
+                                }
+                            ]
+                        }
+                    }
+                ],
+                "principals": [
+                    {
+                        "andIds": {
+                            "ids": [
+                                {
+                                    "orIds": {
+                                        "ids": [
+                                            {
+                                                "metadata": {
+                                                    "filter": "istio_authn",
+                                                    "path": [
+                                                        {
+                                                            "key": "request.auth.principal"
+                                                        }
+                                                    ],
+                                                    "value": {
+                                                        "stringMatch": {
+                                                            "exact": "testing@secure.istio.io/testing@secure.istio.io"
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        ]
+                                    }
+                                },
+                                {
+                                    "orIds": {
+                                        "ids": [
+                                            {
+                                                "header": {
+                                                    "name": "foo",
+                                                    "exactMatch": "lgb"
+                                                }
+                                            }
+                                        ]
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                ]
+            }
+        }
+    }
+}
+}
+```
+
 ![](/image/Istio/RequestAuthtication-配置分析.png)
 
 ![](/image/Istio/AuthorationPolicy配置分析.png)
-
-
 
