@@ -58,3 +58,17 @@ Git是每个开发人员工具包的一部分。学习起来感觉自然而且�
 
 使用集群内部的Deploy Operator，集群凭据不会在生产环境之外公开。一旦将Deploy Operator安装到集群与Git仓库建立连接，线上环境中的任何更改都将通过具有完全回滚的Git pull请求以及Git提供的方便审计日志完成。
 
+## Flux
+
+* 官方定义  ：The GitOps operator for Kubernetes
+* 自动化部署工具（基于 GitOps）
+* 特性
+
+         -  自动同步、自动部署
+
+         -  声明式
+
+         -  基于代码（Pull request），而不是容器
+
+
+
