@@ -41,4 +41,5 @@
     * [7.10流量镜像](istio/7istioliu-liang-kong-zhi-shi-jian/710liu-liang-jing-xiang.md)
   * [8.可观测性](istio/8ke-guan-ce-xing.md)
   * [9.安全](istio/9tlsan-quan-wang-guan.md)
+  * [10.GitOPS](istio/10gitops.md)
 
