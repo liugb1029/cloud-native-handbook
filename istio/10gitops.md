@@ -54,5 +54,7 @@ Git是每个开发人员工具包的一部分。学习起来感觉自然而且�
 
 ## GitOps的流水线
 
-在上节中介绍了GitOps采用拉式模式构建交付流水线，本节将详细地介绍在构建GitOps流水时需要注意哪些事情，有哪些最佳实践。![](/image/Istio/GitOPS-pipeline.png)
+在上节中介绍了GitOps采用拉式模式构建交付流水线，本节将详细地介绍在构建GitOps流水时需要注意哪些事情，有哪些最佳实践。![](/image/Istio/GitOPS-pipeline.png)这是一个新图，显示部署上游的所有内容都围绕Git库工作的。在“拉式流水线”中讲过，开发人员将更新的代码推送到Git代码库，CI工具获取更改并最终构建Docker镜像。**GitOps的Config Update检测到有镜像**，从存储库中提取新镜像，然后在Git配置仓库中更新其YAML。然后，**GitOps的Deploy Operator会检测到群集已过期**，并从配置库中提取已更改的清单，并将新镜像部署到群集。
+
+使用集群内部的Deploy Operator，集群凭据不会在生产环境之外公开。一旦将Deploy Operator安装到集群与Git仓库建立连接，线上环境中的任何更改都将通过具有完全回滚的Git pull请求以及Git提供的方便审计日志完成。
 
