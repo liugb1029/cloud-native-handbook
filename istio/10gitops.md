@@ -54,9 +54,5 @@ Git是每个开发人员工具包的一部分。学习起来感觉自然而且�
 
 ## GitOps的流水线
 
-在上节中介绍了GitOps采用拉式模式构建交付流水线，本节将详细地介绍在构建GitOps流水时需要注意哪些事情，有哪些最佳实践。
-
-![](/image/Istio/GitOPS-pipeline.png)
-
-
+在上节中介绍了GitOps采用拉式模式构建交付流水线，本节将详细地介绍在构建GitOps流水时需要注意哪些事情，有哪些最佳实践。![](/image/Istio/GitOPS-pipeline.png)
 
