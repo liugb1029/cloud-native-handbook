@@ -50,5 +50,13 @@ Git是每个开发人员工具包的一部分。学习起来感觉自然而且�
 
 ## 拉式流水线
 
-在GitOps中，镜像被拉出并且凭证保留在集群中![](/image/Istio/pull-pipeline.png)
+在GitOps中，镜像被拉出并且凭证保留在集群中![](/image/Istio/pull-pipeline.png)Git库是拉式流水线模式的核心，它存储应用程序和配置文件集。开发人员将更新的代码推送到Git代码库; CI工具获取更改并最终构建Docker镜像。GitOps检测到有镜像，从存储库中提取新镜像，然后在Git配置仓库中更新其YAML。然后，GitOps会检测到群集已过期，并从配置库中提取已更改的清单，并将新镜像部署到群集。
+
+## GitOps的流水线
+
+在上节中介绍了GitOps采用拉式模式构建交付流水线，本节将详细地介绍在构建GitOps流水时需要注意哪些事情，有哪些最佳实践。
+
+![](/image/Istio/GitOPS-pipeline.png)
+
+
 
