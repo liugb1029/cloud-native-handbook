@@ -60,15 +60,16 @@ Git是每个开发人员工具包的一部分。学习起来感觉自然而且�
 
 ## Flux
 
-* 官方定义  ：The GitOps operator for Kubernetes
+* 官方定义
+  ：The GitOps operator for Kubernetes
 * 自动化部署工具（基于 GitOps）
 * 特性
 
-         -  自动同步、自动部署
+  * 自动同步、自动部署
 
-         -  声明式
+  * 声明式
 
-         -  基于代码（Pull request），而不是容器
+  * 基于代码（Pull request），而不是容器
 
-
+![](/image/Istio/flux-cd-diagram.png)
 
