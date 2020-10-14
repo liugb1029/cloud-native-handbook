@@ -74,6 +74,8 @@
 
 ### 日志
 
+
+
 #### 查看Envoy日志
 
 ```
@@ -217,6 +219,4 @@ Jaeger Zipkin Datadog  skywalking
 * Collectors are writing to Kafka as a preliminary buffer
 
 ![](/image/Istio/Jaeger-architecture-v2.png)
-
-
 
