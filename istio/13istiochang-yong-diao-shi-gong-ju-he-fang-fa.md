@@ -225,7 +225,7 @@ VirtualService: reviews
 
 #### controlZ 可视化自检工具
 
-istioctl d controlz &lt;istiod-podname&gt; -n istio-system
+istioctl d controlz &lt;istiod-podname&gt;.istio-system
 
 * 调整日志输出级别
 
@@ -235,5 +235,5 @@ istioctl d controlz &lt;istiod-podname&gt; -n istio-system
 
 * 进程信息
 
-
+![](/image/Istio/istio-controlz.png)
 
