@@ -288,7 +288,7 @@ Client Tracer                                              Server Tracer
 `Jaeger`的部署方式主要有以下几种：
 
 * `all-in-one`部署 - 适用于快速体验`Jaeger`，所有追踪数据存储在内存中，不适用于生产环境。
-* `Kubernetes`部署 - 通过在集群独立部署`Jaeger`各组件 manifest 完成，定制化程度高，可使用已有的 Elasticsearch、Kafka 服务，适用于生产环境。目前支持通过operator方式来部署，通过CRD方式可以选择各种不同环境下的配置。这种情况下jaeger-agent支持自动注入（在服务的deployment中添加annotation Jaeger Operator）和daemoset方式部署
+* `Kubernetes`部署 - 通过在集群独立部署`Jaeger`各组件 manifest 完成，定制化程度高，可使用已有的 Elasticsearch、Kafka 服务，适用于生产环境。目前支持通过operator方式来部署，通过CRD方式可以选择各种不同环境下的配置。这种情况下jaeger-agent支持自动注入（在服务的deployment中添加annotation "sidecar.jaegertracing.io/inject": "true"）和daemoset方式部署
 * `OpenTelemetry`部署 - 适用于使用`OpenTelemetry`API 的部署方式。
 * `Windows`部署 - 适用于`Windows`环境的部署方式，通过运行 exe 可执行文件安装和配置。
 
