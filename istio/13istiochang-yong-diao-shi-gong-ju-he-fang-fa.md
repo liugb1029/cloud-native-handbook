@@ -171,5 +171,51 @@ ratings.default.svc.cluster.local     9080     http       inbound       STATIC
 
 * 验证路由
 
+```bash
+[root@master envoy]# istioctl x describe pod productpage-v1-6987489c74-6fgz8
+Pod: productpage-v1-6987489c74-6fgz8
+   Pod Ports: 9080 (productpage), 15090 (istio-proxy)
+--------------------
+Service: productpage
+   Port: http 9080/HTTP targets pod port 9080
+DestinationRule: productpage for "productpage"
+   Matching subsets: v1
+   No Traffic Policy
+VirtualService: productpage
+   1 HTTP route(s)
+
+
+Exposed on Ingress Gateway http://192.168.56.101
+VirtualService: bookinfo
+   /productpage, /static*, /login, /logout, /api/v1/products*
+
+[root@master envoy]# istioctl x describe pod httpbin-6b7bd6467b-p98lg.demo
+Pod: httpbin-6b7bd6467b-p98lg.demo
+   Pod Ports: 80 (httpbin), 15090 (istio-proxy)
+--------------------
+Service: httpbin.demo
+   Port: http 8000/HTTP targets pod port 80
+
+
+Exposed on Ingress Gateway http://192.168.56.101
+VirtualService: httpbin.demo
+   1 HTTP route(s)
+
+[root@master envoy]# istioctl x describe pod reviews-v1-7f99cc4496-gzfrb
+Pod: reviews-v1-7f99cc4496-gzfrb
+   Pod Ports: 9080 (reviews), 15090 (istio-proxy)
+--------------------
+Service: reviews
+   Port: http 9080/HTTP targets pod port 9080
+DestinationRule: reviews for "reviews"
+   Matching subsets: v1
+      (Non-matching subsets v2,v3)
+   No Traffic Policy
+VirtualService: reviews
+   WARNING: No destinations match pod subsets (checked 1 HTTP routes)
+      Route to non-matching subset v2 for (everything)
+      Route to non-matching subset v3 for (everything)
+```
+
 
 
