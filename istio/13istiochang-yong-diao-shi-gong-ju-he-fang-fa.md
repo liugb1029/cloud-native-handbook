@@ -74,5 +74,30 @@ Use "istioctl [command] --help" for more information about a command.
 
   * istioctl pc \[cluster/route/…\] &lt;pod-name.namespace&gt;
 
+```bash
+[root@master envoy]# istioctl ps
+NAME                                                   CDS        LDS        EDS        RDS          ISTIOD                      VERSION
+details-v1-558b8b4b76-jrfd4.default                    SYNCED     SYNCED     SYNCED     SYNCED       istiod-77df9b78f8-pkl2q     1.7.2
+httpbin-6b7bd6467b-6l2rx.testjwt                       SYNCED     SYNCED     SYNCED     SYNCED       istiod-77df9b78f8-pkl2q     1.7.2
+httpbin-6b7bd6467b-p98lg.demo                          SYNCED     SYNCED     SYNCED     SYNCED       istiod-77df9b78f8-pkl2q     1.7.2
+httpbin-v2-56b746ddf7-54mnk.demo                       SYNCED     SYNCED     SYNCED     SYNCED       istiod-77df9b78f8-pkl2q     1.7.2
+istio-egressgateway-fbb7dc4f4-wrw2s.istio-system       SYNCED     SYNCED     SYNCED     NOT SENT     istiod-77df9b78f8-pkl2q     1.7.2
+istio-ingressgateway-5f84fcdd69-qmg7z.istio-system     SYNCED     SYNCED     SYNCED     SYNCED       istiod-77df9b78f8-pkl2q     1.7.2
+productpage-v1-6987489c74-6fgz8.default                SYNCED     SYNCED     SYNCED     SYNCED       istiod-77df9b78f8-pkl2q     1.7.2
+ratings-v1-7dc98c7588-x9gtt.default                    SYNCED     SYNCED     SYNCED     SYNCED       istiod-77df9b78f8-pkl2q     1.7.2
+reviews-v1-7f99cc4496-gzfrb.default                    SYNCED     SYNCED     SYNCED     SYNCED       istiod-77df9b78f8-pkl2q     1.7.2
+reviews-v2-7d79d5bd5d-wn2j8.default                    SYNCED     SYNCED     SYNCED     SYNCED       istiod-77df9b78f8-pkl2q     1.7.2
+reviews-v3-7dbcdcbc56-p6gfg.default                    SYNCED     SYNCED     SYNCED     SYNCED       istiod-77df9b78f8-pkl2q     1.7.2
+sleep-7584bc4cbd-sx6h5.testjwt                         SYNCED     SYNCED     SYNCED     SYNCED       istiod-77df9b78f8-pkl2q     1.7.2
+sleep-8f795f47d-b4s69.demo                             SYNCED     SYNCED     SYNCED     SYNCED       istiod-77df9b78f8-pkl2q     1.7.2
+sleep-8f795f47d-wpzpz.default                          SYNCED     SYNCED     SYNCED     SYNCED       istiod-77df9b78f8-pkl2q     1.7.2
+
+[root@master envoy]# istioctl ps productpage-v1-6987489c74-6fgz8.default
+Clusters Match
+Listeners Match
+Routes Match (RDS last loaded at Wed, 14 Oct 2020 14:27:17 CST)
+[root@master envoy]#
+```
+
 
 
