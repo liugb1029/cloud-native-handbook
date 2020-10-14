@@ -235,5 +235,11 @@ istioctl d controlz &lt;istiod-podname&gt;.istio-system
 
 * 进程信息
 
+```
+[root@master ~]# istioctl dashboard controlz istiod-77df9b78f8-pkl2q.istio-system --address 192.168.56.100
+http://localhost:9876
+Failed to open browser; open http://localhost:9876 in your browser.
+```
+
 ![](/image/Istio/istio-controlz.png)
 
