@@ -43,4 +43,5 @@
   * [9.安全](istio/9tlsan-quan-wang-guan.md)
   * [10.GitOPS](istio/10gitops.md)
   * [11.自动灰度发布-Flagger](istio/11zi-dong-hui-du-fa-5e03-flagger.md)
+  * [12.提升系统的弹性能力](istio/12ti-sheng-xi-tong-de-dan-xing-neng-li.md)
 
