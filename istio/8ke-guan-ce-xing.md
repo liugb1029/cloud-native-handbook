@@ -272,12 +272,8 @@ Client Tracer                                              Server Tracer
 
 `Jaeger`主要由以下几个组件构成：
 
-* Client：Jaeger 客户端，是
-  [OpenTracing](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#opentracing)
-  API 的具体语言实现，可以为各种开源框架提供分布式追踪工具。
-* Agent：监听在 UDP 端口的守护进程，以 Daemonset 的方式部署在宿主机或以
-  [sidecar](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#sidecar)
-  方式注入容器内，屏蔽了 Client 和 Collector 之间的细节以及服务发现。用于接收 Client 发送过来的追踪数据，并将数据批量发送至 Collector。
+* Client：Jaeger 客户端，是[OpenTracing](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#opentracing)API 的具体语言实现，可以为各种开源框架提供分布式追踪工具。
+* Agent：监听在 UDP 端口的守护进程，以 Daemonset 的方式部署在宿主机或以[sidecar](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#sidecar)方式注入容器内，屏蔽了 Client 和 Collector 之间的细节以及服务发现。用于接收 Client 发送过来的追踪数据，并将数据批量发送至 Collector。
 * Collector：用来接收 Agent 发送的数据，验证追踪数据，并建立索引，最后异步地写入后端存储，Collector 是无状态的。
 * DataBase：后端存储组件，支持内存、Cassandra、Elasticsearch、Kafka 的存储方式。
 * Query：用于接收查询请求，从数据库检索数据并通过 UI 展示。
@@ -291,22 +287,10 @@ Client Tracer                                              Server Tracer
 
 `Jaeger`的部署方式主要有以下几种：
 
-* `all-in-one`
-  部署 - 适用于快速体验
-  `Jaeger`
-  ，所有追踪数据存储在内存中，不适用于生产环境。
-* `Kubernetes`
-  部署 - 通过在集群独立部署
-  `Jaeger`
-  各组件 manifest 完成，定制化程度高，可使用已有的 Elasticsearch、Kafka 服务，适用于生产环境。
-* `OpenTelemetry`
-  部署 - 适用于使用
-  `OpenTelemetry`
-  API 的部署方式。
-* `Windows`
-  部署 - 适用于
-  `Windows`
-  环境的部署方式，通过运行 exe 可执行文件安装和配置。
+* `all-in-one`部署 - 适用于快速体验`Jaeger`，所有追踪数据存储在内存中，不适用于生产环境。
+* `Kubernetes`部署 - 通过在集群独立部署`Jaeger`各组件 manifest 完成，定制化程度高，可使用已有的 Elasticsearch、Kafka 服务，适用于生产环境。
+* `OpenTelemetry`部署 - 适用于使用`OpenTelemetry`API 的部署方式。
+* `Windows`部署 - 适用于`Windows`环境的部署方式，通过运行 exe 可执行文件安装和配置。
 
 
 
