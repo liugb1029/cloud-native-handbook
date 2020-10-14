@@ -243,17 +243,25 @@ Failed to open browser; open http://localhost:9876 in your browser.
 
 #### ![](/image/Istio/istio-controlz.png)Envoy admin API 接口
 
-* istioctl d envoy &lt;pod-name&gt;.\[namespace\]    --address x.x.x.x
+* istioctl d envoy &lt;pod-name&gt;.\[namespace\]  
+    --address x.x.x.x
 
 * k port-forward pod-name xxx:15000
 
-*  日志级别调整
+* 日志级别调整
 
-*  性能数据分析
+* 性能数据分析
 
-*  配置等信息
+* 配置等信息
 
-*  指标查看
+* 指标查看
 
+```
+[root@master ~]# istioctl dashboard envoy details-v1-558b8b4b76-jrfd4 --address 192.168.56.100
+http://localhost:15000
+Failed to open browser; open http://localhost:15000 in your browser.
 
+```
+
+![](/image/Istio/istio-envoy-admin.png)
 
