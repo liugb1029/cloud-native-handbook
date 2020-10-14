@@ -210,7 +210,7 @@ Jaeger Zipkin Datadog  skywalking
 
 ![](/image/Istio/Span-and-Trace.png)
 
-##### Jaeger架构
+#### Jaeger架构
 
 * Collectors are writing directly to storage
 
@@ -218,5 +218,25 @@ Jaeger Zipkin Datadog  skywalking
 
 * Collectors are writing to Kafka as a preliminary buffer
 
-![](/image/Istio/Jaeger-architecture-v2.png)
+#### ![](/image/Istio/Jaeger-architecture-v2.png)Istio 分布式追踪实现原理
+
+Istio 服务网格的核心是 Envoy，是一个高性能的开源 L7 代理和通信总线。在 Istio 中，每个微服务都被注入了 Envoy Sidecar，该实例负责处理所有传入和传出的网络流量。因此，每个 Envoy Sidecar 都可以监控所有的服务间 API 调用，并记录每次服务调用所需的时间以及是否成功完成。
+
+每当微服务发起外部调用时，客户端 Envoy 会创建一个新的 span。一个 span 代表一组微服务之间的完整交互过程，从请求者（客户端）发出请求开始到接收到服务方的响应为止。
+
+在服务交互过程中，客户端会记录请求的发起时间和响应的接收时间，服务器端 Envoy 会记录请求的接收时间和响应的返回时间。
+
+每个 Envoy 都会将自己的 span 视图信息发布到分布式追踪系统。当一个微服务处理请求时，可能需要调用其他微服务，从而导致因果关联的 span 的创建，形成完整的 trace。这就需要由应用来从请求消息中收集和转发下列 Header。
+
+* `x-request-id`
+* `x-b3-traceid`
+* `x-b3-spanid`
+* `x-b3-parentspanid`
+* `x-b3-sampled`
+* `x-b3-flags`
+* `x-ot-span-context`
+
+在通信链路中的 Envoy，可以截取、处理、转发相应的 Header。
+
+
 
