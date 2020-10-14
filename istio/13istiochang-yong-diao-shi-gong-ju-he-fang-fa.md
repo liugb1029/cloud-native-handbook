@@ -97,6 +97,66 @@ Clusters Match
 Listeners Match
 Routes Match (RDS last loaded at Wed, 14 Oct 2020 14:27:17 CST)
 [root@master envoy]#
+
+[root@master envoy]# istioctl pc clusters ratings-v1-7dc98c7588-x9gtt.default
+SERVICE FQDN                                                         PORT      SUBSET     DIRECTION     TYPE             DESTINATION RULE
+BlackHoleCluster                                                     -         -          -             STATIC
+InboundPassthroughClusterIpv4                                        -         -          -             ORIGINAL_DST
+PassthroughCluster                                                   -         -          -             ORIGINAL_DST
+agent                                                                -         -          -             STATIC
+dashboard-metrics-scraper.kubernetes-dashboard.svc.cluster.local     8000      -          outbound      EDS
+details.default.svc.cluster.local                                    9080      -          outbound      EDS              details.default
+details.default.svc.cluster.local                                    9080      v1         outbound      EDS              details.default
+fortio.default.svc.cluster.local                                     8080      -          outbound      EDS
+grafana.istio-system.svc.cluster.local                               3000      -          outbound      EDS
+httpbin-v2.demo.svc.cluster.local                                    8000      -          outbound      EDS
+httpbin.demo.svc.cluster.local                                       8000      -          outbound      EDS
+httpbin.testjwt.svc.cluster.local                                    8000      -          outbound      EDS
+istio-egressgateway.istio-system.svc.cluster.local                   80        -          outbound      EDS
+istio-egressgateway.istio-system.svc.cluster.local                   443       -          outbound      EDS
+istio-egressgateway.istio-system.svc.cluster.local                   15443     -          outbound      EDS
+
+[root@master envoy]# istioctl pc clusters ratings-v1-7dc98c7588-x9gtt.default --port 9080 --direction inbound
+SERVICE FQDN                          PORT     SUBSET     DIRECTION     TYPE       DESTINATION RULE
+ratings.default.svc.cluster.local     9080     http       inbound       STATIC
+[root@master envoy]# istioctl pc clusters ratings-v1-7dc98c7588-x9gtt.default --port 9080 --direction inbound -ojson
+[
+    {
+        "name": "inbound|9080|http|ratings.default.svc.cluster.local",
+        "type": "STATIC",
+        "connectTimeout": "10s",
+        "loadAssignment": {
+            "clusterName": "inbound|9080|http|ratings.default.svc.cluster.local",
+            "endpoints": [
+                {
+                    "lbEndpoints": [
+                        {
+                            "endpoint": {
+                                "address": {
+                                    "socketAddress": {
+                                        "address": "127.0.0.1",
+                                        "portValue": 9080
+                                    }
+                                }
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        "circuitBreakers": {
+            "thresholds": [
+                {
+                    "maxConnections": 4294967295,
+                    "maxPendingRequests": 4294967295,
+                    "maxRequests": 4294967295,
+                    "maxRetries": 4294967295
+                }
+            ]
+        }
+    }
+]
+[root@master envoy]#
 ```
 
 
