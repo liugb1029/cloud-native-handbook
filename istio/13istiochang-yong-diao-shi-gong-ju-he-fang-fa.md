@@ -262,7 +262,11 @@ http://localhost:15000
 Failed to open browser; open http://localhost:15000 in your browser.
 ```
 
-![](/image/Istio/istio-envoy-admin.png)
+![](/image/Istio/istio-envoy-admin.png)改变日志级别：
+
+```
+curl -X POST http://192.168.56.100:15000/logging?level=debug
+```
 
 #### Pilot debug 接口
 
