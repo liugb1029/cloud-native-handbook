@@ -123,6 +123,38 @@ EOF
 
 查看ratings envoy的日志，有两次重试的记录。![](/image/Istio/bookinfo-retry.png)
 
+针对500错误才出发重试
+
+```
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: httpbin
+  namespace: demo
+spec:
+  hosts:
+  - "*"
+  gateways:
+  - httpbin-gateway
+  http:
+  - route:
+    - destination:
+        host: httpbin
+        port:
+          number: 8000
+    retries:
+      attempts: 3
+      perTryTimeout: 1s
+      retryOn: 5xx
+    timeout: 8s
+```
+
+
+
+
+
+
+
 ### 熔断
 
 熔断
