@@ -58,5 +58,21 @@ Use "istioctl [command] --help" for more information about a command.
 * istioctl dashboard \[command\]
 * controlz / envoy / Grafana / jaeger / kiali / Prometheus / zipkin
 
+##### 网格配置状态检查
+
+* 配置同步检查
+
+        -    istioctl ps（proxy-status）
+
+        -    状态：SYNCED / NOT SENT / STALE
+
+        -    istioctl ps &lt;pod-name&gt;
+
+*  配置详情
+
+         -   istioctl pc（proxy-config）
+
+         -   istioctl pc \[cluster/route/…\] &lt;pod-name.namespace&gt;
+
 
 
