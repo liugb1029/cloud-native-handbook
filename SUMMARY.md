@@ -42,5 +42,5 @@
   * [8.可观测性](istio/8ke-guan-ce-xing.md)
   * [9.安全](istio/9tlsan-quan-wang-guan.md)
   * [10.GitOPS](istio/10gitops.md)
-  * 11.自动灰度发布-Flagger
+  * [11.自动灰度发布-Flagger](istio/11zi-dong-hui-du-fa-5e03-flagger.md)
 
