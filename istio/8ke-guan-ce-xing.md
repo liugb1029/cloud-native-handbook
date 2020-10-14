@@ -264,9 +264,7 @@ Client Tracer                                              Server Tracer
 
 ![](/image/Istio/envoy-jaeger.png)
 
-图中 Front[Envoy](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#envoy)指的是第一个接收到请求的[Envoy](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#envoy)[Sidecar](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#sidecar)，它会负责创建 Root Span 并追加到请求 Header 内，请求到达不同的服务时，[Envoy](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#envoy)[Sidecar](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#sidecar)会将追踪信息进行上报。部署istio时Envoy默认将追踪信息to你哥哥HTTP方式上报给自带的jaegerd-controller 9411 接口。
-
-
+图中 Front[Envoy](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#envoy)指的是第一个接收到请求的[Envoy](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#envoy)[Sidecar](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#sidecar)，它会负责创建 Root Span 并追加到请求 Header 内，请求到达不同的服务时，[Envoy](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#envoy)[Sidecar](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#sidecar)会将追踪信息进行上报。部署istio时Envoy默认将追踪信息to你哥哥HTTP方式上报给自带的jaegerd-controller 9411 接口。![](/image/Istio/Envoy-jaeger-controller.png)
 
 `Jaeger`的内部组件架构与 EFK 日志系统架构有一定相似性：
 
