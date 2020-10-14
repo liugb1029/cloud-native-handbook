@@ -256,5 +256,61 @@ Client Tracer                                              Server Tracer
 └──────────────────┘                                       └──────────────────┘
 ```
 
+## Envoy-Jaeger 架构 {#envoy-jaeger-架构}
+
+`Envoy`原生支持`Jaeger`，追踪所需`x-b3`开头的 Header 和`x-request-id`在不同的服务之间由业务逻辑进行传递，并由`Envoy`上报给`Jaeger`，最终`Jaeger`生成完整的追踪信息。
+
+在`Istio`中，`Envoy`和`Jaeger`的关系如下：
+
+
+
+
+
+图中 Front[Envoy](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#envoy)指的是第一个接收到请求的[Envoy](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#envoy)[Sidecar](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#sidecar)，它会负责创建 Root Span 并追加到请求 Header 内，请求到达不同的服务时，[Envoy](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#envoy)[Sidecar](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#sidecar)会将追踪信息进行上报。
+
+`Jaeger`的内部组件架构与 EFK 日志系统架构有一定相似性：
+
+
+
+                                                                                     Jaeger 架构图
+
+`Jaeger`主要由以下几个组件构成：
+
+* Client：Jaeger 客户端，是
+  [OpenTracing](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#opentracing)
+  API 的具体语言实现，可以为各种开源框架提供分布式追踪工具。
+* Agent：监听在 UDP 端口的守护进程，以 Daemonset 的方式部署在宿主机或以
+  [sidecar](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#sidecar)
+  方式注入容器内，屏蔽了 Client 和 Collector 之间的细节以及服务发现。用于接收 Client 发送过来的追踪数据，并将数据批量发送至 Collector。
+* Collector：用来接收 Agent 发送的数据，验证追踪数据，并建立索引，最后异步地写入后端存储，Collector 是无状态的。
+* DataBase：后端存储组件，支持内存、Cassandra、Elasticsearch、Kafka 的存储方式。
+* Query：用于接收查询请求，从数据库检索数据并通过 UI 展示。
+* UI：使用 React 编写，用于 UI 界面展示。
+
+在`Istio`提供“开箱即用”的追踪环境中，`Jaeger`的部署方式是`all-in-one`的方式。该模式下部署的[Pod](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#pod)为`istio-tracing`，使用`jaegertracing/all-in-one`镜像，包含：`Jaeger-agent`、`Jaeger-collector`、`Jaeger-query(UI)`几个组件。
+
+不同的是，`Bookinfo`的业务代码并没有集成`Jaeger-client`，而是由`Envoy`将追踪信息直接上报到`Jaeger-collector`，另外，存储方式默认为内存，随着[Pod](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#pod)销毁，追踪数据将会被删除。
+
+## 部署方式 {#部署方式}
+
+`Jaeger`的部署方式主要有以下几种：
+
+* `all-in-one`
+  部署 - 适用于快速体验
+  `Jaeger`
+  ，所有追踪数据存储在内存中，不适用于生产环境。
+* `Kubernetes`
+  部署 - 通过在集群独立部署
+  `Jaeger`
+  各组件 manifest 完成，定制化程度高，可使用已有的 Elasticsearch、Kafka 服务，适用于生产环境。
+* `OpenTelemetry`
+  部署 - 适用于使用
+  `OpenTelemetry`
+  API 的部署方式。
+* `Windows`
+  部署 - 适用于
+  `Windows`
+  环境的部署方式，通过运行 exe 可执行文件安装和配置。
+
 
 
