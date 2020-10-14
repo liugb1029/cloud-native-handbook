@@ -74,7 +74,7 @@
 
 ### 日志
 
-
+![](/image/Istio/ELK最终形态.png)
 
 #### 查看Envoy日志
 
