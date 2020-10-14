@@ -133,5 +133,15 @@ envoy_server_initialization_time_ms_sum{} 805
 envoy_server_initialization_time_ms_count{} 1
 ```
 
+### Prometheus 的服务发现机制
+
+* kubernetes\_sd\_config - role
+* node：集群节点
+* service：服务，常用于黑盒监控
+* pod：以pod中容器为目标
+* endpoints：端点
+* ingress：入口网关
+* relabel\_configs 过滤机制
+
 
 
