@@ -104,5 +104,34 @@ istio_requests_total{
 * /metrics
 * /stats/prometheus----Envoy 15090
 
+```
+[root@master httpbin]# kubectl -n demo exec -it sleep-8f795f47d-b4s69 -- curl http://httpbin:15090/stats/prometheus
+....
+....
+# TYPE envoy_server_initialization_time_ms histogram
+envoy_server_initialization_time_ms_bucket{le="0.5"} 0
+envoy_server_initialization_time_ms_bucket{le="1"} 0
+envoy_server_initialization_time_ms_bucket{le="5"} 0
+envoy_server_initialization_time_ms_bucket{le="10"} 0
+envoy_server_initialization_time_ms_bucket{le="25"} 0
+envoy_server_initialization_time_ms_bucket{le="50"} 0
+envoy_server_initialization_time_ms_bucket{le="100"} 0
+envoy_server_initialization_time_ms_bucket{le="250"} 0
+envoy_server_initialization_time_ms_bucket{le="500"} 0
+envoy_server_initialization_time_ms_bucket{le="1000"} 1
+envoy_server_initialization_time_ms_bucket{le="2500"} 1
+envoy_server_initialization_time_ms_bucket{le="5000"} 1
+envoy_server_initialization_time_ms_bucket{le="10000"} 1
+envoy_server_initialization_time_ms_bucket{le="30000"} 1
+envoy_server_initialization_time_ms_bucket{le="60000"} 1
+envoy_server_initialization_time_ms_bucket{le="300000"} 1
+envoy_server_initialization_time_ms_bucket{le="600000"} 1
+envoy_server_initialization_time_ms_bucket{le="1800000"} 1
+envoy_server_initialization_time_ms_bucket{le="3600000"} 1
+envoy_server_initialization_time_ms_bucket{le="+Inf"} 1
+envoy_server_initialization_time_ms_sum{} 805
+envoy_server_initialization_time_ms_count{} 1
+```
+
 
 
