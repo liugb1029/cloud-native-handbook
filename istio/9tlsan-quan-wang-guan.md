@@ -273,7 +273,7 @@ Peer 认证策略指定 Istio 对目标工作负载实施的双向 TLS 模式。
 
 下面的 peer 认证策略要求命名空间`foo`中的所有工作负载都使用双向 TLS：
 
-```
+```bash
 apiVersion: "security.istio.io/v1beta1"
 kind: "PeerAuthentication"
 metadata:
@@ -286,7 +286,7 @@ spec:
 
 对于特定于工作负载的 peer 认证策略，可以为不同的端口指定不同的双向 TLS 模式。您只能将工作负载声明过的端口用于端口范围的双向 TLS 配置。以下示例为`app:example-app`工作负载禁用了端口80上的双向TLS，并对所有其他端口使用名称空间范围的 peer 认证策略的双向 TLS 设置：
 
-```
+```bash
 apiVersion: "security.istio.io/v1beta1"
 kind: "PeerAuthentication"
 metadata:
@@ -305,7 +305,7 @@ spec:
 
 `80`端口。
 
-```
+```bash
 apiVersion: v1
 kind: Service
 metadata:
@@ -348,7 +348,7 @@ Istio 会根据 request 认证策略中的规则检查提供的令牌（如果�
 
 1、部署sleep服务
 
-```
+```bash
 [root@master istio-1.7.2]# kubectl create namespace testauth
 [root@master istio-1.7.2]# kubectl apply -f samples/sleep/sleep.yaml -n testauth
 [root@master istio-1.7.2]# kubectl exec -it -n testauth sleep-8f795f47d-n76hp -- curl http://httpbin.default:8000/ip
@@ -359,7 +359,7 @@ Istio 会根据 request 认证策略中的规则检查提供的令牌（如果�
 
 2、开启namespace default 的双向mTLS---兼容模式
 
-```
+```bash
 # 给default添加命名空间策略
 # 兼容模式
 [root@master istio-1.7.2]# kubectl apply -f - <<EOF
@@ -380,7 +380,7 @@ EOF
 
 3、开启namespace default 的双向mTLS---严格模式
 
-```
+```bash
 # 严格模式
 [root@master istio-1.7.2]# kubectl apply -f - <<EOF
 apiVersion: "security.istio.io/v1beta1"
@@ -400,7 +400,7 @@ command terminated with exit code 56
 
 4、将sleep服务加入到istio mesh中。
 
-```
+```bash
 [root@master istio-1.7.2]# kubectl apply -f <(istioctl kube-inject -f samples/sleep/sleep.yaml) -n testauth
 serviceaccount/sleep unchanged
 service/sleep unchanged
@@ -415,7 +415,7 @@ Use 'kubectl describe pod/sleep-7584bc4cbd-57sdm -n testauth' to see all of the 
 
 5、基于workload的双向mTLS。
 
-```
+```bash
 # 优先级高于基于namespaced的策略
 [root@master istio-1.7.2]# kubectl apply -f - <<EOF
 apiVersion: "security.istio.io/v1beta1"
@@ -482,7 +482,7 @@ command terminated with exit code 56
 
 以下示例显示了一个授权策略，该策略允许两个源（服务帐号`cluster.local/ns/default/sa/sleep`和命名空间`dev`），在使用有效的 JWT 令牌发送请求时，可以访问命名空间 foo 中的带有标签`app: httpbin`和`version: v1`的工作负载。
 
-```
+```bash
 apiVersion: security.istio.io/v1beta1
 kind: AuthorizationPolicy
 metadata:
@@ -510,7 +510,7 @@ spec:
 
 下例显示了一个授权策略，如果请求来源不是命名空间`foo`，请求将被拒绝。
 
-```
+```bash
 apiVersion: security.istio.io/v1beta1
 kind: AuthorizationPolicy
 metadata:
@@ -538,7 +538,7 @@ spec:
 
 以下示例策略`allow-read`允许对`default`命名空间中带有标签`app: products`的工作负载的`"GET"`和`"HEAD"`访问。
 
-```
+```bash
 apiVersion: security.istio.io/v1beta1
 kind: AuthorizationPolicy
 metadata:
@@ -574,7 +574,7 @@ spec:
 
 以下示例策略允许访问前缀为`/test/*`或后缀为`*/info`的路径。
 
-```
+```bash
 apiVersion: security.istio.io/v1beta1
 kind: AuthorizationPolicy
 metadata:
@@ -597,7 +597,7 @@ spec:
 
 以下示例：如果请求路径不是`/healthz`，则要求从请求的 JWT 认证中导出的主体是有效的。 因此，该策略从 JWT 身份验证中排除对`/healthz`路径的请求：
 
-```
+```bash
 apiVersion: security.istio.io/v1beta1
 kind: AuthorizationPolicy
 metadata:
@@ -619,7 +619,7 @@ spec:
 
 下面的示例拒绝到`/admin`路径且不带请求主体的请求：
 
-```
+```bash
 apiVersion: security.istio.io/v1beta1
 kind: AuthorizationPolicy
 metadata:
@@ -643,7 +643,7 @@ spec:
 
 以下示例显示了一个简单的`allow-all`授权策略，该策略允许完全访问`default`命名空间中的所有工作负载。
 
-```
+```bash
 apiVersion: security.istio.io/v1beta1
 kind: AuthorizationPolicy
 metadata:
@@ -657,7 +657,7 @@ spec:
 
 以下示例显示了一个策略，该策略不允许任何对`admin`命名空间工作负载的访问。
 
-```
+```bash
 apiVersion: security.istio.io/v1beta1
 kind: AuthorizationPolicy
 metadata:
@@ -671,7 +671,7 @@ spec:
 
 您还可以使用`when`部分指定其他条件。 例如，下面的`AuthorizationPolicy`定义包括以下条件：`request.headers [version]`是`v1`或`v2`。 在这种情况下，key 是`request.headers [version]`，它是 Istio 属性`request.headers`（是个字典）中的一项。
 
-```
+```bash
 apiVersion: security.istio.io/v1beta1
 kind: AuthorizationPolicy
 metadata:
@@ -701,7 +701,7 @@ spec:
 
 如果要使工作负载可公开访问，则需要将`source`部分留空。这允许来自所有（经过认证和未经认证）的用户和工作负载的源，例如：
 
-```
+```bash
 apiVersion: security.istio.io/v1beta1
 kind: AuthorizationPolicy
 metadata:
@@ -721,7 +721,7 @@ spec:
 
 要仅允许经过认证的用户，请将`principal`设置为`"*"`，例如：
 
-```
+```bash
 apiVersion: security.istio.io/v1beta1
 kind: AuthorizationPolicy
 metadata:
@@ -757,7 +757,7 @@ Istio 授权支持工作负载使用任意普通 TCP 协议，如 MongoDB。 在
 
 服务访问该 MongoDB 工作负载。
 
-```
+```bash
 apiVersion: "security.istio.io/v1beta1"
 kind: AuthorizationPolicy
 metadata:
@@ -791,7 +791,7 @@ spec:
 
 2、创建请求策略
 
-```
+```bash
 [root@master istio-1.7.2]# kubectl apply -f - <<EOF
 apiVersion: "security.istio.io/v1beta1"
 kind: "RequestAuthentication"
@@ -810,7 +810,7 @@ EOF
 
 3、测试
 
-```
+```bash
 #测试不合法的jwt访问
 [root@master istio-1.7.2]# kubectl exec $(kubectl get pod -l app=sleep -n testjwt -o jsonpath={.items..metadata.name}) -c sleep -n testjwt -- curl -s -o /dev/null -w "%{http_code}\n"
  "http://httpbin.testjwt:8000/headers" -H "Authorization: Bearer invalidToken"
@@ -823,7 +823,7 @@ EOF
 
 4、配置授权策略
 
-```
+```bash
 [root@master istio-1.7.2]# kubectl apply -f - <<EOF
 apiVersion: security.istio.io/v1beta1
 kind: AuthorizationPolicy
@@ -844,7 +844,7 @@ EOF
 
 5、测试
 
-```
+```bash
 [root@master istio-1.7.2]# TOKEN=$(curl https://raw.githubusercontent.com/malphi/geektime-servicemesh/master/c3-19/demo.jwt -s) && echo $TOKEN | cut -d '.' -f2 - | base64 --decode -
 {"exp":4685989700,"foo":"bar","iat":1532389700,"iss":"testing@secure.istio.io","sub":"testing@secure.istio.io"}[root@master istio-1.7.2]#
 
@@ -854,7 +854,7 @@ EOF
 
 6、配置基于请求头key-values精确匹配的授权策略
 
-```
+```bash
 [root@master istio-1.7.2]# kubectl apply -f - <<EOF
 apiVersion: security.istio.io/v1beta1
 kind: AuthorizationPolicy
@@ -882,7 +882,7 @@ RBAC: access denied
 
 7、Envoy后台配置情况截图
 
-```
+```bash
 {
 "name": "envoy.filters.http.rbac",
 "typedConfig": {
