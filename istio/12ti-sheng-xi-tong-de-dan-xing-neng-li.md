@@ -14,5 +14,5 @@
 
 ![](/image/Istio/istio-Retry.png)
 
-
+![](/image/Istio/istio-timeout-retry.png)
 
