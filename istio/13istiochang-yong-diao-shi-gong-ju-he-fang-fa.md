@@ -268,15 +268,22 @@ Failed to open browser; open http://localhost:15000 in your browser.
 
 * k port-forward service/istio-pilot -n istio-system15014:15014
 
-*  http://localhost:15014/debug
+* [http://localhost:15014/debug](http://localhost:15014/debug)
 
-*  xDS 和配置信息
+* xDS 和配置信息
 
-*  性能问题分析
+* 性能问题分析
 
 * 配置同步情况
 
 > 老版本端口是8080，新版本是15014.
 
+```
+[root@master ~]# kubectl -n istio-system get svc istiod
+NAME     TYPE       CLUSTER-IP     EXTERNAL-IP   PORT(S)                                                                       AGE
+istiod   NodePort   10.96.151.82   <none>        15010:32105/TCP,15012:30476/TCP,443:30833/TCP,15014:32237/TCP,853:32626/TCP   22d
+[root@master ~]#
+```
 
+![](/image/Istio/istio-pilot-discovery-debug.png)
 
