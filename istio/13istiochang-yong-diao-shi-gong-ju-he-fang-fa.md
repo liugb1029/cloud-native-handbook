@@ -159,5 +159,17 @@ ratings.default.svc.cluster.local     9080     http       inbound       STATIC
 [root@master envoy]#
 ```
 
+##### 查看 Pod 相关网格配置信息
+
+istioctl x（ experimental ）describe pod &lt;pod-name&gt;
+
+* 验证是否在网格内
+
+* 验证 VirtualService
+
+* 验证 DestinationRule
+
+* 验证路由
+
 
 
