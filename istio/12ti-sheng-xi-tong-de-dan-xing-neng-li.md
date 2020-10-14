@@ -14,9 +14,5 @@
 
 ![](/image/Istio/istio-Retry.png)
 
-![](/image/Istio/istio-timeout-retry.png)
-
-
-
-
+![](/image/Istio/istio-timeout-retry.png)![](/image/Istio/istio-熔断.png)
 
