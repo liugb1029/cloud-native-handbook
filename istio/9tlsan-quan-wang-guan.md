@@ -951,5 +951,5 @@ RBAC: access denied
 
 ![](/image/Istio/RequestAuthtication-配置分析.png)
 
-![](/image/Istio/AuthorationPolicy配置分析.png)
+![](/image/Istio/AuthorationPolicy配置分析.png)![](/image/Istio/AuthorationPolicy配置分析-2.png)
 
