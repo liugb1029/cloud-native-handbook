@@ -161,7 +161,7 @@ ratings.default.svc.cluster.local     9080     http       inbound       STATIC
 
 ##### 查看 Pod 相关网格配置信息
 
-istioctl x（ experimental ）describe pod &lt;pod-name&gt;
+`istioctl x（ experimental ）describe pod <pod-name>`
 
 * 验证是否在网格内
 
