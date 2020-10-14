@@ -1,4 +1,4 @@
-# 可观察性 
+# 可观察性
 
 面对复杂的应用环境和不断扩展的业务需求，即使再完备的测试也难以覆盖所有场景，无法保证服务不会出现故障。正因为如此，才需要“可观察性”来对服务的运行时状态进行监控、上报、分析，以提高服务可靠性。具有可观察性的系统，可以在服务出现故障时大大降低问题定位的难度，甚至可以在出现问题之前及时发现问题以降低风险。具体来说，可观察性可以：
 
@@ -98,6 +98,11 @@ istio_requests_total{
 * [Galley](https://istio.io/latest/zh/docs/reference/commands/galley/#metrics)
 * [Mixer](https://istio.io/latest/zh/docs/reference/commands/mixs/#metrics)
 * [Citadel](https://istio.io/latest/zh/docs/reference/commands/istio_ca/#metrics)
+
+### Istio 的指标接口
+
+* /metrics
+* /stats/prometheus----Envoy 15090
 
 
 
