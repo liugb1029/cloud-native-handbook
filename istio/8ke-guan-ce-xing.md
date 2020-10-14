@@ -268,7 +268,7 @@ Client Tracer                                              Server Tracer
 
 `Jaeger`的内部组件架构与 EFK 日志系统架构有一定相似性：
 
-![](/image/Istio/jaeger-architecture.png)                                                                                   Jaeger 架构图
+![](/image/Istio/jaeger-architecture.png)                                                                                        Jaeger 架构图
 
 `Jaeger`主要由以下几个组件构成：
 
