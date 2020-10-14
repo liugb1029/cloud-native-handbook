@@ -260,8 +260,23 @@ Failed to open browser; open http://localhost:9876 in your browser.
 [root@master ~]# istioctl dashboard envoy details-v1-558b8b4b76-jrfd4 --address 192.168.56.100
 http://localhost:15000
 Failed to open browser; open http://localhost:15000 in your browser.
-
 ```
 
 ![](/image/Istio/istio-envoy-admin.png)
+
+#### Pilot debug 接口
+
+* k port-forward service/istio-pilot -n istio-system15014:15014
+
+*  http://localhost:15014/debug
+
+*  xDS 和配置信息
+
+*  性能问题分析
+
+* 配置同步情况
+
+> 老版本端口是8080，新版本是15014.
+
+
 
