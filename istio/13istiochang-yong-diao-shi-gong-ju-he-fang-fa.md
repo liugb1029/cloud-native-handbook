@@ -217,5 +217,11 @@ VirtualService: reviews
       Route to non-matching subset v3 for (everything)
 ```
 
+##### 网格配置诊断
+
+* istioctl analyze \[–n &lt;namespace&gt; / --all-namespaces\]
+* istioctl analyze a.yaml b.yaml my-app-config/
+* istioctl analyze --use-kube=false a.yaml
+
 
 
