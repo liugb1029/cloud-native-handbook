@@ -223,5 +223,17 @@ VirtualService: reviews
 * istioctl analyze a.yaml b.yaml my-app-config/
 * istioctl analyze --use-kube=false a.yaml
 
+#### controlZ 可视化自检工具
+
+istioctl d controlz &lt;istiod-podname&gt; -n istio-system
+
+* 调整日志输出级别
+
+* 查看内存使用情况
+
+* 环境变量
+
+* 进程信息
+
 
 
