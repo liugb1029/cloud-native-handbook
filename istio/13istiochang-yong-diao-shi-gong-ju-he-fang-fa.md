@@ -62,17 +62,17 @@ Use "istioctl [command] --help" for more information about a command.
 
 * 配置同步检查
 
-        -    istioctl ps（proxy-status）
+  * istioctl ps（proxy-status）
 
-        -    状态：SYNCED / NOT SENT / STALE
+  * 状态：SYNCED / NOT SENT / STALE
 
-        -    istioctl ps &lt;pod-name&gt;
+  * istioctl ps &lt;pod-name&gt;
 
-*  配置详情
+* 配置详情
 
-         -   istioctl pc（proxy-config）
+  * istioctl pc（proxy-config）
 
-         -   istioctl pc \[cluster/route/…\] &lt;pod-name.namespace&gt;
+  * istioctl pc \[cluster/route/…\] &lt;pod-name.namespace&gt;
 
 
 
