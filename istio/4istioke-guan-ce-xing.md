@@ -104,7 +104,7 @@ istio_requests_total{
 * /metrics
 * /stats/prometheus----Envoy 15090
 
-```
+```bash
 [root@master httpbin]# kubectl -n demo exec -it sleep-8f795f47d-b4s69 -- curl http://httpbin:15090/stats/prometheus
 ....
 ....
