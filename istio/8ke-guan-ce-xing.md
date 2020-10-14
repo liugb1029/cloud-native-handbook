@@ -296,8 +296,6 @@ Client Tracer                                              Server Tracer
 * `OpenTelemetry`部署 - 适用于使用`OpenTelemetry`API 的部署方式。
 * `Windows`部署 - 适用于`Windows`环境的部署方式，通过运行 exe 可执行文件安装和配置。
 
-
-
 | Port | Protocol | Component | Function |
 | :--- | :--- | :--- | :--- |
 | 5775 | UDP | agent | accept`zipkin.thrift`over compact thrift protocol \(deprecated, used by legacy clients only\) |
@@ -309,6 +307,5 @@ Client Tracer                                              Server Tracer
 | 14250 | HTTP | collector | accept`model.proto` |
 | 9411 | HTTP | collector | Zipkin compatible endpoint \(optional\) |
 
-  
-
+[Jaeger-Operator参考链接](https://github.com/jaegertracing/jaeger-operator)
 
