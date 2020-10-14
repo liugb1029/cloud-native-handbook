@@ -144,6 +144,49 @@ envoy_server_initialization_time_ms_count{} 1
 * relabel\_configs 过滤机制
 
 ```
-
+- job_name: kubernetes-pods
+  honor_timestamps: true
+  scrape_interval: 15s
+  scrape_timeout: 10s
+  metrics_path: /metrics
+  scheme: http
+  kubernetes_sd_configs:
+  - role: pod
+  relabel_configs:
+  - source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_scrape]
+    separator: ;
+    regex: "true"
+    replacement: $1
+    action: keep
+  - source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_path]
+    separator: ;
+    regex: (.+)
+    target_label: __metrics_path__
+    replacement: $1
+    action: replace
+  - source_labels: [__address__, __meta_kubernetes_pod_annotation_prometheus_io_port]
+    separator: ;
+    regex: ([^:]+)(?::\d+)?;(\d+)
+    target_label: __address__
+    replacement: $1:$2
+    action: replace
+  - separator: ;
+    regex: __meta_kubernetes_pod_label_(.+)
+    replacement: $1
+    action: labelmap
+  - source_labels: [__meta_kubernetes_namespace]
+    separator: ;
+    regex: (.*)
+    target_label: kubernetes_namespace
+    replacement: $1
+    action: replace
+  - source_labels: [__meta_kubernetes_pod_name]
+    separator: ;
+    regex: (.*)
+    target_label: kubernetes_pod_name
+    replacement: $1
+    action: replace
 ```
+
+
 
