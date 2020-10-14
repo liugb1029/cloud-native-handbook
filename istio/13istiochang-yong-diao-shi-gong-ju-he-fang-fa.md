@@ -241,5 +241,19 @@ http://localhost:9876
 Failed to open browser; open http://localhost:9876 in your browser.
 ```
 
-![](/image/Istio/istio-controlz.png)
+#### ![](/image/Istio/istio-controlz.png)Envoy admin API 接口
+
+* istioctl d envoy &lt;pod-name&gt;.\[namespace\]    --address x.x.x.x
+
+* k port-forward pod-name xxx:15000
+
+*  日志级别调整
+
+*  性能数据分析
+
+*  配置等信息
+
+*  指标查看
+
+
 
