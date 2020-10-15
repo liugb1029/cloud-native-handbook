@@ -22,5 +22,15 @@
 
 [https://istio.io/latest/docs/ops/common-problems/network-issues/](https://istio.io/latest/docs/ops/common-problems/network-issues/)
 
+#### 请求中断分析
 
+* 因为 Envoy 的引入，无法准确判断出问题的节点
+
+* 解决方法
+
+       -  根据 request id 串连上下游
+
+       -  分析 Envoy 日志中的上下游元组信息
+
+       -  UPSTREAM\_CLUSTER/ DOWNSTREAM\_REMOTE\_ADDRESS/DOWNSTREAM\_LOCAL\_ADDRESS/           UPSTREAM\_LOCAL\_ADDRESS/UPSTREAM\_HOST
 
