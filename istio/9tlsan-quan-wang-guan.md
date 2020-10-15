@@ -307,7 +307,9 @@ sleep.legacy to httpbin.legacy: 200
 [root@master istio-1.7.2]#
 ```
 
-##### 基于服务的mTLS
+##### 基于服务级别的mTLS
+
+设置服务级别的mTLS，必须设置selector来匹配对应的服务以及destinationrule\(用于外部TLS流量访问服务网格内服务\)
 
 
 
