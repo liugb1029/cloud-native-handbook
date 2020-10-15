@@ -188,7 +188,7 @@ Istio 提供两种类型的认证：
 
 在所有情况下，Istio 都通过自定义 Kubernetes API 将认证策略存储在`Istio config store`。Istiod使每个代理保持最新状态，并在适当时提供密钥。此外，Istio 的认证机制支持宽容模式（permissive mode），以帮助您了解策略更改在实施之前如何影响您的安全状况。
 
-### 双向 TLS 认证 {#mutual-TLS-authentication}
+### 双向 TLS 认证
 
 Istio 通过客户端和服务器端 PEPs 建立服务到服务的通信通道，PEPs 被实现为[Envoy 代理](https://envoyproxy.github.io/envoy/)。当一个工作负载使用双向 TLS 认证向另一个工作负载发送请求时，该请求的处理方式如下：
 
@@ -201,7 +201,7 @@ Istio 通过客户端和服务器端 PEPs 建立服务到服务的通信通道�
 
 ![](/image/Istio/istio-mTLS握手.png)
 
-#### 宽容模式 {#permissive-mode}
+#### 宽容模式
 
 Istio 双向 TLS 具有一个宽容模式（permissive mode），允许服务同时接受纯文本流量和双向 TLS 流量。这个功能极大的提升了双向 TLS 的入门体验。
 
@@ -209,7 +209,7 @@ Istio 双向 TLS 具有一个宽容模式（permissive mode），允许服务同
 
 启用宽容模式后，服务可以同时接受纯文本和双向 TLS 流量。这个模式为入门提供了极大的灵活性。服务中安装的 Istio sidecar 立即接受双向 TLS 流量而不会打断现有的纯文本流量。因此，运维人员可以逐步安装和配置客户端 Istio sidecar 发送双向 TLS 流量。一旦客户端配置完成，运维人员便可以将服务端配置为仅 TLS 模式。更多信息请访问[双向 TLS 迁移向导](https://istio.io/latest/zh/docs/tasks/security/authentication/mtls-migration)。
 
-#### 安全命名 {#secure-naming}
+#### 安全命名
 
 服务器身份（Server identities）被编码在证书里，但服务名称（service names）通过服务发现或 DNS 被检索。安全命名信息将服务器身份映射到服务名称。身份`A`到服务名称`B`的映射表示“授权`A`运行服务`B`“。控制平面监视`apiserver`，生成安全命名映射，并将其安全地分发到 PEPs。 以下示例说明了为什么安全命名对身份验证至关重要。
 
@@ -426,7 +426,7 @@ sleep.legacy to httpbin.bar: 200
 sleep.legacy to httpbin.legacy: 200
 ```
 
-### 认证架构 {#authentication-architecture}
+### 认证架构
 
 您可以使用 peer 和 request 认证策略为在 Istio 网格中接收请求的工作负载指定认证要求。网格运维人员使用`.yaml`文件来指定策略。部署后，策略将保存在 Istio 配置存储中。Istio 控制器监视配置存储。
 
@@ -438,7 +438,7 @@ Istio 异步发送配置到目标端点。代理收到配置后，新的认证�
 
 ![](/image/Istio/istio-authn.png)Istio 将两种类型的身份验证以及凭证中的其他声明（如果适用）输出到下一层：[授权](https://istio.io/latest/zh/docs/concepts/security/#authorization)。
 
-### 认证策略 {#authentication-policies}
+### 认证策略
 
 本节中提供了更多 Istio 认证策略方面的细节。正如[认证架构](https://istio.io/latest/zh/docs/concepts/security/#authentication-architecture)中所说的，认证策略是对服务收到的请求生效的。要在双向 TLS 中指定客户端认证策略，需要在`DetinationRule`中设置`TLSSettings`。[TLS 设置参考文档](https://istio.io/latest/zh/docs/reference/config/networking/destination-rule/#TLSSettings)中有更多这方面的信息。
 
@@ -458,13 +458,13 @@ spec:
     mode: STRICT
 ```
 
-#### 策略存储 {#policy-storage}
+#### 策略存储
 
 Istio 将网格范围的策略存储在根命名空间。这些策略使用一个空的 selector 适用于网格中的所有工作负载。具有名称空间范围的策略存储在相应的名称空间中。它们仅适用于其命名空间内的工作负载。如果你配置了`selector`字段，则认证策略仅适用于与您配置的条件匹配的工作负载。
 
 Peer 和 request 认证策略用 kind 字段区分，分别是`PeerAuthentication`和`RequestAuthentication`。
 
-#### Selector 字段 {#selector-field}
+#### Selector 字段
 
 Peer 和 request 认证策略使用`selector`字段来指定该策略适用的工作负载的标签。以下示例显示适用于带有`app：product-page`标签的工作负载的策略的 selector 字段：
 
@@ -492,7 +492,7 @@ Istio 按照以下顺序为每个工作负载应用最窄的匹配策略：
 
 Istio 可以将所有匹配的 request 认证策略组合起来，就像它们来自单个 request 认证策略一样。因此，您可以在网格或名称空间中配置多个网格范围或命名空间范围的策略。但是，避免使用多个网格范围或命名空间范围的 request 认证策略仍然是一个好的实践。
 
-#### Peer authentication {#peer-authentication}
+#### Peer authentication
 
 Peer 认证策略指定 Istio 对目标工作负载实施的双向 TLS 模式。支持以下模式：
 
@@ -552,7 +552,7 @@ spec:
     app: example-app
 ```
 
-#### Request authentication {#request-authentication}
+#### Request authentication
 
 Request 认证策略指定验证 JSON Web Token（JWT）所需的值。 这些值包括：
 
@@ -564,11 +564,11 @@ Istio 会根据 request 认证策略中的规则检查提供的令牌（如果�
 
 如果 Request 认证策略使用唯一的位置，则它们可以指定多个JWT。当多个策略与工作负载匹配时，Istio 会将所有规则组合起来，就好像它们被指定为单个策略一样。此行为对于开发接受来自不同 JWT 提供者的工作负载时很有用。但是，不支持具有多个有效 JWT 的请求，因为此类请求的输出主体未定义。
 
-#### Principals {#principals}
+#### Principals
 
 使用 peer 认证策略和双向 TLS 时，Istio 将身份从 peer 认证提取到`source.principal`中。同样，当您使用 request 认证策略时，Istio 会将 JWT 中的身份赋值给`request.auth.principal`。使用这些 principals 设置授权策略和作为遥测的输出。
 
-### 更新认证策略 {#updating-authentication-policies}
+### 更新认证策略
 
 您可以随时更改认证策略，Istio 几乎实时将新策略推送到工作负载。但是，Istio 无法保证所有工作负载都同时收到新政策。以下建议有助于避免在更新认证策略时造成干扰：
 
@@ -688,19 +688,19 @@ curl: (56) Recv failure: Connection reset by peer
 command terminated with exit code 56
 ```
 
-### ![](/image/Istio/PeerAuthtication-配置分析.png)授权架构
+![](/image/Istio/PeerAuthtication-配置分析.png)授权架构
 
 每个 Envoy 代理都运行一个授权引擎，该引擎在运行时授权请求。当请求到达代理时，授权引擎根据当前授权策略评估请求上下文，并返回授权结果`ALLOW`或`DENY`。 运维人员使用`.yaml`文件指定 Istio 授权策略。
 
 ![](/image/Istio/istio-授权架构.png)
 
-### 隐式启用 {#implicit-enablement}
+### 隐式启用
 
 您无需显式启用 Istio 的授权功能。只需将授权策略应用于工作负载即可实施访问控制。对于未应用授权策略的工作负载，Istio 不会执行访问控制，放行所有请求。
 
 授权策略支持`ALLOW`和`DENY`动作。 拒绝策略优先于允许策略。如果将任何允许策略应用于工作负载，则默认情况下将拒绝对该工作负载的访问，除非策略中的规则明确允许。当您将多个授权策略应用于相同的工作负载时，Istio 会累加地应用它们。
 
-### 授权策略 {#authorization-policies}
+### 授权策略
 
 要配置授权策略，请创建一个[`AuthorizationPolicy`自定义资源](https://istio.io/latest/zh/docs/reference/config/security/authorization-policy/)。 一个授权策略包括选择器（selector），动作（action） 和一个规则（rules）列表：
 
@@ -761,7 +761,7 @@ spec:
 
 拒绝策略优先于允许策略。如果请求同时匹配上允许策略和拒绝策略，请求将被拒绝。Istio 首先评估拒绝策略，以确保允许策略不能绕过拒绝策略
 
-#### 策略目标 {#policy-target}
+#### 策略目标
 
 您可以通过`metadata/namespace`字段和可选的`selector`字段来指定策略的范围或目标。`metadata/namespace`告诉该策略适用于哪个命名空间。如果将其值设置为根名称空间，则该策略将应用于网格中的所有名称空间。根命名空间的值是可配置的，默认值为`istio-system`。如果设置为任何其他名称空间，则该策略仅适用于指定的名称空间。
 
@@ -786,7 +786,7 @@ spec:
          methods: ["GET", "HEAD"]
 ```
 
-#### 值匹配 {#value-matching}
+#### 值匹配
 
 授权策略中的大多数字段都支持以下所有匹配模式：
 
@@ -822,7 +822,7 @@ spec:
         paths: ["/test/*", "*/info"]
 ```
 
-#### 排除匹配 {#exclusion-matching}
+#### 排除匹配
 
 为了匹配诸如`when`字段中的`notValues`，`source`字段中的`notIpBlocks`，`to`字段中的`notPorts`之类的否定条件，Istio 支持排除匹配。
 
@@ -870,7 +870,7 @@ spec:
         notRequestPrincipals: ["*"]
 ```
 
-#### 全部允许和默认全部拒绝授权策略 {#allow-all-and-default-deny-all-authorization-policies}
+#### 全部允许和默认全部拒绝授权策略
 
 以下示例显示了一个简单的`allow-all`授权策略，该策略允许完全访问`default`命名空间中的所有工作负载。
 
@@ -898,7 +898,7 @@ spec:
   {}
 ```
 
-#### 自定义条件 {#custom-conditions}
+#### 自定义条件
 
 您还可以使用`when`部分指定其他条件。 例如，下面的`AuthorizationPolicy`定义包括以下条件：`request.headers [version]`是`v1`或`v2`。 在这种情况下，key 是`request.headers [version]`，它是 Istio 属性`request.headers`（是个字典）中的一项。
 
@@ -928,7 +928,7 @@ spec:
 
 [条件页面](https://istio.io/latest/zh/docs/reference/config/security/conditions/)中列出了支持的条件`key`值。
 
-#### 认证与未认证身份 {#authenticated-and-unauthenticated-identity}
+#### 认证与未认证身份
 
 如果要使工作负载可公开访问，则需要将`source`部分留空。这允许来自所有（经过认证和未经认证）的用户和工作负载的源，例如：
 
@@ -973,7 +973,7 @@ spec:
        methods: ["GET", "POST"]
 ```
 
-### 在普通 TCP 协议上使用 Istio 授权 {#using-Istio-authorization-on-plain-TCP-protocols}
+### 在普通 TCP 协议上使用 Istio 授权
 
 Istio 授权支持工作负载使用任意普通 TCP 协议，如 MongoDB。 在这种情况下，您可以按照与 HTTP 工作负载相同的方式配置授权策略。 不同之处在于某些字段和条件仅适用于 HTTP 工作负载。 这些字段包括：
 
