@@ -228,6 +228,14 @@ sleep.legacy to httpbin.bar: 200
 sleep.legacy to httpbin.legacy: 200
 ```
 
+默认情况下，网格内服务之间交互会通过密文方式（由代理来完成加密），访问网格外服务时还是明文的。
+
+```bash
+[root@master istio-1.7.2]# kubectl exec "$(kubectl get pod -l app=sleep -n foo -o jsonpath={.items..metadata.name})" -c sleep -n foo -- curl http://httpbin.foo:8000/headers -s | grep X-Forwarded-Client-Cert | sed 's/Hash=[a-z0-9]*;/Hash=<redacted>;/'
+    "X-Forwarded-Client-Cert": "By=spiffe://cluster.local/ns/foo/sa/httpbin;Hash=<redacted>;Subject=\"\";URI=spiffe://cluster.local/ns/foo/sa/sleep"
+[root@master istio-1.7.2]# kubectl exec "$(kubectl get pod -l app=sleep -n foo -o jsonpath={.items..metadata.name})" -c sleep -n foo -- curl http://httpbin.legacy:8000/headers -s | grep X-Forwarded-Client-Cert
+```
+
 ###  {#authentication-architecture}
 
 ### 认证架构 {#authentication-architecture}
