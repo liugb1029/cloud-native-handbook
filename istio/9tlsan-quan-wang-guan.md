@@ -236,9 +236,44 @@ sleep.legacy to httpbin.legacy: 200
 [root@master istio-1.7.2]# kubectl exec "$(kubectl get pod -l app=sleep -n foo -o jsonpath={.items..metadata.name})" -c sleep -n foo -- curl http://httpbin.legacy:8000/headers -s | grep X-Forwarded-Client-Cert
 ```
 
-##### 开启Strict mTLSmoshi 
+##### 开启Strict mTLS模式
 
+开启istio mTLS，默认模式是PERMISSIVE模式，网格内的服务仍然可以接收明文的请求，如果想拒绝明文的请求，可以将模式改为STRICT。
 
+```
+# 全局模式
+[root@master istio-1.7.2]# kubectl apply -f - <<EOF
+> apiVersion: "security.istio.io/v1beta1"
+> kind: "PeerAuthentication"
+> metadata:
+>   name: "default"
+>   namespace: "istio-system"
+> spec:
+>   mtls:
+>     mode: STRICT
+> EOF
+peerauthentication.security.istio.io/default created
+[root@master istio-1.7.2]#
+```
+
+网格外的服务\(namespace legacy）不能访问网格内的服务\(namespace foo和bar\)
+
+```
+[root@master istio-1.7.2]# for from in "foo" "bar" "legacy"; do for to in "foo" "bar" "legacy"; do kubectl exec "$(kubectl get pod -l app=sleep -n ${from} -o jsonpath={.items..metadata.name})" -c sleep -n ${from} -- curl "http://httpbin.${to}:8000/ip" -s -o /dev/null -w "sleep.${from} to httpbin.${to}: %{http_code}\n"; done; done
+sleep.foo to httpbin.foo: 200
+sleep.foo to httpbin.bar: 200
+sleep.foo to httpbin.legacy: 200
+sleep.bar to httpbin.foo: 200
+sleep.bar to httpbin.bar: 200
+sleep.bar to httpbin.legacy: 200
+sleep.legacy to httpbin.foo: 000
+command terminated with exit code 56
+sleep.legacy to httpbin.bar: 000
+command terminated with exit code 56
+sleep.legacy to httpbin.legacy: 200
+```
+
+###  {#authentication-architecture}
 
 ### 认证架构 {#authentication-architecture}
 
