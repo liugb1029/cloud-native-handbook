@@ -21,7 +21,6 @@
         "-highlight", "prism", "prism-themes",
         "lightbox",
         "page-treeview",
-        "chapter-fold",
         "emphasize",
         "expandable-chapters"
     ],
