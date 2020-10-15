@@ -64,7 +64,7 @@ openssl req -out httpbin.example.com.csr -newkey rsa:2048 -nodes -keyout httpbin
 openssl x509 -req -days 365 -CA example.com.crt -CAkey example.com.key -set_serial 0 -in httpbin.example.com.csr -out httpbin.example.com.crt
 ```
 
-3. 创建secret
+1. 创建secret
 
 ```bash
 kubectl create -n istio-system secret tls httpbin-credential --key=httpbin.example.com.key --cert=httpbin.example.com.crt
@@ -158,7 +158,7 @@ spec:
 EOF
 ```
 
-5. 请求验证
+1. 请求验证
 
 ```bash
 curl -HHost:httpbin.example.com \
@@ -199,7 +199,7 @@ Istio 通过客户端和服务器端 PEPs 建立服务到服务的通信通道�
 3. 客户端 Envoy 和服务器端 Envoy 建立了一个双向的 TLS 连接，Istio 将流量从客户端 Envoy 转发到服务器端 Envoy。
 4. 授权后，服务器端 Envoy 通过本地 TCP 连接将流量转发到服务器服务。
 
-#### ![](/image/Istio/istio-mTLS握手.png) {#permissive-mode}
+![](/image/Istio/istio-mTLS握手.png)
 
 #### 宽容模式 {#permissive-mode}
 
