@@ -197,9 +197,23 @@ Istio 双向 TLS 具有一个宽容模式（permissive mode），允许服务同
 
 当客户端调用`datastore`服务时，它从服务器的证书中提取`test-team`身份，并用安全命名信息检查`test-team`是否被允许运行`datastore`。客户端检测到`test-team`不允许运行`datastore`服务，认证失败。
 
-#### Auto mTLS
+#### Auto mTLS实践
 
+##### 准备环境
 
+```bash
+kubectl create ns foo
+kubectl apply -f <(istioctl kube-inject -f samples/httpbin/httpbin.yaml) -n foo
+kubectl apply -f <(istioctl kube-inject -f samples/sleep/sleep.yaml) -n foo
+kubectl create ns bar
+kubectl apply -f <(istioctl kube-inject -f samples/httpbin/httpbin.yaml) -n bar
+kubectl apply -f <(istioctl kube-inject -f samples/sleep/sleep.yaml) -n bar
+kubectl create ns legacy
+kubectl apply -f samples/httpbin/httpbin.yaml -n legacy
+kubectl apply -f samples/sleep/sleep.yaml -n legacy
+```
+
+###  {#authentication-architecture}
 
 ### 认证架构 {#authentication-architecture}
 
