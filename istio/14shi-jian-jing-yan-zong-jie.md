@@ -66,7 +66,15 @@
 * 作用于网格内部：空 或者 \[mesh\]
 * 同时生效：
 
-        -  需要显示加上 mesh 和 gateway-name
+  * 需要显示加上 mesh 和 gateway-name
 
-![](/image/Istio/virtualService-gateway-mesh.png)
+#### ![](/image/Istio/virtualService-gateway-mesh.png)
+
+#### JWT 身份认证失败
+
+* 确保正确设置了jwks 或 jwksUrl
+* 确保 issuer 设置正确
+* 确保 token 正确、没有过期 （jwt.io\)
+
+
 
