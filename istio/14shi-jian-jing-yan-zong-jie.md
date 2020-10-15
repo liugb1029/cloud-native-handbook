@@ -40,9 +40,7 @@
 
 * 查看是否满足 Pod 和 Service 的定义要求
 
-  ```
    [https://istio.io/docs/ops/deployment/requirements/](https://istio.io/docs/ops/deployment/requirements/)
-  ```
 
 * 是否占用了 Istio 默认端口
 
