@@ -28,9 +28,13 @@
 
 * 解决方法
 
-       -  根据 request id 串连上下游
+  * 根据 request id 串连上下游
 
-       -  分析 Envoy 日志中的上下游元组信息
+  * 分析 Envoy 日志中的上下游元组信息
 
-       -  UPSTREAM\_CLUSTER/ DOWNSTREAM\_REMOTE\_ADDRESS/DOWNSTREAM\_LOCAL\_ADDRESS/           UPSTREAM\_LOCAL\_ADDRESS/UPSTREAM\_HOST
+  * UPSTREAM\_CLUSTER/ DOWNSTREAM\_REMOTE\_ADDRESS/  
+    DOWNSTREAM\_LOCAL\_ADDRESS/UPSTREAM\_LOCAL\_ADDRESS/  
+    UPSTREAM\_HOST
+
+
 
