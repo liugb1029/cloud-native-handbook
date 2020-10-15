@@ -289,7 +289,33 @@ istiod   NodePort   10.96.151.82   <none>        15010:32105/TCP,15012:30476/TCP
 [root@master ~]#
 ```
 
-![](/image/Istio/istio-pilot-discovery-debug.png)
+![](/image/Istio/istio-pilot-discovery-debug.png)点击/debug/pprof/profile 下载profile文件
+
+本地执行如下命令查案pilot进程的性能情况
+
+```bash
+% go tool pprof Downloads/profile
+File: pilot-discovery
+Type: cpu
+Time: Oct 14, 2020 at 7:03pm (CST)
+Duration: 30s, Total samples = 110ms ( 0.37%)
+Entering interactive mode (type "help" for commands, "o" for options)
+(pprof) top
+Showing nodes accounting for 100ms, 90.91% of 110ms total
+Showing top 10 nodes out of 73
+      flat  flat%   sum%        cum   cum%
+      10ms  9.09%  9.09%       10ms  9.09%  crypto/aes.gcmAesData
+      10ms  9.09% 18.18%       10ms  9.09%  crypto/aes.gcmAesEnc
+      10ms  9.09% 27.27%       10ms  9.09%  net/url.parse
+      10ms  9.09% 36.36%       10ms  9.09%  runtime.epollwait
+      10ms  9.09% 45.45%       10ms  9.09%  runtime.findObject
+      10ms  9.09% 54.55%       10ms  9.09%  runtime.futex
+      10ms  9.09% 63.64%       10ms  9.09%  runtime.nanotime
+      10ms  9.09% 72.73%       10ms  9.09%  runtime.scanblock
+      10ms  9.09% 81.82%       20ms 18.18%  runtime.scanobject
+      10ms  9.09% 90.91%       30ms 27.27%  runtime.schedule
+(pprof)
+```
 
 
 
