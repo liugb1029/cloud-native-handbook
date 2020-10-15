@@ -140,5 +140,19 @@
 
 * 使用三方 Service Account Token
 
-          - --set values.global.jwtPolicy=third-party-jwt
+  * --set values.global.jwtPolicy=third-party-jwt
+
+#### 问题排查（troubleshooting）
+
+* 善用 debug 工具
+
+* * istioctl proxy-status / proxy-config / analyze
+
+* *  istio-pilot debug 接口（15014）
+
+* *  Envoy admin 接口（15000）
+
+* 关联故障发生时的日志、监控数据，进行分析
+
+
 
