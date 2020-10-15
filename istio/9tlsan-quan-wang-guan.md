@@ -273,7 +273,43 @@ command terminated with exit code 56
 sleep.legacy to httpbin.legacy: 200
 ```
 
-###  {#authentication-architecture}
+##### 基于namespace的mTLS
+
+```
+# 先删除全局模式下的策略
+[root@master istio-1.7.2]# kubectl delete -n istio-system peerauthentications.security.istio.io default
+peerauthentication.security.istio.io "default" deleted
+[root@master istio-1.7.2]# kubectl get peerauthentications.security.istio.io -n istio-system
+No resources found in istio-system namespace.
+[root@master istio-1.7.2]# kubectl apply -f - <<EOF
+apiVersion: "security.istio.io/v1beta1"
+kind: "PeerAuthentication"
+metadata:
+  name: "default"
+  namespace: "foo"
+spec:
+  mtls:
+    mode: STRICT
+EOF
+
+# 只有sleep.legacy访问httbin.foo失败
+[root@master istio-1.7.2]# for from in "foo" "bar" "legacy"; do for to in "foo" "bar" "legacy"; do kubectl exec "$(kubectl get pod -l app=sleep -n ${from} -o jsonpath={.items..metadata.name})" -c sleep -n ${from} -- curl "http://httpbin.${to}:8000/ip" -s -o /dev/null -w "sleep.${from} to httpbin.${to}: %{http_code}\n"; done; done
+sleep.foo to httpbin.foo: 200
+sleep.foo to httpbin.bar: 200
+sleep.foo to httpbin.legacy: 200
+sleep.bar to httpbin.foo: 200
+sleep.bar to httpbin.bar: 200
+sleep.bar to httpbin.legacy: 200
+sleep.legacy to httpbin.foo: 000
+command terminated with exit code 56
+sleep.legacy to httpbin.bar: 200
+sleep.legacy to httpbin.legacy: 200
+[root@master istio-1.7.2]#
+```
+
+##### 基于服务的mTLS
+
+
 
 ### 认证架构 {#authentication-architecture}
 
