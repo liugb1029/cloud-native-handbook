@@ -128,19 +128,17 @@
 
   * 从 DestinationRule 中删除子集
 
-
-
 #### 安全配置建议
 
 * 通过命名空间隔离访问权限
 * 尽可能使用 ISTIO\_MUTUAL 模式（Istio 自动管理证书密钥）
 * 平滑过渡到安全策略
 
-       - JWT：更新时先添加新的再删除旧的
+  * JWT：更新时先添加新的再删除旧的
 
-       -  mTLS：优先使用 permissive 模式
+  * mTLS：优先使用 permissive 模式
 
 * 使用三方 Service Account Token
 
-
+          - --set values.global.jwtPolicy=third-party-jwt
 
