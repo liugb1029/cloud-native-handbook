@@ -202,15 +202,30 @@ Istio 双向 TLS 具有一个宽容模式（permissive mode），允许服务同
 ##### 准备环境
 
 ```bash
-kubectl create ns foo
-kubectl apply -f <(istioctl kube-inject -f samples/httpbin/httpbin.yaml) -n foo
-kubectl apply -f <(istioctl kube-inject -f samples/sleep/sleep.yaml) -n foo
-kubectl create ns bar
-kubectl apply -f <(istioctl kube-inject -f samples/httpbin/httpbin.yaml) -n bar
-kubectl apply -f <(istioctl kube-inject -f samples/sleep/sleep.yaml) -n bar
-kubectl create ns legacy
-kubectl apply -f samples/httpbin/httpbin.yaml -n legacy
-kubectl apply -f samples/sleep/sleep.yaml -n legacy
+[root@master istio-1.7.2]# kubectl create ns foo
+[root@master istio-1.7.2]# kubectl apply -f <(istioctl kube-inject -f samples/httpbin/httpbin.yaml) -n foo
+[root@master istio-1.7.2]# kubectl apply -f <(istioctl kube-inject -f samples/sleep/sleep.yaml) -n foo
+[root@master istio-1.7.2]# kubectl create ns bar
+[root@master istio-1.7.2]# kubectl apply -f <(istioctl kube-inject -f samples/httpbin/httpbin.yaml) -n bar
+[root@master istio-1.7.2]# kubectl apply -f <(istioctl kube-inject -f samples/sleep/sleep.yaml) -n bar
+[root@master istio-1.7.2]# kubectl create ns legacy
+[root@master istio-1.7.2]# kubectl apply -f samples/httpbin/httpbin.yaml -n legacy
+[root@master istio-1.7.2]# kubectl apply -f samples/sleep/sleep.yaml -n legacy
+```
+
+##### 测试
+
+```bash
+[root@master istio-1.7.2]# for from in "foo" "bar" "legacy"; do for to in "foo" "bar" "legacy"; do kubectl exec "$(kubectl get pod -l app=sleep -n ${from} -o jsonpath={.items..metadata.name})" -c sleep -n ${from} -- curl "http://httpbin.${to}:8000/ip" -s -o /dev/null -w "sleep.${from} to httpbin.${to}: %{http_code}\n"; done; done
+sleep.foo to httpbin.foo: 200
+sleep.foo to httpbin.bar: 200
+sleep.foo to httpbin.legacy: 200
+sleep.bar to httpbin.foo: 200
+sleep.bar to httpbin.bar: 200
+sleep.bar to httpbin.legacy: 200
+sleep.legacy to httpbin.foo: 200
+sleep.legacy to httpbin.bar: 200
+sleep.legacy to httpbin.legacy: 200
 ```
 
 ###  {#authentication-architecture}
