@@ -68,7 +68,7 @@
 
   * 需要显示加上 mesh 和 gateway-name
 
-#### ![](/image/Istio/virtualService-gateway-mesh.png)
+![](/image/Istio/virtualService-gateway-mesh.png)
 
 #### JWT 身份认证失败
 
@@ -147,11 +147,8 @@
 * 善用 debug 工具
 
 * * istioctl proxy-status / proxy-config / analyze
-
-* *  istio-pilot debug 接口（15014）
-
-* *  Envoy admin 接口（15000）
-
+* * istio-pilot debug 接口（15014）
+* * Envoy admin 接口（15000）
 * 关联故障发生时的日志、监控数据，进行分析
 
 
