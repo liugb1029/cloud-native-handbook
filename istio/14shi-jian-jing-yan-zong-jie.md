@@ -49,6 +49,7 @@
 * 是否是配置下发延迟
 
 * 使用 istioctl proxy-status 查看配置同步情况
+
 * 使用 Kiali 的配置验证
 
 #### 路由规则冲突
@@ -58,5 +59,14 @@
 * 各业务维护自己的配置，避免交叉定义
 * 通过 Kiali 进行配置验证
 
+#### VirtualService 作用域
 
+* VirtualService 中的 gateway 字段
+* 作用于网关：&lt; gateway-name &gt;
+* 作用于网格内部：空 或者 \[mesh\]
+* 同时生效：
+
+        -  需要显示加上 mesh 和 gateway-name
+
+![](/image/Istio/virtualService-gateway-mesh.png)
 
