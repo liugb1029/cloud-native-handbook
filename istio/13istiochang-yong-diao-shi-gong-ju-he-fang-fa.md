@@ -291,3 +291,5 @@ istiod   NodePort   10.96.151.82   <none>        15010:32105/TCP,15012:30476/TCP
 
 ![](/image/Istio/istio-pilot-discovery-debug.png)
 
+
+
