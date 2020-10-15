@@ -236,7 +236,9 @@ sleep.legacy to httpbin.legacy: 200
 [root@master istio-1.7.2]# kubectl exec "$(kubectl get pod -l app=sleep -n foo -o jsonpath={.items..metadata.name})" -c sleep -n foo -- curl http://httpbin.legacy:8000/headers -s | grep X-Forwarded-Client-Cert
 ```
 
-###  {#authentication-architecture}
+##### 开启Strict mTLSmoshi 
+
+
 
 ### 认证架构 {#authentication-architecture}
 
