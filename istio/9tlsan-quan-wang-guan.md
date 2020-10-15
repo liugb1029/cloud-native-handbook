@@ -51,18 +51,34 @@ Istio 供应身份是通过 secret discovery service（SDS）来实现的，具�
 
 ### 案例---配置TLS安全网关
 
-```
 1.为服务创建根证书和私钥：
+
+```bash
 openssl req -x509 -sha256 -nodes -days 365 -newkey rsa:2048 -subj '/O=example Inc./CN=example.com' -keyout example.com.key -out example.com.crt
+```
 
 2.为httpbin.example.com创建证书和私钥：
+
+```bash
 openssl req -out httpbin.example.com.csr -newkey rsa:2048 -nodes -keyout httpbin.example.com.key -subj "/CN=httpbin.example.com/O=httpbin organization"
 openssl x509 -req -days 365 -CA example.com.crt -CAkey example.com.key -set_serial 0 -in httpbin.example.com.csr -out httpbin.example.com.crt
+```
 
 3. 创建secret
+
+```bash
 kubectl create -n istio-system secret tls httpbin-credential --key=httpbin.example.com.key --cert=httpbin.example.com.crt
+```
 
 4.定义网关,vs，见yaml
+
+```bash
+kubectl apply -f - <<EOF
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: httpbin
+---
 apiVersion: v1
 kind: Service
 metadata:
@@ -73,6 +89,7 @@ spec:
   ports:
   - name: http
     port: 8000
+    targetPort: 80
   selector:
     app: httpbin
 ---
@@ -92,12 +109,13 @@ spec:
         app: httpbin
         version: v1
     spec:
+      serviceAccountName: httpbin
       containers:
-      - image: docker.io/citizenstig/httpbin
+      - image: docker.io/kennethreitz/httpbin
         imagePullPolicy: IfNotPresent
         name: httpbin
         ports:
-        - containerPort: 8000
+        - containerPort: 80
 ---
 apiVersion:  networking.istio.io/v1beta1
 kind: VirtualService
@@ -118,8 +136,8 @@ spec:
     - destination:
         port:
           number: 8000
-        host: httpbin    
---- 
+        host: httpbin  
+---
 apiVersion: networking.istio.io/v1alpha3
 kind: Gateway
 metadata:
@@ -137,16 +155,18 @@ spec:
       credentialName: httpbin-credential
     hosts:
     - httpbin.example.com
+EOF
+```
 
 5. 请求验证
+
+```bash
 curl -HHost:httpbin.example.com \
 --resolve httpbin.example.com:443:127.0.0.1 \
 --cacert example.com.crt "https://httpbin.example.com:443/status/418"
 
 curl -v -HHost:httpbin.example.com --cacert example.com.crt https://httpbin.example.com:31264/status/418
 ```
-
-![](/image/Istio/tls配置分析.png)
 
 ### 认证
 
