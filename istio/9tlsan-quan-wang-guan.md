@@ -197,6 +197,10 @@ Istio 双向 TLS 具有一个宽容模式（permissive mode），允许服务同
 
 当客户端调用`datastore`服务时，它从服务器的证书中提取`test-team`身份，并用安全命名信息检查`test-team`是否被允许运行`datastore`。客户端检测到`test-team`不允许运行`datastore`服务，认证失败。
 
+#### Auto mTLS
+
+
+
 ### 认证架构 {#authentication-architecture}
 
 您可以使用 peer 和 request 认证策略为在 Istio 网格中接收请求的工作负载指定认证要求。网格运维人员使用`.yaml`文件来指定策略。部署后，策略将保存在 Istio 配置存储中。Istio 控制器监视配置存储。
