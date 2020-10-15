@@ -146,7 +146,7 @@ curl -HHost:httpbin.example.com \
 curl -v -HHost:httpbin.example.com --cacert example.com.crt https://httpbin.example.com:31264/status/418
 ```
 
-### 
+![](/image/Istio/tls配置分析.png)
 
 ### 认证
 
