@@ -1,6 +1,6 @@
 ### 超时与重试、熔断、故障注入
 
-#### ![](/image/Istio/bookinfo-delay-retry.png)
+![](/image/Istio/bookinfo-delay-retry.png)
 
 #### 延迟与超时：提升系统的健壮性和可用性
 

@@ -30,21 +30,24 @@
    具有服务网格配置功能
 ```
 
-#### 功能![](/image/Istio/Kiali-Feature.png)架构
-
+#### 功能
+![](/image/Istio/Kiali-Feature.png)
+#### 架构
 ![](/image/Istio/Kiali-architecture.png)
 
 ### Prometheus
 
-#### 简介![](/image/Istio/Prometheus-introduce.png)架构
-
-#### ![](/image/Istio/Prometheus-architecture.png)
+#### 简介
+![](/image/Istio/Prometheus-introduce.png)
+#### 架构
+![](/image/Istio/Prometheus-architecture.png)
 
 #### Istio遥测
 
 ![](/image/Istio/Istio-telemetry-v1.png)
+![](/image/Istio/Istio-telemetry-v2.png)
 
-### ![](/image/Istio/Istio-telemetry-v2.png)Grafana
+### Grafana
 
 #### 功能
 
@@ -169,7 +172,7 @@ productpage访问details------productpage pod istio-proxy查看日志
 | global.proxy.accessLogFile | 日志输出文件，空为关闭输出 |
 | global.proxy.accessLogEncoding | 日志编码格式： JSON、TEXT |
 | global.proxy.accessLogFormat | 配置显示在日志中的字段，空为默认格式 |
-| global.proxy.logLevel | 日志级别，空为warning,可选trace\|debug\|info\|warning\|error\|critical\|off |
+| global.proxy.logLevel | 日志级别，空为warning,可选trace、debug、info、warning、error、critical、off |
 
 ### 分布式追踪
 
@@ -180,7 +183,7 @@ productpage访问details------productpage pod istio-proxy查看日志
 * ##### 起源于Google的Dapper
 * OpenTracing:   API规范、框架、库的组合
 
-#### ![](/image/Istio/Distributed-Systems-Tracing-concept.jpeg)
+![](/image/Istio/Distributed-Systems-Tracing-concept.jpeg)
 
 #### 常见分布式追踪工具
 
@@ -218,7 +221,8 @@ Jaeger Zipkin Datadog  skywalking
 
 * Collectors are writing to Kafka as a preliminary buffer
 
-#### ![](/image/Istio/Jaeger-architecture-v2.png)Istio 分布式追踪实现原理
+![](/image/Istio/Jaeger-architecture-v2.png)Istio 
+#### 分布式追踪实现原理
 
 Istio 服务网格的核心是 Envoy，是一个高性能的开源 L7 代理和通信总线。在 Istio 中，每个微服务都被注入了 Envoy Sidecar，该实例负责处理所有传入和传出的网络流量。因此，每个 Envoy Sidecar 都可以监控所有的服务间 API 调用，并记录每次服务调用所需的时间以及是否成功完成。
 
@@ -256,7 +260,7 @@ Client Tracer                                              Server Tracer
 └──────────────────┘                                       └──────────────────┘
 ```
 
-## Envoy-Jaeger 架构 {#envoy-jaeger-架构}
+## Envoy-Jaeger 架构
 
 `Envoy`原生支持`Jaeger`，追踪所需`x-b3`开头的 Header 和`x-request-id`在不同的服务之间由业务逻辑进行传递，并由`Envoy`上报给`Jaeger`，最终`Jaeger`生成完整的追踪信息。
 
@@ -270,9 +274,9 @@ Client Tracer                                              Server Tracer
 
 ![](/image/Istio/jaeger-architecture.png)
 
-```
+
                                                                                      Jaeger 架构图
-```
+
 
 `Jaeger`主要由以下几个组件构成：
 
@@ -287,7 +291,7 @@ Client Tracer                                              Server Tracer
 
 不同的是，`Bookinfo`的业务代码并没有集成`Jaeger-client`，而是由`Envoy`将追踪信息直接上报到`Jaeger-collector`，另外，存储方式默认为内存，随着[Pod](https://www.servicemesher.com/istio-handbook/GLOSSARY.html#pod)销毁，追踪数据将会被删除。
 
-## 部署方式 {#部署方式}
+## 部署方式
 
 `Jaeger`的部署方式主要有以下几种：
 

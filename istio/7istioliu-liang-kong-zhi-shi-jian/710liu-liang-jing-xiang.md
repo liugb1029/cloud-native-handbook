@@ -1,4 +1,4 @@
-# 流量镜像 {#title}
+# 流量镜像
 
 此任务演示了 Istio 的流量镜像功能。
 
@@ -6,7 +6,7 @@
 
 在此任务中，首先把流量全部路由到`v1`版本的测试服务。然后，执行规则将一部分流量镜像到`v2`版本。
 
-## 开始之前 {#before-you-begin}
+## 开始之前
 
 * 按照[安装指南](https://istio.io/latest/zh/docs/setup/)中的说明设置 Istio。
 
@@ -121,7 +121,7 @@
   EOF
   ```
 
-## 创建一个默认路由策略 {#creating-a-default-routing-policy}
+## 创建一个默认路由策略
 
 默认情况下，Kubernetes 在`httpbin`服务的两个版本之间进行负载均衡。在此步骤中会更改该行为，把所有流量都路由到`v1`。
 
@@ -200,7 +200,7 @@
    [2020-09-22 03:41:04 +0000] [9] [INFO] Booting worker with pid: 9
    ```
 
-## 镜像流量到 v2 {#mirroring-traffic-to-v2}
+## 镜像流量到 v2
 
 1. 改变流量规则将流量镜像到 v2：
 
