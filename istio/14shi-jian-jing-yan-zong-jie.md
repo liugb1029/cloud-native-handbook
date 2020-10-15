@@ -36,5 +36,27 @@
     DOWNSTREAM\_LOCAL\_ADDRESS/UPSTREAM\_LOCAL\_ADDRESS/  
     UPSTREAM\_HOST
 
+#### 路由规则没有生效
+
+* 查看是否满足 Pod 和 Service 的定义要求
+
+       [https://istio.io/docs/ops/deployment/requirements/](https://istio.io/docs/ops/deployment/requirements/)
+
+* 是否占用了 Istio 默认端口
+
+* 是否是配置下发延迟
+* 使用 istioctl proxy-status 查看配置同步情况
+* 使用 Kiali 的配置验证
+
+
+
+
+
+
+
+
+
+
+
 
 
