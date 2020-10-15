@@ -311,7 +311,52 @@ sleep.legacy to httpbin.legacy: 200
 
 设置服务级别的mTLS，必须设置selector来匹配对应的服务以及destinationrule\(用于外部TLS流量访问服务网格内服务\)
 
+```
+[root@master istio-1.7.2]# cat <<EOF | kubectl apply -n bar -f -
+> apiVersion: "security.istio.io/v1beta1"
+> kind: "PeerAuthentication"
+> metadata:
+>   name: "httpbin"
+>   namespace: "bar"
+> spec:
+>   selector:
+>     matchLabels:
+>       app: httpbin
+>   mtls:
+>     mode: STRICT
+> EOF
+peerauthentication.security.istio.io/httpbin created
+[root@master istio-1.7.2]# cat <<EOF | kubectl apply -n bar -f -
+> apiVersion: "networking.istio.io/v1alpha3"
+> kind: "DestinationRule"
+> metadata:
+>   name: "httpbin"
+> spec:
+>   host: "httpbin.bar.svc.cluster.local"
+>   trafficPolicy:
+>     tls:
+>       mode: ISTIO_MUTUAL
+> EOF
+destinationrule.networking.istio.io/httpbin created
+[root@master istio-1.7.2]# kubectl get peerauthentications.security.istio.io -A
+NAMESPACE   NAME                      AGE
+bar         httpbin                   4m43s
+foo         default                   115m
+[root@master istio-1.7.2]# for from in "foo" "bar" "legacy"; do for to in "foo" "bar" "legacy"; do kubectl exec "$(kubectl get pod -l app=sleep -n ${from} -o jsonpath={.items..metadata.name})" -c sleep -n ${from} -- curl "http://httpbin.${to}:8000/ip" -s -o /dev/null -w "sleep.${from} to httpbin.${to}: %{http_code}\n"; done; done
+sleep.foo to httpbin.foo: 200
+sleep.foo to httpbin.bar: 200
+sleep.foo to httpbin.legacy: 200
+sleep.bar to httpbin.foo: 200
+sleep.bar to httpbin.bar: 200
+sleep.bar to httpbin.legacy: 200
+sleep.legacy to httpbin.foo: 000
+command terminated with exit code 56
+sleep.legacy to httpbin.bar: 000
+command terminated with exit code 56
+sleep.legacy to httpbin.legacy: 200
+```
 
+###  {#authentication-architecture}
 
 ### 认证架构 {#authentication-architecture}
 
