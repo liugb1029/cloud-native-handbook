@@ -40,23 +40,23 @@
 
 * 查看是否满足 Pod 和 Service 的定义要求
 
-       [https://istio.io/docs/ops/deployment/requirements/](https://istio.io/docs/ops/deployment/requirements/)
+  ```
+   [https://istio.io/docs/ops/deployment/requirements/](https://istio.io/docs/ops/deployment/requirements/)
+  ```
 
 * 是否占用了 Istio 默认端口
 
 * 是否是配置下发延迟
+
 * 使用 istioctl proxy-status 查看配置同步情况
 * 使用 Kiali 的配置验证
 
+#### 路由规则冲突
 
-
-
-
-
-
-
-
-
+* 重复定义对同一 host 的路由规则
+* 解决方案
+* 各业务维护自己的配置，避免交叉定义
+* 通过 Kiali 进行配置验证
 
 
 
