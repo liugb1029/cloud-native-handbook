@@ -112,5 +112,21 @@
 * 拆分复杂的路由配置 – 单一职责
 * 注意配置生效顺序![](/image/Istio/拆分复杂路由配置-单一职责.png)
 
+#### 注意配置生效顺序
+
+* 先保证服务可用，再配置路由
+
+* 添加 subset：
+
+       - 更新 DestinationRules，添加新子集
+
+       - 更新会使用它的 VirtualServices
+
+* 删除 subset：
+
+        - 从 VirtualServices 删除对该子集的所有引用
+
+        - 从 DestinationRule 中删除子集
+
 
 
