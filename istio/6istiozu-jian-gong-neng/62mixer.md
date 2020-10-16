@@ -8,7 +8,9 @@ Mixer与Envoy sidecar数据平面进行网络通信，pilot控制平面配置Mix
 
 Istio 控制面部署了两个Mixer 组件： istio-telemetry 和istio-policy ，分别处理遥测数据的收集和策略的执行。查看两个组件的Pod 镜像会发现，容器的镜像是相同的，都是"/istio/mixer"。Mixer 是Istio 独有的一种设计, 不同于Pilot ，在其他平台上总能找到类似功能的服务组件。从调用时机上来说,Pilot 管理的是配置数据，在配置改变时和数据面交互即可；然而，对于Mixer 来说，在服务间交互时Envoy 都会对Mixer 进行一次调用，因此这是一种实时管理。当然，在实现上通过在Mixer 和Proxy 上使用缓存机制，可保证不用每次进行数据面请求时都和Mixer 交互。
 
-istio-policy主要负责接收来自Envoy sidecar的check请求，拒绝或通过，只有通过check校验的请求，才允许继续请求目标服务，istio-telemetry则负责接收来自Envoy sidecar的report请求，该请求只做日志记录操作并响应于请求端。
+istio-policy主要负责接收来自Envoy sidecar的check请求，拒绝或通过，只有通过check校验的请求，才允许继续请求目标服务;
+
+istio-telemetry则负责接收来自Envoy sidecar的report请求，该请求只做日志记录操作并响应于请求端。
 
 1. **istio-telemetry**
      istio-telemetry是专门用于收集遥测数据的Mixer服务组件;如下图所示 所示，当网格中的两个服务间有调用发生时，服务的代理Envoy 就会上报遥测数据给istio-telemetry服务组件，istio-telemetry 服务组件则根据配置将生成访问Metric等数据分发给后端的遥测服务。数据面代理通过Report 接口上报数据时访问数据会被批量上报。
