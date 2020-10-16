@@ -18,7 +18,7 @@ Pilot 定义了网格中服务的标准模型，这个标准模型独立于各�
 
 例如 Pilot 中的 Kubernetes 适配器通过`Kubernetes API`服务器得到 kubernetes 中 service 和 pod 的相关信息，然后翻译为标准模型提供给 Pilot 使用。通过适配器模式，Pilot 还可以从`Mesos`,`Cloud Foundry`,`Consul`等平台中获取服务信息，还可以开发适配器将其他提供服务发现的组件集成到 Pilot 中。
 
-* 标准数据面API
+* 标准数据平面API
 
 Pilot 使用了一套起源于 Envoy 项目的标准数据平面 API 来将服务信息和流量规则下发到数据平面的`sidecar`中。
 
