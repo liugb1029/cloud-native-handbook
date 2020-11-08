@@ -85,8 +85,7 @@ TOKEN=$(kubectl get secret ${SECRET} -o json | jq -Mr '.data.token' | base64 -d)
 # 从secret中提取证书文件
 kubectl get secret ${SECRET} -o json | jq -Mr '.data["ca.crt"]' \
 | base64 -d 
->
- /tmp/ca.crt
+> /tmp/ca.crt
 
 # 获取API Server URL，如果API Server部署在多台Master上，只需访问其中一台即可。
 APISERVER=https://$(kubectl -n default get endpoints kubernetes --no-headers \
